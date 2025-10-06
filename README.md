@@ -360,11 +360,12 @@ EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 
 ## 👨‍💻 Author
 
-**Your Name**  
-- 🌐 [Portfolio](https://your-portfolio.com)  
-- 💼 [LinkedIn](https://linkedin.com/in/your-profile)  
-- 🐙 [GitHub](https://github.com/your-username)  
-- 📧 [Email Me](mailto:your-email@example.com)   
+**Muhammad Shaheer Malik**  
+- 🌐 [Portfolio](https://shaheer-portfolio-omega.vercel.app)  
+- 💼 [LinkedIn](https://linkedin.com/in/malik-shaheer03)  
+- 🐙 [GitHub](https://github.com/malik-shaheer03)  
+- 📸 [Instagram](https://instagram.com/malik_shaheer03)  
+- 📧 [Email Me](mailto:shaheermalik03@gmail.com)   
 
 ## 📝 License
 
