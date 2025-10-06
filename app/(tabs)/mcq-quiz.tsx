@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import Header from '@/components/Header';
 import { generateMCQs, Question } from '../../lib/services/mcq-api';
 
 export default function MCQQuizScreen() {
@@ -180,12 +181,7 @@ export default function MCQQuizScreen() {
           style={styles.gradientContainer}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-              <Text style={styles.logoText}>CareerCatalyst</Text>
-            </View>
-          </View>
+          <Header showProfileButton={true} />
 
           <ScrollView 
             style={styles.container}
@@ -273,18 +269,17 @@ export default function MCQQuizScreen() {
         style={styles.gradientContainer}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-            <Text style={styles.logoText}>CareerCatalyst</Text>
-          </View>
-          <View style={styles.timerContainer}>
-            <View style={[styles.timerChip, timeLeft < 300 && styles.timerChipWarning]}>
-              <Icon name="timer" size={18} color="#FFFFFF" />
-              <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+        <Header 
+          showProfileButton={true}
+          rightElement={
+            <View style={styles.timerContainer}>
+              <View style={[styles.timerChip, timeLeft < 300 && styles.timerChipWarning]}>
+                <Icon name="timer" size={18} color="#FFFFFF" />
+                <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+              </View>
             </View>
-          </View>
-        </View>
+          } 
+        />
 
         <ScrollView 
           style={styles.container}

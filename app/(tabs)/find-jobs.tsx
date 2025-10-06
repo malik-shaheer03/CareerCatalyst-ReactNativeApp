@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,15 @@ import {
   Modal,
   ActivityIndicator,
   Image,
+  Animated,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import Header from '@/components/Header';
 
 const jobData = [
   {
@@ -166,6 +171,118 @@ const popularLocations = [
   'Remote',
 ];
 
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+// Animated Job Card Component
+const AnimatedJobCard = ({ item, index }: { item: any; index: number }) => {
+  const cardAnim = useRef(new Animated.Value(0)).current;
+  
+  useEffect(() => {
+    Animated.timing(cardAnim, {
+      toValue: 1,
+      duration: 300,
+      delay: index * 100, // Stagger animation
+      useNativeDriver: true,
+    }).start();
+  }, [cardAnim, index]);
+
+  const getCompanyIcon = (company: string) => {
+    const iconMap: { [key: string]: string } = {
+      Facebook: 'facebook',
+      Google: 'google',
+      Twitter: 'twitter',
+      Microsoft: 'microsoft',
+      Amazon: 'shopping',
+      Asana: 'chart-timeline-variant',
+      'JP Morgan': 'bank',
+      Spotify: 'spotify',
+      Netflix: 'netflix',
+    };
+    return iconMap[company] || 'briefcase';
+  };
+
+  const getCompanyColor = (company: string) => {
+    const colorMap: { [key: string]: string } = {
+      Facebook: '#1877F2',
+      Google: '#4285F4',
+      Twitter: '#1DA1F2',
+      Microsoft: '#00BCF2',
+      Amazon: '#FF9900',
+      Asana: '#F06A6A',
+      'JP Morgan': '#2E3F8F',
+      Spotify: '#1DB954',
+      Netflix: '#E50914',
+    };
+    return colorMap[company] || '#004D40';
+  };
+
+  return (
+    <Animated.View
+      style={{
+        opacity: cardAnim,
+        transform: [
+          {
+            translateY: cardAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [30, 0],
+            }),
+          },
+          {
+            scale: cardAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.9, 1],
+            }),
+          },
+        ],
+      }}
+    >
+      <TouchableOpacity style={styles.jobCard} activeOpacity={0.7}>
+        <View style={styles.jobHeader}>
+          <View style={[styles.companyLogo, { backgroundColor: getCompanyColor(item.company) }]}>
+            <Icon name={getCompanyIcon(item.company) as any} size={24} color="#fff" />
+          </View>
+          <View style={styles.jobInfo}>
+            <Text style={styles.jobTitle}>{item.title}</Text>
+            <Text style={styles.companyName}>{item.company}</Text>
+              <View style={styles.jobMeta}>
+                <Icon name="map-marker" size={12} color="#666" />
+                <Text style={styles.jobLocationText}>{item.location}</Text>
+              <View style={styles.jobTypeTag}>
+                <Text style={styles.jobTypeTagText}>{item.type}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.salaryContainer}>
+            <Text style={styles.salaryText}>{item.salary.split('/')[0]}</Text>
+            <Text style={styles.salaryPeriod}>/{item.salary.split('/')[1]}</Text>
+          </View>
+        </View>
+        
+        <View style={styles.jobFooter}>
+          <Text style={styles.applicantsText}>
+            {item.applicants} Applied of {item.capacity} Capacity
+          </Text>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.saveButton}>
+              <Icon
+                name={item.saved ? 'heart' : 'heart-outline'}
+                size={20}
+                color={item.saved ? '#E91E63' : '#666'}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.applyButton}>
+              <Text style={styles.applyButtonText}>Apply</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
+
 export default function FindJobsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('Getting location...');
@@ -181,6 +298,12 @@ export default function FindJobsScreen() {
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(true);
 
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const additionalJobsAnim = useRef(new Animated.Value(0)).current;
+
   // Auto-detect location on component mount
   useEffect(() => {
     const detectLocation = () => {
@@ -190,6 +313,25 @@ export default function FindJobsScreen() {
       }, 2000);
     };
     detectLocation();
+  }, []);
+
+  // Initialize animations on mount
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
+    // Initialize additional jobs animation to 0 (collapsed state)
+    additionalJobsAnim.setValue(0);
   }, []);
 
   useEffect(() => {
@@ -258,7 +400,7 @@ export default function FindJobsScreen() {
     setFilteredJobs(filtered);
   };
 
-  const handleJobTypeChange = (type) => {
+  const handleJobTypeChange = (type: string) => {
     if (selectedJobTypes.includes(type)) {
       setSelectedJobTypes(selectedJobTypes.filter(t => t !== type));
     } else {
@@ -266,7 +408,7 @@ export default function FindJobsScreen() {
     }
   };
 
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = (category: string) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(selectedCategories.filter(c => c !== category));
     } else {
@@ -274,7 +416,7 @@ export default function FindJobsScreen() {
     }
   };
 
-  const handleLevelChange = (level) => {
+  const handleLevelChange = (level: string) => {
     if (selectedLevels.includes(level)) {
       setSelectedLevels(selectedLevels.filter(l => l !== level));
     } else {
@@ -282,7 +424,7 @@ export default function FindJobsScreen() {
     }
   };
 
-  const toggleFilter = (filterKey, value) => {
+  const toggleFilter = (filterKey: string, value: string) => {
     if (filterKey === 'type') handleJobTypeChange(value);
     if (filterKey === 'category') handleCategoryChange(value);
     if (filterKey === 'level') handleLevelChange(value);
@@ -322,12 +464,91 @@ export default function FindJobsScreen() {
     }, 2000);
   };
 
-  const handleFindMoreJobs = () => {
+  // Animation functions
+  const animateExpand = () => {
+    // Configure LayoutAnimation for smooth expand
+    LayoutAnimation.configureNext({
+      duration: 300,
+      create: { 
+        type: 'easeInEaseOut', 
+        property: 'opacity',
+        springDamping: 0.7,
+      },
+      update: { 
+        type: 'easeInEaseOut',
+        springDamping: 0.7,
+      },
+      delete: { 
+        type: 'easeInEaseOut', 
+        property: 'opacity',
+        springDamping: 0.7,
+      },
+    });
+    
+    // Update state first to show content
     setExpanded(true);
+    
+    // Then animate the chevron rotation and additional jobs fade in
+    setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(additionalJobsAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, 50); // Small delay to ensure content is rendered
+  };
+
+  const animateCollapse = () => {
+    // First animate the additional jobs fade out and chevron rotation
+    Animated.parallel([
+      Animated.timing(rotateAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(additionalJobsAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // After animation completes, configure LayoutAnimation and update state
+      LayoutAnimation.configureNext({
+        duration: 300,
+        create: { 
+          type: 'easeInEaseOut', 
+          property: 'opacity',
+          springDamping: 0.7,
+        },
+        update: { 
+          type: 'easeInEaseOut',
+          springDamping: 0.7,
+        },
+        delete: { 
+          type: 'easeInEaseOut', 
+          property: 'opacity',
+          springDamping: 0.7,
+        },
+      });
+      
+      // Update state after animations complete
+      setExpanded(false);
+    });
+  };
+
+  const handleFindMoreJobs = () => {
+    animateExpand();
   };
 
   const handleCollapse = () => {
-    setExpanded(false);
+    animateCollapse();
   };
 
   // Get initial and additional jobs with modern animation
@@ -340,8 +561,8 @@ export default function FindJobsScreen() {
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  const getCompanyIcon = (company) => {
-    const iconMap = {
+  const getCompanyIcon = (company: string) => {
+    const iconMap: { [key: string]: string } = {
       Facebook: 'facebook',
       Google: 'google',
       Twitter: 'twitter',
@@ -355,8 +576,8 @@ export default function FindJobsScreen() {
     return iconMap[company] || 'briefcase';
   };
 
-  const getCompanyColor = (company) => {
-    const colorMap = {
+  const getCompanyColor = (company: string) => {
+    const colorMap: { [key: string]: string } = {
       Facebook: '#1877F2',
       Google: '#4285F4',
       Twitter: '#1DA1F2',
@@ -370,11 +591,11 @@ export default function FindJobsScreen() {
     return colorMap[company] || '#004D40';
   };
 
-  const renderFilterCategory = ({ item }) => (
+  const renderFilterCategory = ({ item }: { item: any }) => (
     <View style={styles.filterCategory}>
       <Text style={styles.filterCategoryTitle}>{item.label}</Text>
       <View style={styles.filterOptions}>
-        {item.options.map(option => {
+        {item.options.map((option: string) => {
           let isSelected = false;
           if (item.key === 'type') isSelected = selectedJobTypes.includes(option);
           if (item.key === 'category') isSelected = selectedCategories.includes(option);
@@ -404,292 +625,321 @@ export default function FindJobsScreen() {
     </View>
   );
 
-  const renderJobCard = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.jobCard} activeOpacity={0.7}>
-      <View style={styles.jobHeader}>
-        <View style={[styles.companyLogo, { backgroundColor: getCompanyColor(item.company) }]}>
-          <Icon name={getCompanyIcon(item.company)} size={24} color="#fff" />
-        </View>
-        <View style={styles.jobInfo}>
-          <Text style={styles.jobTitle}>{item.title}</Text>
-          <Text style={styles.companyName}>{item.company}</Text>
-          <View style={styles.jobMeta}>
-            <Icon name="map-marker" size={12} color="#666" />
-            <Text style={styles.locationText}>{item.location}</Text>
-            <View style={styles.jobTypeTag}>
-              <Text style={styles.jobTypeTagText}>{item.type}</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.salaryContainer}>
-          <Text style={styles.salaryText}>{item.salary.split('/')[0]}</Text>
-          <Text style={styles.salaryPeriod}>/{item.salary.split('/')[1]}</Text>
-        </View>
-      </View>
-      
-      <View style={styles.jobFooter}>
-        <Text style={styles.applicantsText}>
-          {item.applicants} Applied of {item.capacity} Capacity
-        </Text>
-        <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.saveButton}>
-            <Icon
-              name={item.saved ? 'heart' : 'heart-outline'}
-              size={20}
-              color={item.saved ? '#E91E63' : '#666'}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.applyButton}>
-            <Text style={styles.applyButtonText}>Apply</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
-    <LinearGradient
-      colors={['#004D40', '#00695C', '#00796B']}
-      style={styles.gradientContainer}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.content}
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#004D40', '#00695C', '#00796B']}
+        style={styles.gradientContainer}
+      >
+        {/* Header */}
+        <Header showProfileButton={true} />
+
+        <ScrollView 
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />}
         >
-        {/* Header with Logo */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-            <Text style={styles.logoText}>CareerCatalyst</Text>
-          </View>
-        </View>
-        {/* Search Section */}
-        <View style={styles.searchSection}>
-          {/* Job Title Search */}
-          <View style={styles.searchContainer}>
-            <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search jobs, companies..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Icon name="close" size={20} color="#666" />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {/* Location Search - Below Search Field */}
-          <TouchableOpacity style={styles.locationContainer} onPress={handleLocationClick}>
-            {isGettingLocation ? (
-              <ActivityIndicator size="small" color="#004D40" style={styles.locationIcon} />
-            ) : (
-              <Icon name="map-marker" size={20} color="#00A389" style={styles.locationIcon} />
-            )}
-            <Text style={[styles.locationText, isGettingLocation && styles.locationPlaceholder]}>
-              {location}
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            <View style={styles.heroIconContainer}>
+              <Icon name="briefcase-search" size={48} color="#FFFFFF" />
+            </View>
+            <Text style={styles.heroTitle}>Find Your Dream Job</Text>
+            <Text style={styles.heroSubtitle}>
+              Discover opportunities that match your skills and career goals
             </Text>
-          </TouchableOpacity>
-
-          {/* Popular Search Text */}
-          <Text style={styles.popularText}>• Popular Search: UI, Software Engineer</Text>
-        </View>
-
-
-      <View style={styles.resultsHeader}>
-        <Text style={styles.resultsCount}>
-          {filteredJobs.length} jobs found
-        </Text>
-        <TouchableOpacity 
-          style={styles.filterToggleInline}
-          onPress={() => setShowFilters(!showFilters)}
-        >
-          <Icon name="tune" size={20} color="#004D40" />
-          <Text style={styles.filterButtonText}>Filter</Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={displayJobs}
-        renderItem={renderJobCard}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.jobListContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Icon name="briefcase-search" size={64} color="#ccc" />
-            <Text style={styles.emptyTitle}>No jobs found</Text>
-            <Text style={styles.emptySubtitle}>Try adjusting your search criteria or filters</Text>
-            <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
-              <Text style={styles.clearFiltersButtonText}>Clear All Filters</Text>
-            </TouchableOpacity>
           </View>
-        }
-      />
 
-      {/* Find More Jobs / Collapse Button */}
-      {filteredJobs.length > 6 && (
-        <View style={styles.actionButtonsContainer}>
-          {!expanded ? (
-            <TouchableOpacity style={styles.findMoreButton} onPress={handleFindMoreJobs}>
-              <Text style={styles.findMoreButtonText}>Find More Jobs</Text>
-              <Icon name="chevron-down" size={20} color="#004D40" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.collapseButton} onPress={handleCollapse}>
-              <Text style={styles.collapseButtonText}>Collapse</Text>
-              <Icon name="chevron-up" size={20} color="#fff" />
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
-        </ScrollView>
-      </SafeAreaView>
-
-      {/* Location Modal */}
-      <Modal
-        visible={isLocationDialogOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={handleLocationDialogClose}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.locationDialog}>
-            <Text style={styles.locationDialogTitle}>Select Location</Text>
-            
-            <TouchableOpacity style={styles.currentLocationButton} onPress={getCurrentLocation}>
-              <Icon name="crosshairs-gps" size={20} color="#004D40" />
-              <Text style={styles.currentLocationText}>Use Current Location</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.sectionTitle}>Popular Locations</Text>
-            <ScrollView style={styles.locationList} showsVerticalScrollIndicator={false}>
-              {popularLocations.map((loc, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.locationListItem,
-                    location === loc && styles.locationListItemSelected,
-                  ]}
-                  onPress={() => handleLocationSelect(loc)}
-                >
-                  <Text
-                    style={[
-                      styles.locationListText,
-                      location === loc && styles.locationListTextSelected,
-                    ]}
-                  >
-                    {loc}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <TouchableOpacity style={styles.cancelButton} onPress={handleLocationDialogClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Filter Modal */}
-      <Modal
-        visible={showFilters}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowFilters(false)}
-      >
-        <TouchableOpacity 
-          style={styles.filterModalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowFilters(false)}
-        >
-          <BlurView intensity={20} tint="dark" style={styles.filterBlurOverlay}>
-            <TouchableOpacity 
-              style={styles.filterModalContent}
-              activeOpacity={1}
-              onPress={(e) => e.stopPropagation()}
-            >
-              <View style={styles.filterHeader}>
-                <Text style={styles.filterTitle}>Filters</Text>
-                <TouchableOpacity onPress={clearAllFilters} style={styles.clearButton}>
-                  <Text style={styles.clearButtonText}>Clear All</Text>
-                </TouchableOpacity>
-              </View>
-              
-              <ScrollView style={styles.filterContent} showsVerticalScrollIndicator={false}>
-                <FlatList
-                  data={filterCategories}
-                  renderItem={renderFilterCategory}
-                  keyExtractor={(item) => item.key}
-                  scrollEnabled={false}
+          {/* Main Content Card */}
+          <View style={styles.mainCard}>
+            {/* Search Section */}
+            <View style={styles.searchSection}>
+              {/* Job Title Search */}
+              <View style={styles.searchContainer}>
+                <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search jobs, companies..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholderTextColor="#999"
                 />
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Icon name="close" size={20} color="#666" />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {/* Location Search */}
+              <TouchableOpacity style={styles.locationContainer} onPress={handleLocationClick}>
+                {isGettingLocation ? (
+                  <ActivityIndicator size="small" color="#004D40" style={styles.locationIcon} />
+                ) : (
+                  <Icon name="map-marker" size={20} color="#00A389" style={styles.locationIcon} />
+                )}
+                <Text style={[styles.locationText, isGettingLocation && styles.locationPlaceholder]}>
+                  {location}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Popular Search Text */}
+              <Text style={styles.popularText}>• Popular Search: UI, Software Engineer</Text>
+            </View>
+
+            {/* Results Header */}
+            <View style={styles.resultsHeader}>
+              <View style={styles.resultsHeaderLeft}>
+                <Icon name="briefcase" size={20} color="#00A389" />
+                <Text style={styles.resultsCount}>
+                  {filteredJobs.length} jobs found
+                </Text>
+              </View>
+              <TouchableOpacity 
+                style={styles.filterButton}
+                onPress={() => setShowFilters(!showFilters)}
+              >
+                <Icon name="tune" size={20} color="#00A389" />
+                <Text style={styles.filterButtonText}>Filter</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Jobs List */}
+            <View style={styles.jobsContainer}>
+              {displayJobs.length > 0 ? (
+                displayJobs.map((item, index) => {
+                  // Apply fade animation to additional jobs (index >= 6)
+                  const isAdditionalJob = index >= 6;
+                  return (
+                    <Animated.View 
+                      key={item.id}
+                      style={isAdditionalJob ? {
+                        opacity: additionalJobsAnim,
+                        transform: [{
+                          translateY: additionalJobsAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [20, 0],
+                          })
+                        }]
+                      } : {}}
+                    >
+                      <AnimatedJobCard item={item} index={index} />
+                      {index < displayJobs.length - 1 && <View style={styles.separator} />}
+                    </Animated.View>
+                  );
+                })
+              ) : (
+                <Animated.View 
+                  style={[
+                    styles.emptyContainer,
+                    {
+                      opacity: fadeAnim,
+                      transform: [{ scale: scaleAnim }],
+                    },
+                  ]}
+                >
+                  <Icon name="briefcase-search" size={64} color="#ccc" />
+                  <Text style={styles.emptyTitle}>No jobs found</Text>
+                  <Text style={styles.emptySubtitle}>Try adjusting your search criteria or filters</Text>
+                  <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
+                    <Text style={styles.clearFiltersButtonText}>Clear All Filters</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              )}
+            </View>
+
+            {/* Find More Jobs / Collapse Button */}
+            {filteredJobs.length > 6 && (
+              <View style={styles.actionButtonsContainer}>
+                {!expanded ? (
+                  <TouchableOpacity style={styles.findMoreButton} onPress={handleFindMoreJobs}>
+                    <Text style={styles.findMoreButtonText}>Find More Jobs</Text>
+                    <Animated.View
+                      style={{
+                        transform: [
+                          {
+                            rotate: rotateAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ['0deg', '180deg'],
+                            }),
+                          },
+                        ],
+                      }}
+                    >
+                      <Icon name="chevron-down" size={20} color="#00A389" />
+                    </Animated.View>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity style={styles.collapseButton} onPress={handleCollapse}>
+                    <Text style={styles.collapseButtonText}>Collapse</Text>
+                    <Animated.View
+                      style={{
+                        transform: [
+                          {
+                            rotate: rotateAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ['180deg', '0deg'],
+                            }),
+                          },
+                        ],
+                      }}
+                    >
+                      <Icon name="chevron-up" size={20} color="#FFFFFF" />
+                    </Animated.View>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+
+        {/* Location Modal */}
+        <Modal
+          visible={isLocationDialogOpen}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={handleLocationDialogClose}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.locationDialog}>
+              <Text style={styles.locationDialogTitle}>Select Location</Text>
+              
+              <TouchableOpacity style={styles.currentLocationButton} onPress={getCurrentLocation}>
+                <Icon name="crosshairs-gps" size={20} color="#004D40" />
+                <Text style={styles.currentLocationText}>Use Current Location</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.sectionTitle}>Popular Locations</Text>
+              <ScrollView style={styles.locationList} showsVerticalScrollIndicator={false}>
+                {popularLocations.map((loc, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.locationListItem,
+                      location === loc && styles.locationListItemSelected,
+                    ]}
+                    onPress={() => handleLocationSelect(loc)}
+                  >
+                    <Text
+                      style={[
+                        styles.locationListText,
+                        location === loc && styles.locationListTextSelected,
+                      ]}
+                    >
+                      {loc}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </ScrollView>
-            </TouchableOpacity>
-          </BlurView>
-        </TouchableOpacity>
-      </Modal>
-    </LinearGradient>
+
+              <TouchableOpacity style={styles.cancelButton} onPress={handleLocationDialogClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Filter Modal */}
+        <Modal
+          visible={showFilters}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowFilters(false)}
+        >
+          <TouchableOpacity 
+            style={styles.filterModalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowFilters(false)}
+          >
+            <BlurView intensity={20} tint="dark" style={styles.filterBlurOverlay}>
+              <TouchableOpacity 
+                style={styles.filterModalContent}
+                activeOpacity={1}
+                onPress={(e) => e.stopPropagation()}
+              >
+                <View style={styles.filterHeader}>
+                  <Text style={styles.filterTitle}>Filters</Text>
+                  <TouchableOpacity onPress={clearAllFilters} style={styles.clearButton}>
+                    <Text style={styles.clearButtonText}>Clear All</Text>
+                  </TouchableOpacity>
+                </View>
+                
+                <ScrollView style={styles.filterContent} showsVerticalScrollIndicator={false}>
+                  <FlatList
+                    data={filterCategories}
+                    renderItem={renderFilterCategory}
+                    keyExtractor={(item) => item.key}
+                    scrollEnabled={false}
+                  />
+                </ScrollView>
+              </TouchableOpacity>
+            </BlurView>
+          </TouchableOpacity>
+        </Modal>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
   safeArea: {
     flex: 1,
     backgroundColor: 'transparent',
   },
+  gradientContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
   },
-  content: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 100, // Increased padding to avoid tab bar overlap
   },
-  header: {
-    backgroundColor: 'transparent',
+  heroSection: {
+    alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    elevation: 0,
+    paddingVertical: 40,
   },
-  logoContainer: {
-    flexDirection: 'row',
+  heroIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
   },
-  logoImage: {
-    height: 40,
-    width: 40,
-    marginRight: 10,
-    resizeMode: 'contain',
-  },
-  logoText: {
-    color: 'white',
+  heroTitle: {
+    fontSize: 28,
     fontWeight: '800',
-    fontSize: 20,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 12,
   },
-  searchSection: {
+  heroSubtitle: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
+    lineHeight: 24,
     paddingHorizontal: 20,
-    paddingVertical: 20,
+  },
+  mainCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     marginHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 20,
+    marginBottom: 20,
+    borderRadius: 24,
+    padding: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  searchSection: {
+    marginBottom: 24,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -753,13 +1003,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
-  filterToggle: {
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  resultsHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  resultsCount: {
+    fontSize: 16,
+    color: '#004D40',
+    fontWeight: '700',
     marginLeft: 8,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#f0f0f0',
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#E8F5E8',
+  },
+  filterButtonText: {
+    fontSize: 14,
+    color: '#00A389',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  jobsContainer: {
+    marginBottom: 20,
   },
   // Location Modal Styles
   modalOverlay: {
@@ -955,61 +1235,21 @@ const styles = StyleSheet.create({
   filterOptionTextActive: {
     color: '#fff',
   },
-  resultsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    marginTop: 20,
-  },
-  resultsCount: {
-    fontSize: 17,
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  filterToggleInline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: '#E8F5E8',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    minWidth: 100,
-    justifyContent: 'center',
-  },
-  filterButtonText: {
-    fontSize: 16,
-    color: '#004D40',
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  jobListContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 120, // Increased padding for bottom tabs
-    paddingTop: 10,
-  },
   separator: {
     height: 16,
   },
   jobCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 20,
-    padding: 24,
-    elevation: 6,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
     shadowRadius: 8,
+    elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: '#F3F4F6',
   },
   jobHeader: {
     flexDirection: 'row',
@@ -1049,7 +1289,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  locationText: {
+  jobLocationText: {
     fontSize: 14,
     color: '#6B7280',
     marginLeft: 6,
@@ -1153,45 +1393,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 24,
     paddingHorizontal: 20,
+    paddingBottom: 40, // Extra padding to ensure buttons are visible above tab bar
   },
   findMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 36,
-    paddingVertical: 18,
-    borderRadius: 32,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    borderColor: '#00A389',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
   },
   findMoreButtonText: {
-    color: '#004D40',
-    fontSize: 17,
-    fontWeight: '800',
-    marginRight: 10,
+    color: '#00A389',
+    fontSize: 16,
+    fontWeight: '700',
+    marginRight: 8,
   },
   collapseButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 36,
-    paddingVertical: 18,
-    borderRadius: 32,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 24,
     backgroundColor: '#00A389',
-    elevation: 6,
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
+    elevation: 4,
   },
   collapseButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '800',
-    marginRight: 10,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginRight: 8,
   },
 });

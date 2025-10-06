@@ -16,6 +16,7 @@ import { useAuth } from '../../lib/auth-context';
 import { useRouter } from 'expo-router';
 import { getEmployeeSkills } from '../../lib/services/firestore-services';
 import { getCareerPathsFromSkills, CareerPath } from '../../lib/services/career-path-api';
+import Header from '@/components/Header';
 
 export default function CareerPathScreen() {
   const { currentUser } = useAuth();
@@ -76,12 +77,7 @@ export default function CareerPathScreen() {
           colors={['#004D40', '#00695C', '#00796B']}
           style={styles.gradientContainer}
         >
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-              <Text style={styles.logoText}>CareerCatalyst</Text>
-            </View>
-          </View>
+          <Header />
           
           <View style={styles.loginPrompt}>
             <Icon name="account-circle" size={80} color="#FFFFFF" />
@@ -107,12 +103,7 @@ export default function CareerPathScreen() {
         colors={['#004D40', '#00695C', '#00796B']}
         style={styles.gradientContainer}
       >
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-            <Text style={styles.logoText}>CareerCatalyst</Text>
-          </View>
-        </View>
+        <Header showProfileButton={true} />
 
         <ScrollView 
           style={styles.container} 

@@ -14,6 +14,7 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'expo-router';
+import Header from '@/components/Header';
 
 const { width } = Dimensions.get('window');
 
@@ -83,36 +84,27 @@ export default function HomeScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#004D40', '#00695C', '#00796B']}
-      style={styles.gradientContainer}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          contentContainerStyle={styles.container}
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#004D40', '#00695C', '#00796B']}
+        style={styles.gradientContainer}
+      >
+        {/* Header */}
+        <Header showProfileButton={!!currentUser} />
+
+        <ScrollView 
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />
           }
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-              <Text style={styles.logoText}>CareerCatalyst</Text>
-            </View>
-            {currentUser && (
-              <TouchableOpacity 
-                style={styles.profileButton}
-                onPress={() => router.push('/(tabs)/profile')}
-              >
-                <Icon name="account-circle" size={28} color="#FFFFFF" />
-              </TouchableOpacity>
-            )}
-          </View>
-
           {/* Hero Section */}
           <View style={styles.heroSection}>
+            <View style={styles.heroIconContainer}>
+              <Icon name="home" size={48} color="#FFFFFF" />
+            </View>
             <Text style={styles.heroTitle}>
               {currentUser ? `Welcome back!` : `Find Your Dream Job`}
             </Text>
@@ -140,126 +132,113 @@ export default function HomeScreen() {
             )}
           </View>
 
-
-
-          {/* Recent Jobs */}
-          <View style={styles.recentJobsSection}>
-            <Text style={styles.sectionTitle}>Recent Jobs</Text>
-            <View style={styles.jobsList}>
-              {recentJobs.map((job) => (
-                <TouchableOpacity key={job.id} style={styles.jobCard}>
-                  <View style={styles.jobHeader}>
-                    <View style={[styles.companyLogo, { backgroundColor: getCompanyColor(job.company) }]}>
-                      <Icon name={getCompanyIcon(job.company)} size={24} color="#fff" />
-                    </View>
-                    <View style={styles.jobInfo}>
-                      <Text style={styles.jobTitle}>{job.title}</Text>
-                      <Text style={styles.jobCompany}>{job.company}</Text>
-                      <View style={styles.jobMeta}>
-                        <Icon name="map-marker" size={12} color="#6B7280" />
-                        <Text style={styles.jobLocation}>{job.location}</Text>
-                        <View style={styles.jobTypeTag}>
-                          <Text style={styles.jobTypeTagText}>Full-time</Text>
+          {/* Main Content Card */}
+          <View style={styles.mainCard}>
+            {/* Recent Jobs Section */}
+            <View style={styles.jobsSection}>
+              <View style={styles.sectionHeader}>
+                <Icon name="briefcase" size={24} color="#00A389" />
+                <Text style={styles.sectionTitle}>Recent Jobs</Text>
+              </View>
+              
+              <View style={styles.jobsList}>
+                {recentJobs.map((job) => (
+                  <TouchableOpacity key={job.id} style={styles.jobCard}>
+                    <View style={styles.jobHeader}>
+                      <View style={[styles.companyLogo, { backgroundColor: getCompanyColor(job.company) }]}>
+                        <Icon name={getCompanyIcon(job.company)} size={24} color="#fff" />
+                      </View>
+                      <View style={styles.jobInfo}>
+                        <Text style={styles.jobTitle}>{job.title}</Text>
+                        <Text style={styles.jobCompany}>{job.company}</Text>
+                        <View style={styles.jobMeta}>
+                          <Icon name="map-marker" size={12} color="#6B7280" />
+                          <Text style={styles.jobLocation}>{job.location}</Text>
+                          <View style={styles.jobTypeTag}>
+                            <Text style={styles.jobTypeTagText}>Full-time</Text>
+                          </View>
                         </View>
                       </View>
+                      <View style={styles.salaryContainer}>
+                        <Text style={styles.salaryText}>{job.salary.split('/')[0]}</Text>
+                        <Text style={styles.salaryPeriod}>/{job.salary.split('/')[1]}</Text>
+                      </View>
                     </View>
-                    <View style={styles.salaryContainer}>
-                      <Text style={styles.salaryText}>{job.salary.split('/')[0]}</Text>
-                      <Text style={styles.salaryPeriod}>/{job.salary.split('/')[1]}</Text>
+                    
+                    <View style={styles.jobFooter}>
+                      <Text style={styles.jobPosted}>{job.posted}</Text>
+                      <View style={styles.actionButtons}>
+                        <TouchableOpacity style={styles.saveButton}>
+                          <Icon name="heart-outline" size={20} color="#666" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.applyButton}>
+                          <Text style={styles.applyButtonText}>Apply</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                  
-                  <View style={styles.jobFooter}>
-                    <Text style={styles.jobPosted}>{job.posted}</Text>
-                    <View style={styles.actionButtons}>
-                      <TouchableOpacity style={styles.saveButton}>
-                        <Icon name="heart-outline" size={20} color="#666" />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.applyButton}>
-                        <Text style={styles.applyButtonText}>Apply</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-            {/* Show More Button */}
-            <View style={styles.showMoreContainer}>
+              {/* Show More Button */}
               <TouchableOpacity 
                 style={styles.showMoreButton}
                 onPress={() => router.push('/(tabs)/find-jobs')}
               >
                 <Text style={styles.showMoreButtonText}>Show More Jobs</Text>
-                <Icon name="chevron-down" size={20} color="#004D40" />
+                <Icon name="chevron-right" size={20} color="#00A389" />
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
   safeArea: {
     flex: 1,
     backgroundColor: 'transparent',
   },
+  gradientContainer: {
+    flex: 1,
+  },
   container: {
+    flex: 1,
+  },
+  scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120,
-  },
-  header: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoImage: {
-    height: 32,
-    width: 32,
-    marginRight: 0,
-    resizeMode: 'contain',
-  },
-  logoText: {
-    color: 'white',
-    fontWeight: '800',
-    fontSize: 20,
-    marginLeft: 8,
-  },
-  profileButton: {
-    padding: 4,
+    paddingBottom: 100,
   },
   heroSection: {
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 40,
+  },
+  heroIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
   },
   heroTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 40,
+    marginBottom: 12,
   },
   heroSubtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
-    marginBottom: 32,
     lineHeight: 24,
     paddingHorizontal: 20,
+    marginBottom: 32,
   },
   heroButtons: {
     flexDirection: 'row',
@@ -269,12 +248,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#00A389',
     paddingHorizontal: 32,
     paddingVertical: 16,
-    borderRadius: 28,
+    borderRadius: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 4,
   },
   primaryButtonText: {
     color: '#FFFFFF',
@@ -285,7 +264,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     paddingHorizontal: 32,
     paddingVertical: 16,
-    borderRadius: 28,
+    borderRadius: 24,
     borderWidth: 2,
     borderColor: '#FFFFFF',
   },
@@ -294,56 +273,67 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 20,
+  mainCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    marginHorizontal: 20,
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  recentJobsSection: {
-    paddingHorizontal: 20,
-    marginBottom: 32,
+  jobsSection: {
+    marginBottom: 0,
   },
-  showMoreContainer: {
+  sectionHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 20,
+    marginBottom: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#004D40',
+    marginLeft: 8,
   },
   showMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 36,
-    paddingVertical: 18,
-    borderRadius: 32,
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    borderColor: '#00A389',
+    backgroundColor: 'transparent',
+    marginTop: 20,
   },
   showMoreButtonText: {
-    color: '#004D40',
-    fontSize: 17,
-    fontWeight: '800',
-    marginRight: 10,
+    color: '#00A389',
+    fontSize: 16,
+    fontWeight: '700',
+    marginRight: 8,
   },
   jobsList: {
     gap: 16,
   },
   jobCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 20,
-    padding: 24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: '#F3F4F6',
   },
   jobHeader: {
     flexDirection: 'row',

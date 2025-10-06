@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { useAuth } from '@/lib/auth-context';
+import Header from '@/components/Header';
 import { db } from '@/lib/firebase';
 import { EducationStep, ExperienceStep, CertificationsStep, JobPreferencesStep } from '@/components/profile-setup';
 

@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import Header from '@/components/Header';
 
 const jobTitles = [
   "Software Engineer",
@@ -186,12 +187,7 @@ export default function InterviewSetupScreen() {
         style={styles.gradientContainer}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-            <Text style={styles.logoText}>CareerCatalyst</Text>
-          </View>
-        </View>
+        <Header showProfileButton={true} />
 
         <ScrollView 
           style={styles.container}

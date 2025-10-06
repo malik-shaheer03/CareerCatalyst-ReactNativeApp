@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import Header from '@/components/Header';
 import * as Speech from 'expo-speech';
 import Voice from '@react-native-voice/voice';
 import { generateInterviewQuestions, analyzeInterviewPerformance, InterviewResponse } from '../../lib/services/mcq-api';
@@ -319,12 +320,7 @@ export default function InterviewBotScreen() {
           style={styles.gradientContainer}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-              <Text style={styles.logoText}>CareerCatalyst</Text>
-            </View>
-          </View>
+          <Header showProfileButton={true} />
 
           <ScrollView 
             style={styles.container}
@@ -459,12 +455,7 @@ export default function InterviewBotScreen() {
         style={styles.gradientContainer}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/white-logo-noBG.png')} style={styles.logoImage} />
-            <Text style={styles.logoText}>CareerCatalyst</Text>
-          </View>
-        </View>
+        <Header showProfileButton={true} />
 
         <ScrollView 
           style={styles.container}
