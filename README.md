@@ -24,10 +24,13 @@
 - 📝 **Smart MCQ Practice** - Adaptive quiz system with AI-generated questions
 - 🗺️ **Career Path Guidance** - Personalized career recommendations using Google Gemini AI
 - 💼 **Job Discovery** - Advanced job search with filtering and real-time updates
-- 📄 **Resume Management** - Professional resume builder and optimization
+- 📄 **Advanced Resume Builder** - Professional resume creation with rich text editing and PDF export
+- 📊 **Resume Dashboard** - Manage multiple resumes with preview and sharing capabilities
 - 🔐 **Multi-role Authentication** - Secure login for job seekers and employers
 - 📊 **Performance Analytics** - Detailed insights into interview and quiz performance
 - 🎨 **Modern UI/UX** - Beautiful, intuitive design with smooth animations
+- 🔔 **Toast Notifications** - Real-time feedback and user notifications
+- ✅ **Confirmation Modals** - Interactive confirmation dialogs for better UX
 
 ## 🏗️ System Architecture
 
@@ -51,7 +54,10 @@
 4. **Interview Module**: AI-powered mock interviews and MCQ practice
 5. **Career Path Module**: Personalized career guidance and training recommendations
 6. **Job Search**: Advanced filtering and real-time job discovery
-7. **Profile Management**: Comprehensive user profile and resume builder
+7. **Advanced Resume System**: Professional resume builder with rich text editing and PDF export
+8. **Resume Dashboard**: Multi-resume management with preview and sharing
+9. **AI Integration**: Enhanced AI services for content generation and recommendations
+10. **Notification System**: Toast notifications and confirmation modals
 
 ## 🎨 User Interface Features
 
@@ -232,11 +238,19 @@ const model = "gemini-2.5-flash-lite";
 - Saved searches and job alerts
 - Application tracking and status updates
 
-### 4. **Comprehensive Analytics**
+### 4. **Advanced Resume System**
+- Professional resume builder with rich text editing
+- Multiple resume templates and customization options
+- Real-time preview and PDF export functionality
+- Resume dashboard for managing multiple resumes
+- AI-powered content suggestions and optimization
+
+### 5. **Comprehensive Analytics**
 - Interview performance metrics and trends
 - Career development progress tracking
 - Job application success rates
 - Skill assessment and improvement areas
+- Resume performance and optimization insights
 
 ## 📊 Performance Metrics
 
@@ -273,6 +287,11 @@ const model = "gemini-2.5-flash-lite";
 - **Expo Blur**: Glassmorphism effects
 - **React Native Voice**: Speech recognition capabilities
 - **Expo Speech**: Text-to-speech functionality
+- **html2canvas**: HTML to canvas conversion for resume export
+- **jsPDF**: PDF generation for resume downloads
+- **React Native Paper**: Material Design components
+- **React Native Render HTML**: Rich text rendering
+- **React Native Super Grid**: Advanced grid layouts
 
 ## 📝 Project Structure
 
@@ -283,13 +302,24 @@ CareerCatalyst/
 │   │   ├── (tabs)/         # Tab-based navigation screens
 │   │   │   ├── auth/       # Authentication screens
 │   │   │   ├── dashboards/ # User dashboards
+│   │   │   ├── resume-builder.tsx    # Advanced resume builder
+│   │   │   ├── resume-dashboard.tsx  # Resume management
 │   │   │   └── ...         # Other feature screens
 │   │   └── modal.tsx       # Modal components
 │   ├── components/         # Reusable UI components
 │   │   ├── ui/            # Base UI components
-│   │   └── profile-setup/ # Profile setup components
+│   │   ├── profile-setup/ # Profile setup components
+│   │   ├── resume/        # Resume-specific components
+│   │   │   ├── form-components/  # Resume form components
+│   │   │   ├── preview/          # Resume preview components
+│   │   │   └── ...               # Other resume components
+│   │   ├── ConfirmationModal.tsx    # Confirmation dialogs
+│   │   └── ToastNotification.tsx    # Toast notifications
 │   ├── lib/               # Utility functions and services
 │   │   ├── services/      # API services and AI integration
+│   │   ├── ai/           # AI-specific services and models
+│   │   ├── resume/       # Resume management and utilities
+│   │   ├── ToastContext.tsx  # Toast notification context
 │   │   └── firebase.ts    # Firebase configuration
 │   ├── hooks/             # Custom React hooks
 │   ├── constants/         # App constants and themes

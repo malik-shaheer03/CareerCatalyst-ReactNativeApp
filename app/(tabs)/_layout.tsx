@@ -27,6 +27,10 @@ export default function TabLayout() {
                             pathname.includes('/mcq-setup') || 
                             pathname.includes('/mcq-quiz');
 
+  // Check if we're on resume-related screens (resume-builder, resume-dashboard)
+  const isResumeRelated = pathname.includes('/resume-builder') || 
+                         pathname.includes('/resume-dashboard');
+
   const handleProfilePress = () => {
     if (!loading) {
       if (currentUser) {
@@ -49,6 +53,8 @@ export default function TabLayout() {
         // User is logged in, allow navigation to the tab
         if (tabName === 'interview') {
           router.push('/(tabs)/interview-prep');
+        } else if (tabName === 'resume') {
+          router.push('/(tabs)/resume-dashboard');
         } else {
           router.push(`/(tabs)/${tabName}` as any);
         }
@@ -165,20 +171,34 @@ export default function TabLayout() {
         name="resume"
         options={{
           title: 'Resume',
-          tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              {focused && (
-                <View style={styles.activeBackground} />
-              )}
-              <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-                <Icon
-                  name="file-document"
-                  size={20}
-                  color={focused ? '#FFFFFF' : color}
-                />
+          tabBarIcon: ({ color, focused }) => {
+            const isActive = focused || isResumeRelated;
+            return (
+              <View style={styles.tabItemContainer}>
+                {isActive && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+                  <Icon
+                    name="file-document"
+                    size={20}
+                    color={isActive ? '#FFFFFF' : color}
+                  />
+                </View>
               </View>
-            </View>
-          ),
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || isResumeRelated;
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
           tabBarButton: (props) => (
             <TouchableOpacity
               onPress={() => handleAuthenticatedTabPress('resume')}
@@ -417,6 +437,19 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="mcq-quiz"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      {/* Resume Builder Screens */}
+      <Tabs.Screen
+        name="resume-builder"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="resume-dashboard"
         options={{
           href: null, // Hide from tab bar
         }}

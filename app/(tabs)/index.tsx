@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  ScrollView, 
-  StyleSheet, 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  RefreshControl,
-  Dimensions 
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '@/components/Header';
+import { useAuth } from '@/lib/auth-context';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'expo-router';
-import Header from '@/components/Header';
+import React, { useState } from 'react';
+import {
+    Dimensions,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
@@ -183,7 +182,7 @@ export default function HomeScreen() {
               {/* Show More Button */}
               <TouchableOpacity 
                 style={styles.showMoreButton}
-                onPress={() => router.push('/(tabs)/find-jobs')}
+                onPress={() => handleQuickAction('/(tabs)/find-jobs')}
               >
                 <Text style={styles.showMoreButtonText}>Show More Jobs</Text>
                 <Icon name="chevron-right" size={20} color="#00A389" />

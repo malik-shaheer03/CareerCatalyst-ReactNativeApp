@@ -16,6 +16,12 @@ service cloud.firestore {
     match /employees/{employeeId} {
       allow read, write: if request.auth != null && request.auth.uid == resource.data.uid;
       allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
+      
+      // Resumes subcollection - users can manage their own resumes
+      match /resumes/{resumeId} {
+        allow read, write: if request.auth != null && request.auth.uid == employeeId;
+        allow create: if request.auth != null && request.auth.uid == employeeId;
+      }
     }
     
     // Public job listings (readable by all authenticated users)
