@@ -20,136 +20,10 @@ import {
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { router } from 'expo-router';
 import Header from '@/components/Header';
-
-const jobData = [
-  {
-    id: '1',
-    title: 'Visual Designer',
-    company: 'Facebook',
-    location: 'Remote',
-    salary: '$2000/month',
-    type: 'Full-time',
-    posted: '2 days ago',
-    applicants: 10,
-    capacity: 30,
-    saved: false,
-    level: 'Senior',
-    category: 'Design & Development',
-  },
-  {
-    id: '2',
-    title: 'Product Designer',
-    company: 'Google',
-    location: 'Remote',
-    salary: '$2500/month',
-    type: 'Full-time',
-    posted: '1 week ago',
-    applicants: 15,
-    capacity: 25,
-    saved: false,
-    level: 'Senior',
-    category: 'Design & Development',
-  },
-  {
-    id: '3',
-    title: 'Frontend Developer',
-    company: 'Twitter',
-    location: 'Remote',
-    salary: '$1800/month',
-    type: 'Full-time',
-    posted: '3 days ago',
-    applicants: 8,
-    capacity: 20,
-    saved: true,
-    level: 'Mid',
-    category: 'Design & Development',
-  },
-  {
-    id: '4',
-    title: 'Software Engineer',
-    company: 'Microsoft',
-    location: 'Remote',
-    salary: '$3200/month',
-    type: 'Full-time',
-    posted: '1 day ago',
-    applicants: 12,
-    capacity: 15,
-    saved: false,
-    level: 'Senior',
-    category: 'Design & Development',
-  },
-  {
-    id: '5',
-    title: 'Backend Developer',
-    company: 'Amazon',
-    location: 'Remote',
-    salary: '$2800/month',
-    type: 'Full-time',
-    posted: '5 days ago',
-    applicants: 18,
-    capacity: 22,
-    saved: false,
-    level: 'Mid',
-    category: 'Design & Development',
-  },
-  {
-    id: '6',
-    title: 'Project Manager',
-    company: 'Asana',
-    location: 'Remote',
-    salary: '$3000/month',
-    type: 'Full-time',
-    posted: '1 week ago',
-    applicants: 20,
-    capacity: 25,
-    saved: false,
-    level: 'Senior',
-    category: 'Project Management',
-  },
-  {
-    id: '7',
-    title: 'Financial Analyst',
-    company: 'JP Morgan',
-    location: 'Remote',
-    salary: '$3600/month',
-    type: 'Full-time',
-    posted: '4 days ago',
-    applicants: 19,
-    capacity: 30,
-    saved: false,
-    level: 'Mid',
-    category: 'Finance',
-  },
-  {
-    id: '8',
-    title: 'Marketing Intern',
-    company: 'Spotify',
-    location: 'Remote',
-    salary: '$1500/month',
-    type: 'Internship',
-    posted: '2 days ago',
-    applicants: 25,
-    capacity: 40,
-    saved: false,
-    level: 'Entry',
-    category: 'Marketing & Communication',
-  },
-  {
-    id: '9',
-    title: 'Content Creator',
-    company: 'Netflix',
-    location: 'Remote',
-    salary: '$2600/month',
-    type: 'Full-time',
-    posted: '6 days ago',
-    applicants: 22,
-    capacity: 30,
-    saved: false,
-    level: 'Mid',
-    category: 'Marketing & Communication',
-  },
-];
+import JobCard from '@/components/find-jobs/JobCard';
+import { getAllJobsForJobSeekers, type JobSeeker } from '@/lib/services/job-seeker-services';
 
 const filterCategories = [
   { key: 'type', label: 'Job Type', options: ['Full-time', 'Part-time', 'Internship', 'Contract'] },
@@ -159,6 +33,124 @@ const filterCategories = [
 
 const quickFilters = ['Remote', 'Full-time', 'Senior Level', 'High Salary'];
 const sortOptions = ['Most Recent', 'Highest Salary', 'Most Relevant'];
+
+// Mock job data that displays by default
+const mockJobs: JobSeeker[] = [
+  {
+    id: '1',
+    title: 'Senior React Developer',
+    company: 'Google',
+    location: 'Remote',
+    type: 'Full-time',
+    category: 'Design & Development',
+    level: 'Senior',
+    salary: '$2500/month',
+    applicants: '22',
+    capacity: '30',
+    description: 'We are seeking a skilled React Developer to join our dynamic team. You will be responsible for developing and maintaining web applications using React.js and related technologies.',
+    requirements: ['3+ years React experience', 'JavaScript proficiency', 'Node.js knowledge'],
+    benefits: ['Health insurance', 'Flexible hours', 'Remote work'],
+    postedDate: new Date(),
+    companyIcon: 'google',
+    companyColor: '#4285F4',
+    employerId: 'google-hr',
+  },
+  {
+    id: '2',
+    title: 'UI/UX Designer',
+    company: 'Facebook',
+    location: 'Menlo Park, CA',
+    type: 'Full-time',
+    category: 'Design & Development',
+    level: 'Mid',
+    salary: '$2200/month',
+    applicants: '18',
+    capacity: '25',
+    description: 'Join our design team to create intuitive and engaging user experiences. You will work closely with product managers and developers to bring designs to life.',
+    requirements: ['UI/UX design experience', 'Figma proficiency', 'Portfolio required'],
+    benefits: ['Health benefits', 'Stock options', 'Free meals'],
+    postedDate: new Date(),
+    companyIcon: 'facebook',
+    companyColor: '#1877F2',
+    employerId: 'fb-design',
+  },
+  {
+    id: '3',
+    title: 'Frontend Developer',
+    company: 'Microsoft',
+    location: 'Redmond, WA',
+    type: 'Contract',
+    category: 'Design & Development',
+    level: 'Entry',
+    salary: '$1800/month',
+    applicants: '14',
+    capacity: '20',
+    description: 'Entry-level position for a Frontend Developer to work on exciting web projects. Great opportunity to learn and grow with mentorship from senior developers.',
+    requirements: ['HTML/CSS/JS basics', 'React knowledge', 'Eagerness to learn'],
+    benefits: ['Training provided', 'Career development', 'Mentorship program'],
+    postedDate: new Date(),
+    companyIcon: 'microsoft',
+    companyColor: '#00BCF2',
+    employerId: 'ms-frontend',
+  },
+  {
+    id: '4',
+    title: 'Product Manager',
+    company: 'Apple',
+    location: 'Cupertino, CA',
+    type: 'Full-time',
+    category: 'Project Management',
+    level: 'Senior',
+    salary: '$3200/month',
+    applicants: '30',
+    capacity: '40',
+    description: 'Lead product strategy and development for our innovative consumer products. Work with cross-functional teams to deliver world-class user experiences.',
+    requirements: ['5+ years PM experience', 'Technical background', 'Leadership skills'],
+    benefits: ['Competitive salary', 'Stock options', 'Product discounts'],
+    postedDate: new Date(),
+    companyIcon: 'apple',
+    companyColor: '#A2AAAD',
+    employerId: 'apple-pm',
+  },
+  {
+    id: '5',
+    title: 'Data Scientist',
+    company: 'Netflix',
+    location: 'Los Gatos, CA',
+    type: 'Full-time',
+    category: 'Design & Development',
+    level: 'Mid',
+    salary: '$2800/month',
+    applicants: '25',
+    capacity: '35',
+    description: 'Analyze user data to drive content recommendations and platform improvements. Work with large datasets and machine learning algorithms.',
+    requirements: ['Python/R experience', 'Machine learning knowledge', 'Statistics background'],
+    benefits: ['Free Netflix', 'Health insurance', 'Learning budget'],
+    postedDate: new Date(),
+    companyIcon: 'netflix',
+    companyColor: '#E50914',
+    employerId: 'netflix-data',
+  },
+  {
+    id: '6',
+    title: 'Marketing Specialist',
+    company: 'Amazon',
+    location: 'Seattle, WA',
+    type: 'Part-time',
+    category: 'Marketing & Communication',
+    level: 'Entry',
+    salary: '$1500/month',
+    applicants: '12',
+    capacity: '18',
+    description: 'Support marketing campaigns and digital advertising efforts. Great opportunity for someone starting their marketing career.',
+    requirements: ['Marketing basics', 'Social media knowledge', 'Communication skills'],
+    benefits: ['Employee discounts', 'Flexible schedule', 'Training'],
+    postedDate: new Date(),
+    companyIcon: 'amazon',
+    companyColor: '#FF9900',
+    employerId: 'amazon-marketing',
+  },
+];
 
 const popularLocations = [
   'Islamabad, Pakistan',
@@ -239,46 +231,7 @@ const AnimatedJobCard = ({ item, index }: { item: any; index: number }) => {
         ],
       }}
     >
-      <TouchableOpacity style={styles.jobCard} activeOpacity={0.7}>
-        <View style={styles.jobHeader}>
-          <View style={[styles.companyLogo, { backgroundColor: getCompanyColor(item.company) }]}>
-            <Icon name={getCompanyIcon(item.company) as any} size={24} color="#fff" />
-          </View>
-          <View style={styles.jobInfo}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.companyName}>{item.company}</Text>
-              <View style={styles.jobMeta}>
-                <Icon name="map-marker" size={12} color="#666" />
-                <Text style={styles.jobLocationText}>{item.location}</Text>
-              <View style={styles.jobTypeTag}>
-                <Text style={styles.jobTypeTagText}>{item.type}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.salaryContainer}>
-            <Text style={styles.salaryText}>{item.salary.split('/')[0]}</Text>
-            <Text style={styles.salaryPeriod}>/{item.salary.split('/')[1]}</Text>
-          </View>
-        </View>
-        
-        <View style={styles.jobFooter}>
-          <Text style={styles.applicantsText}>
-            {item.applicants} Applied of {item.capacity} Capacity
-          </Text>
-          <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.saveButton}>
-              <Icon
-                name={item.saved ? 'heart' : 'heart-outline'}
-                size={20}
-                color={item.saved ? '#E91E63' : '#666'}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.applyButton}>
-              <Text style={styles.applyButtonText}>Apply</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </TouchableOpacity>
+      <JobCard job={item} />
     </Animated.View>
   );
 };
@@ -286,7 +239,9 @@ const AnimatedJobCard = ({ item, index }: { item: any; index: number }) => {
 export default function FindJobsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('Getting location...');
-  const [filteredJobs, setFilteredJobs] = useState(jobData);
+  const [jobs, setJobs] = useState<JobSeeker[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<JobSeeker[]>([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
@@ -297,6 +252,17 @@ export default function FindJobsScreen() {
   const [salaryRange, setSalaryRange] = useState([0, 4000]);
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(true);
+
+  // Handle job details navigation
+  const handleViewJobDetails = (job: JobSeeker) => {
+    router.push({
+      pathname: '/(tabs)/job-details',
+      params: {
+        jobId: job.id,
+        jobData: JSON.stringify(job),
+      },
+    });
+  };
 
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -334,71 +300,92 @@ export default function FindJobsScreen() {
     additionalJobsAnim.setValue(0);
   }, []);
 
+  // Load real jobs from Firebase
+  const loadJobs = async () => {
+    try {
+      console.log('🔄 Loading jobs from Firebase...');
+      setLoadingJobs(true);
+      
+      const realJobs = await getAllJobsForJobSeekers();
+      console.log(`📋 Loaded ${realJobs.length} real jobs`);
+      
+      setJobs(realJobs);
+      
+      // If no real jobs exist, show a message
+      if (realJobs.length === 0) {
+        console.log('ℹ️ No jobs found in Firebase');
+      }
+      
+    } catch (error) {
+      console.error('❌ Error loading jobs:', error);
+      // Fallback to mock data if Firebase fails
+      console.log('🔄 Falling back to mock data...');
+      setJobs(mockJobs);
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+
   useEffect(() => {
-    filterJobs();
-  }, [searchQuery, location, selectedJobTypes, selectedCategories, selectedLevels, sortBy, salaryRange]);
+    loadJobs();
+  }, []);
 
-  const filterJobs = () => {
-    let filtered = [...jobData];
+  // Refresh function for pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadJobs();
+    setRefreshing(false);
+  };
 
-    // Search filter - more comprehensive
+  // Function to navigate to scraper page
+  const navigateToScraper = () => {
+    router.push('/(tabs)/job-scraper');
+  };
+
+  // Filter jobs client-side (keep UI logic)
+  useEffect(() => {
+    let filtered = [...jobs];
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        job =>
-          job.title.toLowerCase().includes(searchLower) ||
-          job.company.toLowerCase().includes(searchLower) ||
-          job.location.toLowerCase().includes(searchLower) ||
-          job.category.toLowerCase().includes(searchLower) ||
-          job.type.toLowerCase().includes(searchLower)
+        (job: any) =>
+          job.title?.toLowerCase().includes(searchLower) ||
+          job.company?.toLowerCase().includes(searchLower) ||
+          job.location?.toLowerCase().includes(searchLower) ||
+          job.category?.toLowerCase().includes(searchLower) ||
+          job.type?.toLowerCase().includes(searchLower)
       );
     }
-
-    // Location filter - only filter if user explicitly selects "Remote"
     if (location && location !== 'Getting location...' && location === 'Remote') {
-      filtered = filtered.filter(job => {
-        return job.location.toLowerCase().includes('remote');
-      });
+      filtered = filtered.filter((job: any) => job.location?.toLowerCase().includes('remote'));
     }
-    // For all other locations (including "Islamabad, Pakistan"), show all jobs
-
-    // Job type filter
     if (selectedJobTypes.length > 0) {
-      filtered = filtered.filter(job => selectedJobTypes.includes(job.type));
+      filtered = filtered.filter((job: any) => selectedJobTypes.includes(job.type));
     }
-
-    // Category filter
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(job => selectedCategories.includes(job.category));
+      filtered = filtered.filter((job: any) => selectedCategories.includes(job.category));
     }
-
-    // Experience level filter
     if (selectedLevels.length > 0) {
-      filtered = filtered.filter(job => selectedLevels.includes(job.level));
+      filtered = filtered.filter((job: any) => selectedLevels.includes(job.level));
     }
-
-    // Salary range filter
-    filtered = filtered.filter(job => {
-      const salaryValue = parseInt(job.salary.replace(/[^0-9]/g, ''));
+    filtered = filtered.filter((job: any) => {
+      const salaryValue = parseInt(job.salary?.replace(/[^0-9]/g, '') || '0');
       return salaryValue >= salaryRange[0] && salaryValue <= salaryRange[1];
     });
-
-    // Sort jobs
-    filtered.sort((a, b) => {
+    filtered.sort((a: any, b: any) => {
       switch (sortBy) {
         case 'Highest Salary':
-          const salaryA = parseInt(a.salary.replace(/[^0-9]/g, ''));
-          const salaryB = parseInt(b.salary.replace(/[^0-9]/g, ''));
+          const salaryA = parseInt(a.salary?.replace(/[^0-9]/g, '') || '0');
+          const salaryB = parseInt(b.salary?.replace(/[^0-9]/g, '') || '0');
           return salaryB - salaryA;
         case 'Most Relevant':
-          return b.applicants - a.applicants;
-        default: // Most Recent
-          return new Date().getTime() - new Date().getTime(); // Simplified for demo
+          return (b.applicants || 0) - (a.applicants || 0);
+        default:
+          return 0;
       }
     });
-
     setFilteredJobs(filtered);
-  };
+  }, [jobs, searchQuery, location, selectedJobTypes, selectedCategories, selectedLevels, sortBy, salaryRange]);
 
   const handleJobTypeChange = (type: string) => {
     if (selectedJobTypes.includes(type)) {
@@ -435,7 +422,6 @@ export default function FindJobsScreen() {
     setSelectedCategories([]);
     setSelectedLevels([]);
     setSearchQuery('');
-    // Don't clear location - keep it as is
     setSalaryRange([0, 4000]);
     setSortBy('Most Recent');
   };
@@ -456,7 +442,6 @@ export default function FindJobsScreen() {
 
   const getCurrentLocation = () => {
     setIsGettingLocation(true);
-    // Simulate getting current location
     setTimeout(() => {
       setLocation('Islamabad, Pakistan');
       setIsGettingLocation(false);
@@ -466,7 +451,6 @@ export default function FindJobsScreen() {
 
   // Animation functions
   const animateExpand = () => {
-    // Configure LayoutAnimation for smooth expand
     LayoutAnimation.configureNext({
       duration: 300,
       create: { 
@@ -485,10 +469,8 @@ export default function FindJobsScreen() {
       },
     });
     
-    // Update state first to show content
     setExpanded(true);
     
-    // Then animate the chevron rotation and additional jobs fade in
     setTimeout(() => {
       Animated.parallel([
         Animated.timing(rotateAnim, {
@@ -502,11 +484,10 @@ export default function FindJobsScreen() {
           useNativeDriver: true,
         }),
       ]).start();
-    }, 50); // Small delay to ensure content is rendered
+    }, 50);
   };
 
   const animateCollapse = () => {
-    // First animate the additional jobs fade out and chevron rotation
     Animated.parallel([
       Animated.timing(rotateAnim, {
         toValue: 0,
@@ -519,7 +500,6 @@ export default function FindJobsScreen() {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // After animation completes, configure LayoutAnimation and update state
       LayoutAnimation.configureNext({
         duration: 300,
         create: { 
@@ -538,7 +518,6 @@ export default function FindJobsScreen() {
         },
       });
       
-      // Update state after animations complete
       setExpanded(false);
     });
   };
@@ -555,41 +534,6 @@ export default function FindJobsScreen() {
   const initialJobs = filteredJobs.slice(0, 6);
   const additionalJobs = filteredJobs.slice(6);
   const displayJobs = expanded ? filteredJobs : initialJobs;
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  };
-
-  const getCompanyIcon = (company: string) => {
-    const iconMap: { [key: string]: string } = {
-      Facebook: 'facebook',
-      Google: 'google',
-      Twitter: 'twitter',
-      Microsoft: 'microsoft',
-      Amazon: 'shopping',
-      Asana: 'chart-timeline-variant',
-      'JP Morgan': 'bank',
-      Spotify: 'spotify',
-      Netflix: 'netflix',
-    };
-    return iconMap[company] || 'briefcase';
-  };
-
-  const getCompanyColor = (company: string) => {
-    const colorMap: { [key: string]: string } = {
-      Facebook: '#1877F2',
-      Google: '#4285F4',
-      Twitter: '#1DA1F2',
-      Microsoft: '#00BCF2',
-      Amazon: '#FF9900',
-      Asana: '#F06A6A',
-      'JP Morgan': '#2E3F8F',
-      Spotify: '#1DB954',
-      Netflix: '#E50914',
-    };
-    return colorMap[company] || '#004D40';
-  };
 
   const renderFilterCategory = ({ item }: { item: any }) => (
     <View style={styles.filterCategory}>
@@ -625,14 +569,12 @@ export default function FindJobsScreen() {
     </View>
   );
 
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <LinearGradient
         colors={['#004D40', '#00695C', '#00796B']}
         style={styles.gradientContainer}
       >
-        {/* Header */}
         <Header showProfileButton={true} />
 
         <ScrollView 
@@ -641,7 +583,6 @@ export default function FindJobsScreen() {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FFFFFF" />}
         >
-          {/* Hero Section */}
           <View style={styles.heroSection}>
             <View style={styles.heroIconContainer}>
               <Icon name="briefcase-search" size={48} color="#FFFFFF" />
@@ -652,11 +593,8 @@ export default function FindJobsScreen() {
             </Text>
           </View>
 
-          {/* Main Content Card */}
           <View style={styles.mainCard}>
-            {/* Search Section */}
             <View style={styles.searchSection}>
-              {/* Job Title Search */}
               <View style={styles.searchContainer}>
                 <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
                 <TextInput
@@ -673,7 +611,6 @@ export default function FindJobsScreen() {
                 )}
               </View>
 
-              {/* Location Search */}
               <TouchableOpacity style={styles.locationContainer} onPress={handleLocationClick}>
                 {isGettingLocation ? (
                   <ActivityIndicator size="small" color="#004D40" style={styles.locationIcon} />
@@ -685,11 +622,22 @@ export default function FindJobsScreen() {
                 </Text>
               </TouchableOpacity>
 
-              {/* Popular Search Text */}
               <Text style={styles.popularText}>• Popular Search: UI, Software Engineer</Text>
             </View>
 
-            {/* Results Header */}
+            {/* Job Scrapper Button */}
+            <View style={styles.scrapperSection}>
+              <TouchableOpacity 
+                style={styles.scrapperButton}
+                onPress={navigateToScraper}
+              >
+                <Icon name="cloud-download" size={20} color="#fff" />
+                <Text style={styles.scrapperButtonText}>
+                  Scrape Real Jobs
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.resultsHeader}>
               <View style={styles.resultsHeaderLeft}>
                 <Icon name="briefcase" size={20} color="#00A389" />
@@ -706,15 +654,15 @@ export default function FindJobsScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Jobs List */}
             <View style={styles.jobsContainer}>
-              {displayJobs.length > 0 ? (
+              {loadingJobs ? (
+                <ActivityIndicator size="large" color="#00796B" style={{ marginTop: 32 }} />
+              ) : displayJobs.length > 0 ? (
                 displayJobs.map((item, index) => {
-                  // Apply fade animation to additional jobs (index >= 6)
                   const isAdditionalJob = index >= 6;
                   return (
                     <Animated.View 
-                      key={item.id}
+                      key={item.id || index}
                       style={isAdditionalJob ? {
                         opacity: additionalJobsAnim,
                         transform: [{
@@ -725,32 +673,45 @@ export default function FindJobsScreen() {
                         }]
                       } : {}}
                     >
-                      <AnimatedJobCard item={item} index={index} />
+                      <JobCard 
+                        job={item} 
+                        onApply={() => handleViewJobDetails(item)}
+                      />
                       {index < displayJobs.length - 1 && <View style={styles.separator} />}
                     </Animated.View>
                   );
                 })
               ) : (
                 <Animated.View 
-                  style={[
-                    styles.emptyContainer,
-                    {
-                      opacity: fadeAnim,
-                      transform: [{ scale: scaleAnim }],
-                    },
-                  ]}
+                  style={[styles.emptyContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}
                 >
                   <Icon name="briefcase-search" size={64} color="#ccc" />
-                  <Text style={styles.emptyTitle}>No jobs found</Text>
-                  <Text style={styles.emptySubtitle}>Try adjusting your search criteria or filters</Text>
-                  <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
-                    <Text style={styles.clearFiltersButtonText}>Clear All Filters</Text>
-                  </TouchableOpacity>
+                  <Text style={styles.emptyTitle}>
+                    {jobs.length === 0 ? 'No jobs available yet' : 'No jobs found'}
+                  </Text>
+                  <Text style={styles.emptySubtitle}>
+                    {jobs.length === 0 
+                      ? 'Be the first to discover new opportunities! Pull down to refresh or check the job scraper for external listings.'
+                      : 'Try adjusting your search criteria or filters'
+                    }
+                  </Text>
+                  {jobs.length === 0 ? (
+                    <TouchableOpacity 
+                      style={styles.clearFiltersButton} 
+                      onPress={() => onRefresh()}
+                    >
+                      <Icon name="refresh" size={16} color="#00A389" />
+                      <Text style={styles.clearFiltersButtonText}>Refresh</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.clearFiltersButton} onPress={clearAllFilters}>
+                      <Text style={styles.clearFiltersButtonText}>Clear All Filters</Text>
+                    </TouchableOpacity>
+                  )}
                 </Animated.View>
               )}
             </View>
 
-            {/* Find More Jobs / Collapse Button */}
             {filteredJobs.length > 6 && (
               <View style={styles.actionButtonsContainer}>
                 {!expanded ? (
@@ -795,7 +756,6 @@ export default function FindJobsScreen() {
           </View>
         </ScrollView>
 
-        {/* Location Modal */}
         <Modal
           visible={isLocationDialogOpen}
           transparent={true}
@@ -841,7 +801,6 @@ export default function FindJobsScreen() {
           </View>
         </Modal>
 
-        {/* Filter Modal */}
         <Modal
           visible={showFilters}
           transparent={true}
@@ -896,7 +855,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 100, // Increased padding to avoid tab bar overlap
+    paddingBottom: 100,
   },
   heroSection: {
     alignItems: 'center',
@@ -1003,6 +962,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
+  scrapperSection: {
+    marginTop: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  scrapperButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#00A389',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  scrapperButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
   resultsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1041,7 +1024,6 @@ const styles = StyleSheet.create({
   jobsContainer: {
     marginBottom: 20,
   },
-  // Location Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
@@ -1144,7 +1126,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
   },
-  // Filter Modal Styles
   filterModalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -1182,10 +1163,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: '#004D40',
-  },
-  filterHeaderActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   clearButton: {
     marginRight: 16,
@@ -1238,128 +1215,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 16,
   },
-  jobCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  jobHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 20,
-  },
-  companyLogo: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 18,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  jobInfo: {
-    flex: 1,
-  },
-  jobTitle: {
-    fontSize: 19,
-    fontWeight: '800',
-    color: '#004D40',
-    marginBottom: 8,
-    lineHeight: 26,
-  },
-  companyName: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginBottom: 10,
-    fontWeight: '600',
-  },
-  jobMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  jobLocationText: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginLeft: 6,
-    marginRight: 14,
-    fontWeight: '500',
-  },
-  jobTypeTag: {
-    backgroundColor: '#E8F5E8',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#00A389',
-  },
-  jobTypeTagText: {
-    fontSize: 12,
-    color: '#00A389',
-    fontWeight: '700',
-  },
-  salaryContainer: {
-    alignItems: 'flex-end',
-  },
-  salaryText: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#00A389',
-  },
-  salaryPeriod: {
-    fontSize: 13,
-    color: '#6B7280',
-    fontWeight: '500',
-  },
-  jobFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
-  },
-  applicantsText: {
-    fontSize: 14,
-    color: '#6B7280',
-    flex: 1,
-    fontWeight: '500',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  saveButton: {
-    padding: 8,
-    marginRight: 12,
-  },
-  applyButton: {
-    backgroundColor: '#00A389',
-    paddingHorizontal: 28,
-    paddingVertical: 12,
-    borderRadius: 28,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  applyButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-  },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -1383,6 +1238,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   clearFiltersButtonText: {
     color: '#fff',
@@ -1393,7 +1252,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 24,
     paddingHorizontal: 20,
-    paddingBottom: 40, // Extra padding to ensure buttons are visible above tab bar
+    paddingBottom: 40,
   },
   findMoreButton: {
     flexDirection: 'row',

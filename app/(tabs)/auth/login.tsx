@@ -12,7 +12,8 @@ import {
   Animated,
   Dimensions,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ScrollView
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -316,7 +317,11 @@ export default function LoginScreen() {
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View style={styles.contentContainer}>
+          <ScrollView 
+            contentContainerStyle={styles.contentContainer}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
             <Animated.View 
               style={[
                 styles.formWrapper,
@@ -471,7 +476,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
       </View>
             </Animated.View>
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
     </SafeAreaView>
     </LinearGradient>
@@ -490,10 +495,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
-    paddingTop: 40,
-    paddingBottom: 100, // Account for tab bar height
+    paddingTop: Platform.OS === 'ios' ? 60 : 40, // Better status bar handling
+    paddingBottom: Platform.OS === 'ios' ? 120 : 110, // Increased padding for tab bar
     justifyContent: 'center',
   },
   formWrapper: {

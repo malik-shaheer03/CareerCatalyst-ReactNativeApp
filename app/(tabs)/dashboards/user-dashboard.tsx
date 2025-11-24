@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   Dimensions,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { useNotificationService } from '@/lib/notification-service';
-import { doc, getDoc, collection, onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, Unsubscribe, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 const { width, height } = Dimensions.get('window');
@@ -22,9 +23,9 @@ const { width, height } = Dimensions.get('window');
 interface StatCard {
   label: string;
   value: string;
-  change: string;
   icon: string;
   color: string;
+  loading?: boolean;
 }
 
 interface QuickAction {
@@ -35,12 +36,27 @@ interface QuickAction {
   route: string;
 }
 
+interface RecentActivity {
+  id: string;
+  title: string;
+  time: string;
+  icon: string;
+  color: string;
+  type: 'application' | 'interview';
+}
+
 export default function UserDashboardScreen() {
   const router = useRouter();
   const { currentUser, signOut } = useAuth();
   const { notifications } = useNotificationService();
   const [refreshing, setRefreshing] = useState(false);
   const [userName, setUserName] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  
+  // Real-time stats
+  const [jobsAppliedCount, setJobsAppliedCount] = useState<number>(0);
+  const [interviewsGivenCount, setInterviewsGivenCount] = useState<number>(0);
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
 
   // Fetch user's name from profile with real-time updates
   useEffect(() => {
@@ -101,35 +117,125 @@ export default function UserDashboardScreen() {
     };
   }, [currentUser]);
 
-  // Sample data - in real app, this would come from API/database
+  // Fetch real-time data for jobs applied and interviews
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        // Fetch job applications count
+        const applicationsQuery = query(
+          collection(db, 'applications'),
+          where('userId', '==', currentUser.uid)
+        );
+        const applicationsSnapshot = await getDocs(applicationsQuery);
+        setJobsAppliedCount(applicationsSnapshot.size);
+
+        // Build recent activities from applications
+        const activities: RecentActivity[] = [];
+        applicationsSnapshot.forEach((doc) => {
+          const data = doc.data();
+          const appliedDate = data.appliedAt?.toDate() || new Date();
+          activities.push({
+            id: doc.id,
+            title: `Applied to ${data.jobTitle || 'a position'}`,
+            time: getTimeAgo(appliedDate),
+            icon: 'briefcase',
+            color: '#2196F3',
+            type: 'application'
+          });
+        });
+
+        // Fetch interview attempts (MCQ + Mock Interviews)
+        // Check for interview_sessions or interview_attempts collection
+        const interviewQuery = query(
+          collection(db, 'interview_sessions'),
+          where('userId', '==', currentUser.uid)
+        );
+        const interviewSnapshot = await getDocs(interviewQuery);
+        setInterviewsGivenCount(interviewSnapshot.size);
+
+        // Add interview activities
+        interviewSnapshot.forEach((doc) => {
+          const data = doc.data();
+          const interviewDate = data.completedAt?.toDate() || data.createdAt?.toDate() || new Date();
+          activities.push({
+            id: doc.id,
+            title: `Completed ${data.type === 'mcq' ? 'MCQ Quiz' : 'Mock Interview'}`,
+            time: getTimeAgo(interviewDate),
+            icon: data.type === 'mcq' ? 'clipboard-check' : 'microphone',
+            color: '#FF9800',
+            type: 'interview'
+          });
+        });
+
+        // Sort activities by most recent
+        activities.sort((a, b) => {
+          const timeA = parseTimeAgo(a.time);
+          const timeB = parseTimeAgo(b.time);
+          return timeA - timeB;
+        });
+
+        setRecentActivities(activities.slice(0, 5)); // Show only 5 most recent
+
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [currentUser]);
+
+  // Helper function to calculate time ago
+  const getTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    const diffWeeks = Math.floor(diffMs / 604800000);
+
+    if (diffMins < 60) return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    return `${diffWeeks} week${diffWeeks !== 1 ? 's' : ''} ago`;
+  };
+
+  // Helper to parse time ago string for sorting
+  const parseTimeAgo = (timeStr: string): number => {
+    const match = timeStr.match(/(\d+)\s+(min|hour|day|week)/);
+    if (!match) return 0;
+    
+    const value = parseInt(match[1]);
+    const unit = match[2];
+    
+    switch(unit) {
+      case 'min': return value;
+      case 'hour': return value * 60;
+      case 'day': return value * 1440;
+      case 'week': return value * 10080;
+      default: return 0;
+    }
+  };
+
+  // Real-time stats data
   const statsData: StatCard[] = [
     {
-      label: 'Profile Views',
-      value: '1,234',
-      change: '+12%',
-      icon: 'eye',
-      color: '#00A389'
-    },
-    {
       label: 'Jobs Applied',
-      value: '45',
-      change: '+8%',
+      value: loading ? '-' : jobsAppliedCount.toString(),
       icon: 'briefcase',
-      color: '#2196F3'
+      color: '#2196F3',
+      loading
     },
     {
-      label: 'Interviews',
-      value: '6',
-      change: '+15%',
-      icon: 'account-tie',
-      color: '#FF9800'
-    },
-    {
-      label: 'Profile Complete',
-      value: '95%',
-      change: '+5%',
-      icon: 'check-circle',
-      color: '#4CAF50'
+      label: 'Interviews Given',
+      value: loading ? '-' : interviewsGivenCount.toString(),
+      icon: 'microphone',
+      color: '#FF9800',
+      loading
     }
   ];
 
@@ -153,27 +259,44 @@ export default function UserDashboardScreen() {
   const onRefresh = async () => {
     setRefreshing(true);
     
-    // Refetch user name
-    if (currentUser) {
-      try {
-        const userDocRef = doc(db, 'employees', currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.displayName) {
-            setUserName(userData.displayName);
-          }
-        }
-      } catch (error) {
-        console.error('Error refreshing user name:', error);
-      }
-    }
-    
-    // Simulate API call
-    setTimeout(() => {
+    if (!currentUser) {
       setRefreshing(false);
-    }, 1000);
+      return;
+    }
+
+    try {
+      // Refetch user name
+      const userDocRef = doc(db, 'employees', currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.displayName) {
+          setUserName(userData.displayName);
+        }
+      }
+
+      // Refetch job applications
+      const applicationsQuery = query(
+        collection(db, 'applications'),
+        where('userId', '==', currentUser.uid)
+      );
+      const applicationsSnapshot = await getDocs(applicationsQuery);
+      setJobsAppliedCount(applicationsSnapshot.size);
+
+      // Refetch interviews
+      const interviewQuery = query(
+        collection(db, 'interview_sessions'),
+        where('userId', '==', currentUser.uid)
+      );
+      const interviewSnapshot = await getDocs(interviewQuery);
+      setInterviewsGivenCount(interviewSnapshot.size);
+
+    } catch (error) {
+      console.error('Error refreshing dashboard data:', error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -228,17 +351,20 @@ export default function UserDashboardScreen() {
 
           {/* Stats Cards */}
           <View style={styles.statsContainer}>
-            <Text style={styles.sectionTitle}>Your Progress</Text>
+            <Text style={styles.sectionTitle}>Your Activity</Text>
             <View style={styles.statsGrid}>
               {statsData.map((stat, index) => (
                 <View key={index} style={styles.statCard}>
                   <View style={styles.statHeader}>
                     <View style={[styles.statIcon, { backgroundColor: stat.color }]}>
-                      <Icon name={stat.icon} size={20} color="#FFFFFF" />
+                      <Icon name={stat.icon as any} size={24} color="#FFFFFF" />
                     </View>
-                    <Text style={styles.statChange}>{stat.change}</Text>
                   </View>
-                  <Text style={styles.statValue}>{stat.value}</Text>
+                  {stat.loading ? (
+                    <ActivityIndicator size="large" color={stat.color} style={{ marginVertical: 8 }} />
+                  ) : (
+                    <Text style={styles.statValue}>{stat.value}</Text>
+                  )}
                   <Text style={styles.statLabel}>{stat.label}</Text>
                 </View>
               ))}
@@ -256,7 +382,7 @@ export default function UserDashboardScreen() {
                   onPress={() => handleQuickAction(action.route)}
                 >
                   <View style={[styles.actionIcon, { backgroundColor: action.color }]}>
-                    <Icon name={action.icon} size={24} color="#FFFFFF" />
+                    <Icon name={action.icon as any} size={24} color="#FFFFFF" />
                   </View>
                   <Text style={styles.actionTitle}>{action.title}</Text>
                   <Text style={styles.actionDescription}>{action.description}</Text>
@@ -266,67 +392,31 @@ export default function UserDashboardScreen() {
           </View>
 
           {/* Recent Activity */}
-          <View style={styles.activityContainer}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
-            <View style={styles.activityCard}>
-              <View style={styles.activityItem}>
-                <View style={styles.activityIcon}>
-                  <Icon name="eye" size={20} color="#00A389" />
-                </View>
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityTitle}>Profile viewed by TechCorp Inc.</Text>
-                  <Text style={styles.activityTime}>2 hours ago</Text>
-                </View>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <View style={styles.activityIcon}>
-                  <Icon name="briefcase" size={20} color="#2196F3" />
-                </View>
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityTitle}>Applied to Senior Developer at Google</Text>
-                  <Text style={styles.activityTime}>1 day ago</Text>
-                </View>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <View style={styles.activityIcon}>
-                  <Icon name="calendar-check" size={20} color="#FF9800" />
-                </View>
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityTitle}>Interview scheduled with Microsoft</Text>
-                  <Text style={styles.activityTime}>3 days ago</Text>
-                </View>
-              </View>
-
-              <View style={styles.activityItem}>
-                <View style={styles.activityIcon}>
-                  <Icon name="account-edit" size={20} color="#9C27B0" />
-                </View>
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityTitle}>Profile updated successfully</Text>
-                  <Text style={styles.activityTime}>1 week ago</Text>
-                </View>
+          {recentActivities.length > 0 && (
+            <View style={styles.activityContainer}>
+              <Text style={styles.sectionTitle}>Recent Activity</Text>
+              <View style={styles.activityCard}>
+                {recentActivities.map((activity) => (
+                  <View key={activity.id} style={styles.activityItem}>
+                    <View style={styles.activityIcon}>
+                      <Icon name={activity.icon as any} size={20} color={activity.color} />
+                    </View>
+                    <View style={styles.activityContent}>
+                      <Text style={styles.activityTitle}>{activity.title}</Text>
+                      <Text style={styles.activityTime}>{activity.time}</Text>
+                    </View>
+                  </View>
+                ))}
+                
+                {recentActivities.length === 0 && !loading && (
+                  <View style={styles.emptyState}>
+                    <Icon name="inbox" size={48} color="#D1D5DB" />
+                    <Text style={styles.emptyStateText}>No recent activity</Text>
+                  </View>
+                )}
               </View>
             </View>
-          </View>
-
-          {/* Quick Insights */}
-          <View style={styles.tipsContainer}>
-            <Text style={styles.sectionTitle}>Quick Insights</Text>
-            <View style={styles.tipCard}>
-              <Icon name="trending-up" size={24} color="#00A389" />
-              <Text style={styles.tipText}>
-                Your profile completion is at 95%. Complete your skills section to reach 100% and increase visibility by 40%.
-              </Text>
-            </View>
-            <View style={styles.tipCard}>
-              <Icon name="target" size={24} color="#FF9800" />
-              <Text style={styles.tipText}>
-                You've applied to 45 jobs this month. Consider targeting roles that match your top skills for better success rates.
-              </Text>
-            </View>
-          </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -406,27 +496,23 @@ const styles = StyleSheet.create({
   },
   statHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   statIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  statChange: {
-    fontSize: 12,
-    color: '#4CAF50',
-    fontWeight: '600',
-  },
   statValue: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: '800',
     color: '#004D40',
-    marginBottom: 6,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   statLabel: {
     fontSize: 13,
@@ -553,5 +639,17 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: '500',
   },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    marginTop: 12,
+    fontWeight: '500',
+  },
 });
+
 

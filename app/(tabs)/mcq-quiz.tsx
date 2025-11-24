@@ -271,14 +271,6 @@ export default function MCQQuizScreen() {
         {/* Header */}
         <Header 
           showProfileButton={true}
-          rightElement={
-            <View style={styles.timerContainer}>
-              <View style={[styles.timerChip, timeLeft < 300 && styles.timerChipWarning]}>
-                <Icon name="timer" size={18} color="#FFFFFF" />
-                <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
-              </View>
-            </View>
-          } 
         />
 
         <ScrollView 
@@ -302,8 +294,14 @@ export default function MCQQuizScreen() {
             {/* Progress */}
             <View style={styles.progressContainer}>
               <View style={styles.progressHeader}>
-                <Icon name="chart-line" size={24} color="#00A389" />
-                <Text style={styles.progressTitle}>Progress</Text>
+                <View style={styles.progressInfo}>
+                  <Icon name="chart-line" size={24} color="#00A389" />
+                  <Text style={styles.progressTitle}>Progress</Text>
+                </View>
+                <View style={[styles.timerChip, timeLeft < 300 && styles.timerChipWarning]}>
+                  <Icon name="timer" size={18} color="#FFFFFF" />
+                  <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+                </View>
               </View>
               <Text style={styles.progressText}>
                 Question {currentQuestion + 1} of {questions.length}
@@ -428,15 +426,15 @@ const styles = StyleSheet.create({
   timerChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: '#00A389',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#000',
+    borderColor: 'rgba(0, 163, 137, 0.3)',
+    shadowColor: '#00A389',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
   },
@@ -503,7 +501,12 @@ const styles = StyleSheet.create({
   progressHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
+  },
+  progressInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   progressTitle: {
     fontSize: 20,

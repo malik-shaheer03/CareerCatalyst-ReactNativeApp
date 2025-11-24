@@ -8,67 +8,111 @@ import {
   TouchableOpacity,
   Dimensions,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { useNotificationService } from '@/lib/notification-service';
+import { getEmployerAnalytics, getEmployerJobs, getEmployerApplications } from '@/lib/services/employer-services';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const { width, height } = Dimensions.get('window');
 
 interface StatCard {
   label: string;
-  value: string;
-  icon: string;
+  value: number;
+  icon: keyof typeof Icon.glyphMap;
   color: string;
+  loading?: boolean;
 }
 
-interface ActiveJob {
+interface RecentJob {
+  id: string;
   title: string;
-  applications: number;
-  views: number;
-  status: 'Active' | 'Paused';
-}
-
-interface RecentActivity {
-  action: string;
-  job: string;
-  time: string;
+  applicationsCount: number;
+  postedDate: Date;
+  status: string;
 }
 
 export default function EmployerDashboardScreen() {
   const router = useRouter();
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, userProfile, signOut } = useAuth();
   const { notifications } = useNotificationService();
   const [refreshing, setRefreshing] = useState(false);
-  const [stats, setStats] = useState<StatCard[]>([
-    { label: 'Active Jobs', value: '12', icon: 'briefcase', color: '#4CAF50' },
-    { label: 'Total Applications', value: '248', icon: 'file-document', color: '#2196F3' },
-    { label: 'Profile Views', value: '1,234', icon: 'eye', color: '#FF9800' },
-    { label: 'Interviews Scheduled', value: '18', icon: 'calendar', color: '#9C27B0' },
-  ]);
+  const [loading, setLoading] = useState(true);
+  
+  // Real-time stats
+  const [totalJobs, setTotalJobs] = useState(0);
+  const [activeJobs, setActiveJobs] = useState(0);
+  const [totalApplications, setTotalApplications] = useState(0);
+  const [recentJobs, setRecentJobs] = useState<RecentJob[]>([]);
 
-  const activeJobs: ActiveJob[] = [
-    { title: 'Senior React Developer', applications: 45, views: 234, status: 'Active' },
-    { title: 'UI/UX Designer', applications: 32, views: 189, status: 'Active' },
-    { title: 'Backend Developer', applications: 28, views: 156, status: 'Paused' },
-    { title: 'Product Manager', applications: 67, views: 345, status: 'Active' },
-  ];
+  // Load dashboard data with real-time Firestore queries
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      if (!currentUser) return;
 
-  const recentActivities: RecentActivity[] = [
-    { action: 'New application received', job: 'Senior React Developer', time: '2 hours ago' },
-    { action: 'Job posted successfully', job: 'UI/UX Designer', time: '1 day ago' },
-    { action: 'Interview scheduled', job: 'Backend Developer', time: '2 days ago' },
-    { action: 'Candidate shortlisted', job: 'Product Manager', time: '3 days ago' },
-  ];
+      // Fetch all employer jobs
+      const jobs = await getEmployerJobs();
+      setTotalJobs(jobs.length);
+      
+      // Count active jobs
+      const activeJobsCount = jobs.filter(job => job.status === 'active').length;
+      setActiveJobs(activeJobsCount);
+
+      // Fetch applications for all employer jobs
+      const applications = await getEmployerApplications();
+      setTotalApplications(applications.length);
+
+      // Get recent jobs with application counts
+      const jobsWithCounts = await Promise.all(
+        jobs.slice(0, 5).map(async (job) => {
+          const jobApplications = applications.filter(app => app.jobId === job.id);
+          return {
+            id: job.id!,
+            title: job.title,
+            applicationsCount: jobApplications.length,
+            postedDate: job.postedAt ? new Date(job.postedAt) : new Date(),
+            status: job.status || 'active'
+          };
+        })
+      );
+      
+      setRecentJobs(jobsWithCounts);
+
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      notifications.customError('Load Error', 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    // Simulate data refresh
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    loadDashboardData().finally(() => setRefreshing(false));
+  };
+
+  const getTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / 86400000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
   const handleSignOut = async () => {
@@ -82,148 +126,135 @@ export default function EmployerDashboardScreen() {
     }
   };
 
+  const stats: StatCard[] = [
+    { label: 'Total Jobs', value: totalJobs, icon: 'briefcase-variant', color: '#00A389', loading },
+    { label: 'Active Jobs', value: activeJobs, icon: 'briefcase-check', color: '#10B981', loading },
+    { label: 'Applications', value: totalApplications, icon: 'account-multiple', color: '#3B82F6', loading },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#00A389', '#00C9A7']}
+        colors={['#00A389', '#00D4A1']}
         style={styles.header}
       >
         <View style={styles.headerContent}>
           <View style={styles.welcomeSection}>
-            <Text style={styles.welcomeText}>Welcome back,</Text>
-            <Text style={styles.nameText}>{currentUser?.email || 'Employer'}</Text>
-            <Text style={styles.subtitleText}>Manage your hiring process</Text>
+            <Text style={styles.welcomeText}>Welcome back</Text>
+            <Text style={styles.nameText}>
+              {userProfile?.companyName || currentUser?.email?.split('@')[0] || 'Employer'}
+            </Text>
           </View>
           <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-            <Icon name="logout" size={20} color="#fff" />
+            <Icon name="logout" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
       </LinearGradient>
 
       <ScrollView
         style={styles.content}
+        contentContainerStyle={styles.contentContainer}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            colors={['#00A389']}
+            tintColor="#00A389"
+          />
         }
+        showsVerticalScrollIndicator={false}
       >
-        {/* Stats Cards */}
-        <View style={styles.statsContainer}>
-          <Text style={styles.sectionTitle}>Overview</Text>
-          <View style={styles.statsGrid}>
-            {stats.map((stat, index) => (
-              <View key={index} style={[styles.statCard, { borderLeftColor: stat.color }]}>
-                <View style={styles.statContent}>
-                  <Icon name={stat.icon} size={24} color={stat.color} />
-                  <Text style={styles.statValue}>{stat.value}</Text>
-                  <Text style={styles.statLabel}>{stat.label}</Text>
-                </View>
-              </View>
-            ))}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#00A389" />
+            <Text style={styles.loadingText}>Loading...</Text>
           </View>
-        </View>
+        ) : (
+          <>
+            {/* Stats Cards */}
+            <View style={styles.statsContainer}>
+              <Text style={styles.sectionTitle}>Overview</Text>
+              <View style={styles.statsGrid}>
+                {stats.map((stat, index) => (
+                  <View key={index} style={styles.statCard}>
+                    <View style={[styles.statIconContainer, { backgroundColor: stat.color }]}>
+                      <Icon name={stat.icon} size={28} color="#FFFFFF" />
+                    </View>
+                    <Text style={styles.statValue}>{stat.value}</Text>
+                    <Text style={styles.statLabel}>{stat.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
 
-
-        {/* Profile Management */}
+        {/* Quick Actions */}
         <View style={styles.actionsContainer}>
-          <Text style={styles.sectionTitle}>Profile Management</Text>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsGrid}>
             <TouchableOpacity 
               style={styles.actionCard}
               onPress={() => router.push('/(tabs)/profile/edit-employer-profile')}
             >
-              <Icon name="account-edit" size={32} color="#00A389" />
+              <View style={[styles.actionIconContainer, { backgroundColor: '#00A389' }]}>
+                <Icon name="account-edit" size={24} color="#FFFFFF" />
+              </View>
               <Text style={styles.actionText}>Edit Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionCard}
               onPress={() => router.push('/(tabs)/profile/view-profile')}
             >
-              <Icon name="account" size={32} color="#2196F3" />
+              <View style={[styles.actionIconContainer, { backgroundColor: '#3B82F6' }]}>
+                <Icon name="account" size={24} color="#FFFFFF" />
+              </View>
               <Text style={styles.actionText}>View Profile</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Active Job Postings */}
-        <View style={styles.jobsContainer}>
-          <Text style={styles.sectionTitle}>Active Job Postings</Text>
-          <View style={styles.jobsList}>
-            {activeJobs.map((job, index) => (
-              <View key={index} style={styles.jobCard}>
-                <View style={styles.jobHeader}>
-                  <Text style={styles.jobTitle}>{job.title}</Text>
-                  <View style={[
-                    styles.statusBadge,
-                    { backgroundColor: job.status === 'Active' ? '#4CAF50' : '#FF9800' }
-                  ]}>
-                    <Text style={styles.statusText}>{job.status}</Text>
+        {/* Recent Jobs */}
+        {recentJobs.length > 0 && (
+          <View style={styles.jobsContainer}>
+            <Text style={styles.sectionTitle}>Recent Jobs</Text>
+            <View style={styles.jobsList}>
+              {recentJobs.map((job) => (
+                <TouchableOpacity 
+                  key={job.id} 
+                  style={styles.jobCard}
+                  onPress={() => router.push('/(tabs)/employer/manage-jobs')}
+                >
+                  <View style={styles.jobHeader}>
+                    <Text style={styles.jobTitle} numberOfLines={1}>{job.title}</Text>
+                    <View style={[
+                      styles.statusBadge,
+                      { backgroundColor: job.status === 'active' ? '#10B981' : '#F59E0B' }
+                    ]}>
+                      <Text style={styles.statusText}>
+                        {job.status === 'active' ? 'Active' : 'Paused'}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-                <View style={styles.jobStats}>
-                  <View style={styles.jobStat}>
-                    <Icon name="file-document" size={16} color="#666" />
-                    <Text style={styles.jobStatText}>{job.applications} applications</Text>
+                  <View style={styles.jobStats}>
+                    <View style={styles.jobStat}>
+                      <Icon name="account-multiple" size={16} color="#6B7280" />
+                      <Text style={styles.jobStatText}>
+                        {job.applicationsCount} {job.applicationsCount === 1 ? 'application' : 'applications'}
+                      </Text>
+                    </View>
+                    <View style={styles.jobStat}>
+                      <Icon name="calendar" size={16} color="#6B7280" />
+                      <Text style={styles.jobStatText}>
+                        {getTimeAgo(job.postedDate)}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={styles.jobStat}>
-                    <Icon name="eye" size={16} color="#666" />
-                    <Text style={styles.jobStatText}>{job.views} views</Text>
-                  </View>
-                </View>
-                <View style={styles.progressBar}>
-                  <View style={[
-                    styles.progressFill,
-                    { width: `${Math.min((job.applications / 100) * 100, 100)}%` }
-                  ]} />
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Recent Activity */}
-        <View style={styles.activityContainer}>
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          <View style={styles.activityList}>
-            {recentActivities.map((activity, index) => (
-              <View key={index} style={styles.activityItem}>
-                <Icon 
-                  name={
-                    activity.action.includes('application') ? 'account-plus' :
-                    activity.action.includes('posted') ? 'briefcase' :
-                    activity.action.includes('interview') ? 'calendar-check' :
-                    'account-check'
-                  } 
-                  size={20} 
-                  color={
-                    activity.action.includes('application') ? '#4CAF50' :
-                    activity.action.includes('posted') ? '#2196F3' :
-                    activity.action.includes('interview') ? '#FF9800' :
-                    '#9C27B0'
-                  } 
-                />
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityTitle}>{activity.action}</Text>
-                  <Text style={styles.activitySubtitle}>{activity.job}</Text>
-                  <Text style={styles.activityTime}>{activity.time}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Tips Section */}
-        <View style={styles.tipsContainer}>
-          <Text style={styles.sectionTitle}>Hiring Tips</Text>
-          <View style={styles.tipCard}>
-            <Icon name="lightbulb" size={24} color="#FFC107" />
-            <View style={styles.tipContent}>
-              <Text style={styles.tipTitle}>Improve Your Job Postings</Text>
-              <Text style={styles.tipText}>
-                Use clear, specific job descriptions and include salary ranges to attract better candidates.
-              </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
-        </View>
+        )}
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -232,12 +263,14 @@ export default function EmployerDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#F9FAFB',
   },
   header: {
-    paddingTop: 20,
-    paddingBottom: 30,
+    paddingTop: 16,
+    paddingBottom: 24,
     paddingHorizontal: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
   headerContent: {
     flexDirection: 'row',
@@ -248,231 +281,179 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeText: {
-    fontSize: 16,
-    color: '#E8F5E8',
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 4,
+    fontWeight: '500',
   },
   nameText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 4,
-  },
-  subtitleText: {
-    fontSize: 14,
-    color: '#E8F5E8',
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
   },
   signOutButton: {
-    padding: 8,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
     paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
   statsContainer: {
-    marginTop: -20,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: '700',
+    color: '#111827',
     marginBottom: 16,
+    letterSpacing: 0.2,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: 12,
   },
   statCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    width: (width - 60) / 2,
-    marginBottom: 12,
-    borderLeftWidth: 4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    width: (width - 52) / 3,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  statContent: {
+  statIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 12,
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginTop: 8,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: '#6B7280',
-    marginTop: 4,
     textAlign: 'center',
+    fontWeight: '500',
   },
   actionsContainer: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   actionsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: 12,
   },
   actionCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 20,
-    width: (width - 60) / 2,
-    marginBottom: 12,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  actionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   actionText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#1F2937',
-    marginTop: 8,
+    fontWeight: '600',
+    color: '#374151',
     textAlign: 'center',
   },
   jobsContainer: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   jobsList: {
     gap: 12,
   },
   jobCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
   },
   jobHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   jobTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937',
+    color: '#111827',
     flex: 1,
+    marginRight: 8,
   },
   statusBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
-    color: '#fff',
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   jobStats: {
     flexDirection: 'row',
     gap: 16,
-    marginBottom: 8,
   },
   jobStat: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
   jobStatText: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#6B7280',
+    fontWeight: '500',
   },
-  progressBar: {
-    height: 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#00A389',
-    borderRadius: 2,
-  },
-  activityContainer: {
-    marginBottom: 20,
-  },
-  activityList: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  activityItem: {
-    flexDirection: 'row',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    paddingVertical: 80,
   },
-  activityContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  activityTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1F2937',
-  },
-  activitySubtitle: {
-    fontSize: 12,
+  loadingText: {
+    marginTop: 16,
+    fontSize: 15,
     color: '#6B7280',
-    marginTop: 2,
-  },
-  activityTime: {
-    fontSize: 11,
-    color: '#9CA3AF',
-    marginTop: 2,
-  },
-  tipsContainer: {
-    marginBottom: 20,
-  },
-  tipCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  tipContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  tipTitle: {
-    fontSize: 14,
     fontWeight: '500',
-    color: '#1F2937',
-    marginBottom: 4,
-  },
-  tipText: {
-    fontSize: 12,
-    color: '#6B7280',
-    lineHeight: 18,
   },
 });
 

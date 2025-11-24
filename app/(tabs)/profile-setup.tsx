@@ -473,6 +473,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     padding: 20,
+    paddingTop: 0, // Let Header component handle top spacing
+    paddingBottom: Platform.OS === 'ios' ? 120 : 110, // Account for tab bar
   },
   loadingContainer: {
     flex: 1,

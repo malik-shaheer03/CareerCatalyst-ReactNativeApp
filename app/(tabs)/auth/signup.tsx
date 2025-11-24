@@ -12,7 +12,8 @@ import {
   Animated,
   Dimensions,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ScrollView
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -28,7 +29,9 @@ import {
   addDoc, 
   getDocs, 
   query, 
-  where 
+  where,
+  setDoc,
+  doc
 } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useNotificationService } from '@/lib/notification-service';
@@ -159,8 +162,8 @@ export default function SignUpScreen() {
       const user = userCredential.user;
       
       if (isEmployer) {
-        // Store employer data
-        await addDoc(collection(db, "employers"), {
+        // Store employer data using UID as document ID
+        await setDoc(doc(db, "employers", user.uid), {
           uid: user.uid,
           email: user.email,
           companyName,
@@ -181,11 +184,11 @@ export default function SignUpScreen() {
           console.log('✅ Router replace successful');
         } catch (error) {
           console.error('❌ Router error:', error);
-          router.push('/employer-dashboard');
+          router.push('/(tabs)/dashboards/employer-dashboard');
         }
       } else {
-        // Store employee data
-        await addDoc(collection(db, "employees"), {
+        // Store employee data using UID as document ID
+        await setDoc(doc(db, "employees", user.uid), {
           uid: user.uid,
           email: user.email,
           fullName: fullName,
@@ -263,8 +266,8 @@ export default function SignUpScreen() {
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          // New Employer: Save to Firestore
-          await addDoc(collection(db, "employers"), {
+          // New Employer: Save to Firestore using UID as document ID
+          await setDoc(doc(db, "employers", user.uid), {
             uid: user.uid,
             email: user.email,
             companyName,
@@ -283,7 +286,7 @@ export default function SignUpScreen() {
           console.log('✅ Router replace successful');
         } catch (error) {
           console.error('❌ Router error:', error);
-          router.push('/employer-dashboard');
+          router.push('/(tabs)/dashboards/employer-dashboard');
         }
       } else {
         // Check if employee already exists
@@ -294,8 +297,8 @@ export default function SignUpScreen() {
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          // New User: Save to Firestore
-          await addDoc(collection(db, "employees"), {
+          // New User: Save to Firestore using UID as document ID
+          await setDoc(doc(db, "employees", user.uid), {
             uid: user.uid,
             email: user.email,
             fullName: fullName || 'Google User',
@@ -345,7 +348,11 @@ export default function SignUpScreen() {
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-      <View style={styles.contentContainer}>
+      <ScrollView 
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
             <Animated.View 
               style={[
                 styles.formWrapper,
@@ -619,7 +626,7 @@ export default function SignUpScreen() {
             </TouchableOpacity>
           </View>
             </Animated.View>
-      </View>
+      </ScrollView>
         </KeyboardAvoidingView>
     </SafeAreaView>
     </LinearGradient>
@@ -638,10 +645,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
-    paddingTop: 30,
-    paddingBottom: 100, // Account for tab bar height
+    paddingTop: Platform.OS === 'ios' ? 50 : 30, // Better status bar handling
+    paddingBottom: Platform.OS === 'ios' ? 120 : 110, // Increased padding for tab bar
     justifyContent: 'center',
   },
   formWrapper: {

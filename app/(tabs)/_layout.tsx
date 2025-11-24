@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { View, Text, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { usePathname, useRouter } from 'expo-router';
@@ -10,6 +10,9 @@ export default function TabLayout() {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, userType, loading } = useAuth();
+  
+  // Debug logging
+  console.log('TabLayout - userType:', userType, 'loading:', loading);
   
   // Check if we're on auth, dashboard, or profile screens
   const isProfileRelated = pathname.includes('/auth/') || 
@@ -31,39 +34,40 @@ export default function TabLayout() {
   const isResumeRelated = pathname.includes('/resume-builder') || 
                          pathname.includes('/resume-dashboard');
 
-  const handleProfilePress = () => {
-    if (!loading) {
-      if (currentUser) {
-        // User is logged in, redirect to appropriate dashboard
-        if (userType === 'employer') {
-          router.replace('/(tabs)/dashboards/employer-dashboard');
-        } else {
-          router.replace('/(tabs)/dashboards/user-dashboard');
-        }
-      } else {
-        // User is not logged in, redirect to login
-        router.replace('/(tabs)/auth/login');
-      }
-    }
-  };
+  // Check if we're on job scraper (should highlight find-jobs tab)
+  const isJobScraperRelated = pathname.includes('/job-scraper');
 
-  const handleAuthenticatedTabPress = (tabName: 'find-jobs' | 'resume' | 'interview' | 'career-path') => {
-    if (!loading) {
-      if (currentUser) {
-        // User is logged in, allow navigation to the tab
-        if (tabName === 'interview') {
-          router.push('/(tabs)/interview-prep');
-        } else if (tabName === 'resume') {
-          router.push('/(tabs)/resume-dashboard');
-        } else {
-          router.push(`/(tabs)/${tabName}` as any);
-        }
-      } else {
-        // User is not logged in, redirect to login
+  // Check if we're on find-jobs or job scraper (both should highlight find-jobs)
+  const isFindJobsRelated = pathname.includes('/find-jobs') || isJobScraperRelated || pathname.includes('/apply-job') || pathname.includes('/job-details');
+
+  // Check if we're on employer-related screens
+  const isEmployerJobsRelated = pathname.includes('/employer/post-job') || pathname.includes('/employer/manage-jobs');
+  const isEmployerAppsRelated = pathname.includes('/employer/applications') || pathname.includes('/employer/candidate-details');
+  const isEmployerAnalyticsRelated = pathname.includes('/employer/analytics');
+
+  // Determine if we should show employer tabs
+  // Only show employer tabs when user is logged in AND is an employer
+  const isEmployer = !loading && currentUser && userType === 'employer';
+  const isEmployee = !loading && currentUser && userType === 'employee'; 
+  const isLoggedIn = !loading && !!currentUser;
+  
+  console.log('TabLayout - loading:', loading, 'isEmployer:', isEmployer, 'isEmployee:', isEmployee, 'isLoggedIn:', isLoggedIn, 'userType:', userType, 'currentUser:', !!currentUser);
+
+  // Redirect to login if trying to access protected screens without being logged in
+  React.useEffect(() => {
+    if (!loading && !currentUser) {
+      // User is not logged in
+      const isOnAuthScreen = pathname.includes('/auth/');
+      const isOnProfileSetup = pathname.includes('/profile-setup');
+      const isOnHomeScreen = pathname === '/' || pathname === '/index';
+      
+      // If user is not on auth, profile setup, or home screen, redirect to login
+      if (!isOnAuthScreen && !isOnProfileSetup && !isOnHomeScreen) {
+        console.log('Redirecting unauthenticated user to login from:', pathname);
         router.replace('/(tabs)/auth/login');
       }
     }
-  };
+  }, [loading, currentUser, pathname, router]);
 
   return (
     <Tabs
@@ -97,6 +101,7 @@ export default function TabLayout() {
           letterSpacing: 0.1,
           fontFamily: Platform.OS === 'android' ? 'Roboto-Medium' : 'System',
           color: '#374151',
+          textAlign: 'center',
         },
         tabBarActiveTintColor: '#00A389',
         tabBarInactiveTintColor: '#4B5563',
@@ -117,6 +122,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          href: isLoggedIn ? null : undefined, // Hide when logged in
           tabBarIcon: ({ color, focused }) => (
             <View style={styles.tabItemContainer}>
               {focused && (
@@ -133,44 +139,193 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* EMPLOYER TABS */}
+      <Tabs.Screen
+        name="employer/post-job"
+        options={{
+          title: 'Post Job',
+          href: isEmployer ? undefined : null, // Hide if not employer
+          tabBarIcon: ({ color, focused }) => {
+            const isCustomFocused = focused || pathname.includes('/employer/post-job');
+            return (
+              <View style={styles.tabItemContainer}>
+                {isCustomFocused && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isCustomFocused && styles.activeIconContainer]}>
+                  <Icon
+                    name="plus-circle"
+                    size={20}
+                    color={isCustomFocused ? '#FFFFFF' : color}
+                  />
+                </View>
+              </View>
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || pathname.includes('/employer/post-job');
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
+        }}
+      />
+      
+      <Tabs.Screen
+        name="employer/manage-jobs"
+        options={{
+          title: 'Manage Jobs',
+          href: isEmployer ? undefined : null, // Hide if not employer
+          tabBarIcon: ({ color, focused }) => {
+            const isCustomFocused = focused || pathname.includes('/employer/manage-jobs');
+            return (
+              <View style={styles.tabItemContainer}>
+                {isCustomFocused && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isCustomFocused && styles.activeIconContainer]}>
+                  <Icon
+                    name="briefcase-edit"
+                    size={20}
+                    color={isCustomFocused ? '#FFFFFF' : color}
+                  />
+                </View>
+              </View>
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || pathname.includes('/employer/manage-jobs');
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
+        }}
+      />
+
+      <Tabs.Screen
+        name="employer/applications"
+        options={{
+          title: 'Applications',
+          href: isEmployer ? undefined : null, // Hide if not employer
+          tabBarIcon: ({ color, focused }) => {
+            const isCustomFocused = focused || isEmployerAppsRelated;
+            return (
+              <View style={styles.tabItemContainer}>
+                {isCustomFocused && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isCustomFocused && styles.activeIconContainer]}>
+                  <Icon
+                    name="account-group"
+                    size={20}
+                    color={isCustomFocused ? '#FFFFFF' : color}
+                  />
+                </View>
+              </View>
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || isEmployerAppsRelated;
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
+        }}
+      />
+
+      <Tabs.Screen
+        name="employer/analytics"
+        options={{
+          title: 'Analytics',
+          href: isEmployer ? undefined : null, // Hide if not employer
+          tabBarIcon: ({ color, focused }) => {
+            const isCustomFocused = focused || isEmployerAnalyticsRelated;
+            return (
+              <View style={styles.tabItemContainer}>
+                {isCustomFocused && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isCustomFocused && styles.activeIconContainer]}>
+                  <Icon
+                    name="chart-bar"
+                    size={20}
+                    color={isCustomFocused ? '#FFFFFF' : color}
+                  />
+                </View>
+              </View>
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || isEmployerAnalyticsRelated;
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
+        }}
+      />
+
+      {/* EMPLOYEE TABS */}
       <Tabs.Screen
         name="find-jobs"
         options={{
           title: 'Jobs',
-          tabBarIcon: ({ color, focused }) => (
-            <View style={styles.tabItemContainer}>
-              {focused && (
-                <View style={styles.activeBackground} />
-              )}
-              <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-                <Icon
-                  name="briefcase"
-                  size={20}
-                  color={focused ? '#FFFFFF' : color}
-                />
+          href: isEmployee ? undefined : null, // Only show for logged-in employees
+          tabBarIcon: ({ color, focused }) => {
+            // Custom focus logic: highlight if on find-jobs OR job-scraper
+            const isCustomFocused = focused || isFindJobsRelated;
+            return (
+              <View style={styles.tabItemContainer}>
+                {isCustomFocused && (
+                  <View style={styles.activeBackground} />
+                )}
+                <View style={[styles.iconContainer, isCustomFocused && styles.activeIconContainer]}>
+                  <Icon
+                    name="briefcase"
+                    size={20}
+                    color={isCustomFocused ? '#FFFFFF' : color}
+                  />
+                </View>
               </View>
-            </View>
-          ),
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              onPress={() => handleAuthenticatedTabPress('find-jobs')}
-              style={props.style}
-              disabled={props.disabled || false}
-              accessibilityLabel={props.accessibilityLabel}
-              accessibilityRole={props.accessibilityRole}
-              accessibilityState={props.accessibilityState}
-              accessibilityHint={props.accessibilityHint}
-              testID={props.testID}
-            >
-              {props.children}
-            </TouchableOpacity>
-          ),
+            );
+          },
+          tabBarLabel: ({ focused, children }) => {
+            const isActive = focused || isFindJobsRelated;
+            return (
+              <Text style={[
+                styles.tabBarLabel,
+                isActive && styles.activeTabBarLabel
+              ]}>
+                {children}
+              </Text>
+            );
+          },
         }}
       />
       <Tabs.Screen
         name="resume"
         options={{
           title: 'Resume',
+          href: isEmployee ? undefined : null, // Only show for logged-in employees
           tabBarIcon: ({ color, focused }) => {
             const isActive = focused || isResumeRelated;
             return (
@@ -199,26 +354,13 @@ export default function TabLayout() {
               </Text>
             );
           },
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              onPress={() => handleAuthenticatedTabPress('resume')}
-              style={props.style}
-              disabled={props.disabled || false}
-              accessibilityLabel={props.accessibilityLabel}
-              accessibilityRole={props.accessibilityRole}
-              accessibilityState={props.accessibilityState}
-              accessibilityHint={props.accessibilityHint}
-              testID={props.testID}
-            >
-              {props.children}
-            </TouchableOpacity>
-          ),
         }}
       />
-        <Tabs.Screen
-        name="interview"
+      <Tabs.Screen
+        name="interview-prep"
         options={{
           title: 'Interview',
+          href: isEmployee ? undefined : null, // Only show for logged-in employees
           tabBarIcon: ({ color, focused }) => {
             const isActive = focused || isInterviewRelated;
             return (
@@ -248,26 +390,13 @@ export default function TabLayout() {
               </Text>
             );
           },
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              onPress={() => handleAuthenticatedTabPress('interview')}
-              style={props.style}
-              disabled={props.disabled || false}
-              accessibilityLabel={props.accessibilityLabel}
-              accessibilityRole={props.accessibilityRole}
-              accessibilityState={props.accessibilityState}
-              accessibilityHint={props.accessibilityHint}
-              testID={props.testID}
-            >
-              {props.children}
-            </TouchableOpacity>
-          ),
         }}
       />
       <Tabs.Screen
         name="career-path"
         options={{
           title: 'Career',
+          href: isEmployee ? undefined : null, // Only show for logged-in employees
           tabBarIcon: ({ color, focused }) => {
             // Show as active if focused OR if we're on career-related screens
             const isActive = focused || isCareerRelated;
@@ -298,26 +427,15 @@ export default function TabLayout() {
               </Text>
             );
           },
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              onPress={() => handleAuthenticatedTabPress('career-path')}
-              style={props.style}
-              disabled={props.disabled || false}
-              accessibilityLabel={props.accessibilityLabel}
-              accessibilityRole={props.accessibilityRole}
-              accessibilityState={props.accessibilityState}
-              accessibilityHint={props.accessibilityHint}
-              testID={props.testID}
-            >
-              {props.children}
-            </TouchableOpacity>
-          ),
         }}
       />
+
+      {/* Common Profile Tab for logged-in users only */}
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
+          href: isLoggedIn ? undefined : null, // Only show when logged in
           tabBarIcon: ({ color, focused }) => {
             // Show as active if focused OR if we're on profile-related screens
             const isActive = focused || isProfileRelated;
@@ -348,22 +466,9 @@ export default function TabLayout() {
               </Text>
             );
           },
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              onPress={handleProfilePress}
-              style={props.style}
-              disabled={props.disabled || false}
-              accessibilityLabel={props.accessibilityLabel}
-              accessibilityRole={props.accessibilityRole}
-              accessibilityState={props.accessibilityState}
-              accessibilityHint={props.accessibilityHint}
-              testID={props.testID}
-            >
-              {props.children}
-            </TouchableOpacity>
-          ),
         }}
       />
+      
       {/* Auth Screens */}
       <Tabs.Screen
         name="auth"
@@ -412,9 +517,9 @@ export default function TabLayout() {
       />
       {/* Interview Module Screens */}
       <Tabs.Screen
-        name="interview-prep"
+        name="interview"
         options={{
-          href: null, // Hide from tab bar
+          href: null, // Hide from tab bar - Coming Soon screen
         }}
       />
       <Tabs.Screen
@@ -450,6 +555,30 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="resume-dashboard"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      
+      {/* Job Scraper Screen - Hidden from tab bar, accessed via find-jobs */}
+      <Tabs.Screen
+        name="job-scraper"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+
+      {/* Job Details Screen - Hidden from tab bar, accessed via find-jobs */}
+      <Tabs.Screen
+        name="job-details"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+
+      {/* Apply Job Screen - Hidden from tab bar, accessed via find-jobs */}
+      <Tabs.Screen
+        name="apply-job"
         options={{
           href: null, // Hide from tab bar
         }}
@@ -533,6 +662,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    textAlign: 'center', // Center align the text
   },
   activeTabBarLabel: {
     color: '#FFFFFF',
@@ -540,6 +670,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+    textAlign: 'center', // Center align the text
   },
   tabItemContainer: {
     position: 'relative',

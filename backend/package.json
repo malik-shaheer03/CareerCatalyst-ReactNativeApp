@@ -1,0 +1,34 @@
+{
+  "name": "careercatalyst-backend",
+  "version": "1.0.0",
+  "description": "Backend services for CareerCatalyst mobile app",
+  "main": "index.js",
+  "scripts": {
+    "start:password-reset": "node passwordReset.js",
+    "start:candidate-email": "node send_candidate_email.js",
+    "start:resume-email": "node sendResumeEmail.js",
+    "start:all": "concurrently \"npm run start:password-reset\" \"npm run start:candidate-email\" \"npm run start:resume-email\"",
+    "dev": "concurrently \"nodemon passwordReset.js\" \"nodemon send_candidate_email.js\" \"nodemon sendResumeEmail.js\""
+  },
+  "keywords": [
+    "backend",
+    "express",
+    "email",
+    "otp",
+    "password-reset"
+  ],
+  "author": "CareerCatalyst Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "nodemailer": "^6.9.7",
+    "firebase-admin": "^11.11.1",
+    "dotenv": "^16.3.1",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2"
+  }
+}

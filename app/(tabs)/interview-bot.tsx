@@ -44,6 +44,7 @@ export default function InterviewBotScreen() {
   const [performanceAnalysis, setPerformanceAnalysis] = useState<any>(null);
   const [answerStartTime, setAnswerStartTime] = useState<number>(0);
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [questionTimer, setQuestionTimer] = useState(0);
 
   // Voice recognition setup (mobile only)
   useEffect(() => {
@@ -66,6 +67,22 @@ export default function InterviewBotScreen() {
     generateQuestions();
   }, [jobTitle, difficulty]);
 
+  // Timer for each question
+  useEffect(() => {
+    if (!interviewStarted || interviewCompleted || showResults) return;
+
+    const timer = setInterval(() => {
+      setQuestionTimer(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [interviewStarted, interviewCompleted, showResults, currentQuestionIndex]);
+
+  // Reset timer when moving to next question
+  useEffect(() => {
+    setQuestionTimer(0);
+  }, [currentQuestionIndex]);
+
   const generateQuestions = async () => {
     setLoading(true);
     try {
@@ -85,6 +102,13 @@ export default function InterviewBotScreen() {
       ]);
     }
     setLoading(false);
+  };
+
+  // Format timer display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   // Voice recognition event handlers
@@ -479,10 +503,16 @@ export default function InterviewBotScreen() {
             {interviewStarted && (
               <View style={styles.progressSection}>
                 <View style={styles.progressHeader}>
-                  <Icon name="chart-line" size={24} color="#00A389" />
-                  <Text style={styles.progressTitle}>Interview Progress</Text>
+                  <View style={styles.progressInfo}>
+                    <Icon name="chart-line" size={24} color="#00A389" />
+                    <Text style={styles.progressTitle}>Interview Progress</Text>
+                  </View>
+                  <View style={styles.timerChip}>
+                    <Icon name="timer" size={18} color="#FFFFFF" />
+                    <Text style={styles.timerText}>{formatTime(questionTimer)}</Text>
+                  </View>
                 </View>
-                <View style={styles.progressInfo}>
+                <View style={styles.progressInfoSection}>
                   <Text style={styles.progressText}>
                     Question {currentQuestionIndex + 1} of {questions.length}
                   </Text>
@@ -707,7 +737,12 @@ const styles = StyleSheet.create({
   progressHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
+  },
+  progressInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   progressTitle: {
     fontSize: 20,
@@ -715,11 +750,25 @@ const styles = StyleSheet.create({
     color: '#004D40',
     marginLeft: 8,
   },
-  progressInfo: {
+  progressInfoSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+  },
+  timerChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#00A389',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  timerText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginLeft: 6,
   },
   progressText: {
     fontSize: 18,

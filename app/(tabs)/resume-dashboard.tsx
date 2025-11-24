@@ -20,6 +20,8 @@ import { ResumeListItem } from '@/lib/resume';
 import { CompactResumePreview } from '@/components/resume/preview';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import { useToast } from '@/lib/ToastContext';
+import ShareResumeModal from '@/components/ShareResumeModal';
+import { shareResumePDF, printResume } from '@/lib/services/resume-pdf-service';
 
 // Get screen dimensions
 const { width: screenWidth } = Dimensions.get('window');
@@ -29,7 +31,7 @@ const isTablet = screenWidth >= 768;
 const ResumeDashboardScreen: React.FC = () => {
   const router = useRouter();
   const { state, actions } = useResume();
-  const { resumeList, isLoading, error } = state;
+  const { resumeList, isLoading, error, currentResume } = state;
   const { showSuccess, showError } = useToast();
 
   // State management
@@ -40,6 +42,7 @@ const ResumeDashboardScreen: React.FC = () => {
   const [resumeToDelete, setResumeToDelete] = useState<ResumeListItem | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(0);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // Resumes are loaded automatically by the ResumeProvider on mount
   // No need to call loadResumeList here as it's already handled by the context
@@ -590,6 +593,42 @@ const ResumeDashboardScreen: React.FC = () => {
     }
   }, [actions.duplicateResume, showSuccess, showError]);
 
+  // Handle resume share via email
+  const handleResumeShare = useCallback(async (resume: ResumeListItem) => {
+    try {
+      console.log('Loading resume for sharing:', resume.id);
+      // Load the full resume data before sharing using loadResume
+      await actions.loadResume(resume.id);
+      console.log('Resume loaded successfully, opening share modal');
+      console.log('Current resume from state:', state.currentResume);
+      setShowShareModal(true);
+    } catch (error: any) {
+      console.error('Error loading resume for sharing:', error);
+      showError(error.message || 'Failed to load resume data');
+    }
+  }, [actions.loadResume, showError, state.currentResume]);
+
+  // Handle resume share via device
+  const handleResumeShareDevice = useCallback(async (resume: ResumeListItem) => {
+    try {
+      await shareResumePDF(resume as any);
+      showSuccess('Resume shared successfully!');
+    } catch (error: any) {
+      console.error('Share error:', error);
+      showError(error.message || 'Failed to share resume');
+    }
+  }, [showSuccess, showError]);
+
+  // Handle resume print
+  const handleResumePrint = useCallback(async (resume: ResumeListItem) => {
+    try {
+      await printResume(resume as any);
+    } catch (error: any) {
+      console.error('Print error:', error);
+      showError(error.message || 'Failed to print resume');
+    }
+  }, [showError]);
+
   // Filter and sort resumes
   const getFilteredResumes = useCallback(() => {
     console.log('getFilteredResumes called with resumeList length:', resumeList?.length || 0);
@@ -664,6 +703,16 @@ const ResumeDashboardScreen: React.FC = () => {
         </View>
         
         <View style={styles.resumeActions}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.shareButton]}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleResumeShare(resume);
+            }}
+          >
+            <Icon name="email" size={16} color="#00A389" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.actionButton}
             onPress={(e) => {
@@ -875,6 +924,21 @@ const ResumeDashboardScreen: React.FC = () => {
         type="delete"
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+      />
+
+      {/* Share Resume Modal */}
+      <ShareResumeModal
+        visible={showShareModal}
+        resume={currentResume}
+        onClose={() => {
+          setShowShareModal(false);
+        }}
+        onSuccess={() => {
+          showSuccess('Resume sent successfully!');
+        }}
+        onError={(message) => {
+          showError(message);
+        }}
       />
     </View>
   );
@@ -1088,6 +1152,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  shareButton: {
+    backgroundColor: '#E0F2F1',
   },
   downloadButton: {
     backgroundColor: '#e8f5e8',

@@ -11,6 +11,12 @@ interface UserProfile {
   firstName?: string;
   lastName?: string;
   userType: 'employee' | 'employer';
+  // Employer-specific fields
+  companyName?: string;
+  companyWebsite?: string;
+  companyLocation?: string;
+  // Employee-specific fields
+  fullName?: string;
   // Add other profile fields as needed
 }
 
@@ -71,7 +77,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     photoURL: data.photoURL,
                     firstName: data.firstName,
                     lastName: data.lastName,
-                    userType: 'employer'
+                    userType: 'employer',
+                    companyName: data.companyName,
+                    companyWebsite: data.companyWebsite,
+                    companyLocation: data.companyLocation
                   });
                   setUserType('employer');
                 }
@@ -102,7 +111,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                       photoURL: data.photoURL,
                       firstName: data.firstName,
                       lastName: data.lastName,
-                      userType: 'employee'
+                      userType: 'employee',
+                      fullName: data.fullName
                     });
                     setUserType('employee');
                   }

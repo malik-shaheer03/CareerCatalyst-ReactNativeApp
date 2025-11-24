@@ -52,7 +52,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
           iconColor: '#4CAF50',
           backgroundColor: '#E8F5E8',
           borderColor: '#4CAF50',
-          textColor: '#2E7D32',
+          textColor: '#1B5E20', // Darker green for better visibility
         };
       case 'error':
         return {
@@ -60,7 +60,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
           iconColor: '#F44336',
           backgroundColor: '#FFEBEE',
           borderColor: '#F44336',
-          textColor: '#C62828',
+          textColor: '#B71C1C', // Darker red for better visibility
         };
       case 'warning':
         return {
@@ -76,7 +76,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
           iconColor: '#2196F3',
           backgroundColor: '#E3F2FD',
           borderColor: '#2196F3',
-          textColor: '#1565C0',
+          textColor: '#0D47A1', // Darker blue for better visibility
         };
       default:
         return {
@@ -84,7 +84,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
           iconColor: '#4CAF50',
           backgroundColor: '#E8F5E8',
           borderColor: '#4CAF50',
-          textColor: '#2E7D32',
+          textColor: '#1B5E20',
         };
     }
   };
@@ -260,9 +260,10 @@ const styles = StyleSheet.create({
   },
   message: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 20,
+    fontSize: 15,
+    fontWeight: '600',
+    lineHeight: 22,
+    letterSpacing: 0.2,
   },
   actionButton: {
     paddingHorizontal: 12,

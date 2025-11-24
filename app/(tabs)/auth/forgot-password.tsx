@@ -16,8 +16,7 @@ import {
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { sendPasswordResetOTP } from '@/lib/services/backend-api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +29,6 @@ export default function ForgotPasswordScreen() {
   
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   
   // Animation values
@@ -94,21 +92,20 @@ export default function ForgotPasswordScreen() {
     setErrors({});
 
     try {
-      await sendPasswordResetEmail(auth, email);
-      setEmailSent(true);
-      console.log('✅ Password reset email sent successfully');
-    } catch (err: any) {
-      console.error('❌ Password reset error:', err);
-      let errorMessage = 'Failed to send reset email. Please try again.';
+      await sendPasswordResetOTP(email);
+      console.log('✅ OTP sent successfully to:', email);
       
-      if (err.code === 'auth/user-not-found') {
-        errorMessage = 'No account found with this email address.';
+      // Navigate to OTP verification screen
+      router.push({
+        pathname: '/auth/verify-otp',
+        params: { email },
+      });
+    } catch (err: any) {
+      console.error('❌ Send OTP error:', err);
+      let errorMessage = err.message || 'Failed to send OTP. Please try again.';
+      
+      if (errorMessage.includes('No account found')) {
         setErrors(prev => ({ ...prev, email: errorMessage }));
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address.';
-        setErrors(prev => ({ ...prev, email: errorMessage }));
-      } else if (err.message) {
-        errorMessage = err.message;
       }
       
       Alert.alert('Error', errorMessage);
@@ -155,87 +152,63 @@ export default function ForgotPasswordScreen() {
               <View style={styles.header}>
                 <View style={styles.logoContainer}>
                   <View style={styles.logoCircle}>
-                    <Icon name="lock-reset" size={32} color="#00A389" />
+                    <Icon name="email-lock" size={32} color="#00A389" />
                   </View>
                 </View>
                 <Text style={styles.title}>Forgot Password?</Text>
                 <Text style={styles.subtitle}>
-                  {emailSent 
-                    ? 'Check your email for reset instructions'
-                    : 'Enter your email address and we\'ll send you instructions to reset your password'}
+                  Enter your email address and we'll send you a 6-digit verification code to reset your password
                 </Text>
               </View>
 
-              {!emailSent && (
-                <>
-                  {/* Email Input */}
-                  <View style={styles.inputContainer}>
-                    <Text style={styles.fieldLabel}>Email Address</Text>
-                    <View style={[styles.inputWrapper, errors.email && styles.inputError]}>
-                      <Icon name="email-outline" size={22} color="#666" style={styles.inputIcon} />
-                      <TextInput
-                        style={styles.textInput}
-                        placeholder="Enter your email address"
-                        placeholderTextColor="#999"
-                        value={email}
-                        onChangeText={(text) => {
-                          setEmail(text);
-                          clearError('email');
-                        }}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        autoComplete="email"
-                        editable={!isSubmitting}
-                      />
-                    </View>
-                    {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-                  </View>
-
-                  {/* Reset Password Button */}
-                  <TouchableOpacity
-                    style={[styles.resetButton, isSubmitting && styles.buttonDisabled]}
-                    onPress={handleResetPassword}
-                    disabled={isSubmitting}
-                    activeOpacity={0.8}
-                  >
-                    {isSubmitting ? (
-                      <ActivityIndicator size="small" color="white" />
-                    ) : (
-                      <Text style={styles.resetButtonText}>Send Reset Email</Text>
-                    )}
-                  </TouchableOpacity>
-                </>
-              )}
-
-              {emailSent && (
-                <View style={styles.successContainer}>
-                  <View style={styles.successIconContainer}>
-                    <Icon name="check-circle" size={48} color="#4CAF50" />
-                  </View>
-                  <Text style={styles.successTitle}>Email Sent! 📧</Text>
-                  <Text style={styles.successText}>
-                    We've sent password reset instructions to:
-                  </Text>
-                  <Text style={styles.emailText}>{email}</Text>
-                  <Text style={styles.instructionText}>
-                    Please check your inbox and follow the instructions to reset your password. 
-                    Don't forget to check your spam folder!
-                  </Text>
-                  
-                  <TouchableOpacity
-                    style={styles.resendButton}
-                    onPress={() => {
-                      setEmailSent(false);
-                      setEmail('');
+              {/* Email Input */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.fieldLabel}>Email Address</Text>
+                <View style={[styles.inputWrapper, errors.email && styles.inputError]}>
+                  <Icon name="email-outline" size={22} color="#666" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter your email address"
+                    placeholderTextColor="#999"
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      clearError('email');
                     }}
-                    disabled={isSubmitting}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={styles.resendButtonText}>Try Different Email</Text>
-                  </TouchableOpacity>
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="email"
+                    editable={!isSubmitting}
+                  />
                 </View>
-              )}
+                {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+              </View>
+
+              {/* Send OTP Button */}
+              <TouchableOpacity
+                style={[styles.resetButton, isSubmitting && styles.buttonDisabled]}
+                onPress={handleResetPassword}
+                disabled={isSubmitting}
+                activeOpacity={0.8}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Icon name="email-fast" size={20} color="#FFFFFF" />
+                    <Text style={styles.resetButtonText}>Send Verification Code</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              {/* Info Box */}
+              <View style={styles.infoBox}>
+                <Icon name="information" size={18} color="#00A389" />
+                <Text style={styles.infoText}>
+                  You'll receive a 6-digit code via email that expires in 10 minutes
+                </Text>
+              </View>
 
               {/* Back to Login Link */}
               <View style={styles.loginContainer}>
@@ -374,6 +347,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   resetButton: {
+    flexDirection: 'row',
     backgroundColor: '#00A389',
     height: 48,
     borderRadius: 10,
@@ -398,6 +372,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 0.5,
+    marginLeft: 8,
+  },
+  infoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#E0F2F1',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#00A389',
+    marginLeft: 8,
+    lineHeight: 16,
   },
   successContainer: {
     alignItems: 'center',
