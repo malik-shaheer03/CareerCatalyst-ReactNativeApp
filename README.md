@@ -1,9 +1,4 @@
-# 🚀 CareerCatalyst - AI-Po#### 💼 **Job Discovery & Scraping** - Advanced job search, filtering, and automatic job scraping from LinkedIn and Indeed
-## � Backend Services
-
-CareerCatalyst includes three Node.js/Express microservices for email communications and one Python/FastAPI service for job scraping:
-
-### 1. **Password Reset Service** (Port 5001)*Multi-role Authentication** - Secure login for job seekers and employers with email/passwordred Career Development Platform
+# 🚀 CareerCatalyst -  💼 **Job Discovery & Scraping** - Advanced job search, filtering, and automatic job scraping from LinkedIn and Indeed
 
 <div align="center">
 
