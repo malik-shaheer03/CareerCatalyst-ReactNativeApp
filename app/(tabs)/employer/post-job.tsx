@@ -1,24 +1,25 @@
 
-import React, { useState, useEffect } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    PanResponder,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuth } from '../../../lib/auth-context';
-import { postJob, updateJob, getEmployerCompanyName } from '../../../lib/services/employer-services';
-import { useToast } from '../../../lib/ToastContext';
 import { withEmployerProtection } from '../../../lib/employer-protection';
+import { getEmployerCompanyName, postJob, updateJob } from '../../../lib/services/employer-services';
+import { useToast } from '../../../lib/ToastContext';
 
 interface JobFormData {
   title: string;
@@ -50,6 +51,27 @@ function PostJobScreen() {
     requirements: '',
     benefits: '',
   });
+
+  // Swipe gesture handler for right swipe to navigate back to manage-jobs
+  const panResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+          // Only respond to horizontal swipes to the right
+          return gestureState.dx > 20 && Math.abs(gestureState.dy) < 80;
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+          // If swipe is significant enough (more than 100 pixels to the right)
+          console.log('Post-job swipe detected:', gestureState.dx);
+          if (gestureState.dx > 100) {
+            console.log('Navigating to manage-jobs from post-job');
+            router.push('/(tabs)/employer/manage-jobs');
+          }
+        },
+      }),
+    [router]
+  );
 
   // Load company name and edit data when component mounts
   useEffect(() => {
@@ -185,59 +207,89 @@ function PostJobScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
       <KeyboardAvoidingView 
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerSpacer} />
-          <Text style={styles.headerTitle}>{isEditMode ? 'Edit Job' : 'Post a Job'}</Text>
-          <View style={styles.headerSpacer} />
+        {/* Modern Header */}
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.headerSubtitle}>
+                {isEditMode ? 'Update Position' : 'New Opportunity'}
+              </Text>
+              <Text style={styles.headerTitle}>
+                {isEditMode ? 'Edit Job' : 'Post a Job'}
+              </Text>
+            </View>
+            <Icon name={isEditMode ? "edit" : "work"} size={32} color="#00A389" />
+          </View>
         </View>
 
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.formContainer}>
             {/* Job Title */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Job Title *</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.title}
-                onChangeText={(value) => handleInputChange('title', value)}
-                placeholder="e.g. Software Engineer"
-                placeholderTextColor="#9CA3AF"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="title" size={20} color="#00A389" />
+                <Text style={styles.label}>Job Title *</Text>
+              </View>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  value={formData.title}
+                  onChangeText={(value) => handleInputChange('title', value)}
+                  placeholder="e.g. Senior Software Engineer"
+                  placeholderTextColor="#94A3B8"
+                />
+              </View>
             </View>
 
             {/* Company */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Company *</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.company}
-                onChangeText={(value) => handleInputChange('company', value)}
-                placeholder="e.g. Tech Corp"
-                placeholderTextColor="#9CA3AF"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="business" size={20} color="#3B82F6" />
+                <Text style={styles.label}>Company *</Text>
+              </View>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  value={formData.company}
+                  onChangeText={(value) => handleInputChange('company', value)}
+                  placeholder="e.g. Tech Innovations Inc."
+                  placeholderTextColor="#94A3B8"
+                />
+              </View>
             </View>
 
             {/* Location */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Location *</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.location}
-                onChangeText={(value) => handleInputChange('location', value)}
-                placeholder="e.g. New York, NY"
-                placeholderTextColor="#9CA3AF"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="location-on" size={20} color="#EF4444" />
+                <Text style={styles.label}>Location *</Text>
+              </View>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  value={formData.location}
+                  onChangeText={(value) => handleInputChange('location', value)}
+                  placeholder="e.g. New York, NY or Remote"
+                  placeholderTextColor="#94A3B8"
+                />
+              </View>
             </View>
 
             {/* Job Type */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Job Type</Text>
+              <View style={styles.labelRow}>
+                <Icon name="work" size={20} color="#8B5CF6" />
+                <Text style={styles.label}>Job Type</Text>
+              </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.chipContainer}>
                   {jobTypes.map((type) => (
@@ -263,7 +315,10 @@ function PostJobScreen() {
 
             {/* Experience Level */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Experience Level</Text>
+              <View style={styles.labelRow}>
+                <Icon name="trending-up" size={20} color="#F59E0B" />
+                <Text style={styles.label}>Experience Level</Text>
+              </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.chipContainer}>
                   {experienceLevels.map((level) => (
@@ -289,59 +344,79 @@ function PostJobScreen() {
 
             {/* Salary */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Salary Range</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.salary}
-                onChangeText={(value) => handleInputChange('salary', value)}
-                placeholder="e.g. $50,000 - $80,000"
-                placeholderTextColor="#9CA3AF"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="payments" size={20} color="#10B981" />
+                <Text style={styles.label}>Salary Range</Text>
+              </View>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  value={formData.salary}
+                  onChangeText={(value) => handleInputChange('salary', value)}
+                  placeholder="e.g. $80,000 - $120,000 or Competitive"
+                  placeholderTextColor="#94A3B8"
+                />
+              </View>
             </View>
 
             {/* Description */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Job Description *</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                value={formData.description}
-                onChangeText={(value) => handleInputChange('description', value)}
-                placeholder="Describe the role, responsibilities, and what you're looking for..."
-                placeholderTextColor="#9CA3AF"
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="description" size={20} color="#06B6D4" />
+                <Text style={styles.label}>Job Description *</Text>
+              </View>
+              <View style={styles.textAreaWrapper}>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  value={formData.description}
+                  onChangeText={(value) => handleInputChange('description', value)}
+                  placeholder="Describe the role, responsibilities, and what you're looking for in a candidate..."
+                  placeholderTextColor="#94A3B8"
+                  multiline
+                  numberOfLines={5}
+                  textAlignVertical="top"
+                />
+              </View>
             </View>
 
             {/* Requirements */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Requirements</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                value={formData.requirements}
-                onChangeText={(value) => handleInputChange('requirements', value)}
-                placeholder="List the required skills, qualifications, and experience..."
-                placeholderTextColor="#9CA3AF"
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="checklist" size={20} color="#F97316" />
+                <Text style={styles.label}>Requirements</Text>
+              </View>
+              <View style={styles.textAreaWrapper}>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  value={formData.requirements}
+                  onChangeText={(value) => handleInputChange('requirements', value)}
+                  placeholder="List the required skills, qualifications, and experience (comma-separated)"
+                  placeholderTextColor="#94A3B8"
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+              </View>
             </View>
 
             {/* Benefits */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Benefits</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                value={formData.benefits}
-                onChangeText={(value) => handleInputChange('benefits', value)}
-                placeholder="Health insurance, 401k, flexible hours, etc..."
-                placeholderTextColor="#9CA3AF"
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
+              <View style={styles.labelRow}>
+                <Icon name="card-giftcard" size={20} color="#EC4899" />
+                <Text style={styles.label}>Benefits</Text>
+              </View>
+              <View style={styles.textAreaWrapper}>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  value={formData.benefits}
+                  onChangeText={(value) => handleInputChange('benefits', value)}
+                  placeholder="Health insurance, 401k, flexible hours, remote work, etc..."
+                  placeholderTextColor="#94A3B8"
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -357,8 +432,10 @@ function PostJobScreen() {
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
               <>
-                <Icon name={isEditMode ? "edit" : "work"} size={20} color="#FFFFFF" />
-                <Text style={styles.postButtonText}>{isEditMode ? 'Update Job' : 'Post Job'}</Text>
+                <Icon name={isEditMode ? "check-circle" : "send"} size={22} color="#FFFFFF" />
+                <Text style={styles.postButtonText}>
+                  {isEditMode ? 'Update Job' : 'Post Job'}
+                </Text>
               </>
             )}
           </TouchableOpacity>
@@ -371,28 +448,40 @@ function PostJobScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
   },
   keyboardContainer: {
     flex: 1,
+  },
+  headerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
   },
-  backButton: {
-    padding: 8,
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+    marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1E293B',
+    letterSpacing: -0.5,
   },
   headerSpacer: {
     width: 40,
@@ -400,79 +489,126 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 120,
+  },
   formContainer: {
-    padding: 20,
+    padding: 24,
   },
   inputGroup: {
-    marginBottom: 24,
+    marginBottom: 28,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  inputWrapper: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     fontSize: 16,
-    color: '#111827',
+    color: '#1E293B',
+    fontWeight: '500',
+  },
+  textAreaWrapper: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   textArea: {
-    minHeight: 100,
+    minHeight: 120,
     paddingTop: 16,
+    paddingBottom: 16,
+    textAlignVertical: 'top',
   },
   chipContainer: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
+    paddingVertical: 4,
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
   },
   chipSelected: {
     backgroundColor: '#00A389',
     borderColor: '#00A389',
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   chipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#64748B',
   },
   chipTextSelected: {
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   buttonContainer: {
-    padding: 20,
-    paddingBottom: 100, // Account for tab bar height + extra space
+    padding: 24,
+    paddingBottom: 120,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 10,
   },
   postButton: {
     backgroundColor: '#00A389',
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 12,
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 8,
   },
   postButtonDisabled: {
     opacity: 0.6,
   },
   postButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   debugButton: {
     padding: 8,

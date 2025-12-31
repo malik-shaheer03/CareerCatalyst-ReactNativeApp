@@ -1,28 +1,27 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-  Animated,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-  Modal,
-  FlatList,
-  Linking,
-} from 'react-native';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Location from 'expo-location';
 import Header from '@/components/Header';
 import JobCard from '@/components/find-jobs/JobCard';
 import { fetchJobs, ScrapeParams } from '@/services/jobScrapperService';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Location from 'expo-location';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  FlatList,
+  Linking,
+  Modal,
+  Platform,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  UIManager,
+  View
+} from 'react-native';
 
 // API Configuration
 const API_BASE_URL = 'http://192.168.1.7:8000';
@@ -568,13 +567,18 @@ export default function JobScraperScreen() {
           animationType="fade"
           onRequestClose={() => setShowJobTypesModal(false)}
         >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
+          <TouchableOpacity 
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowJobTypesModal(false)}
+          >
+            <TouchableOpacity 
+              style={styles.modalContent}
+              activeOpacity={1}
+              onPress={(e) => e.stopPropagation()}
+            >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Select Job Types</Text>
-                <TouchableOpacity onPress={() => setShowJobTypesModal(false)}>
-                  <Icon name="close" size={24} color="#666" />
-                </TouchableOpacity>
               </View>
               
               <View style={styles.jobTypesGrid}>
@@ -609,8 +613,8 @@ export default function JobScraperScreen() {
               >
                 <Text style={styles.modalDoneButtonText}>Done</Text>
               </TouchableOpacity>
-            </View>
-          </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </Modal>
 
         {/* Work Location Types Modal */}
@@ -620,13 +624,18 @@ export default function JobScraperScreen() {
           animationType="fade"
           onRequestClose={() => setShowWorkLocationModal(false)}
         >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
+          <TouchableOpacity 
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowWorkLocationModal(false)}
+          >
+            <TouchableOpacity 
+              style={styles.modalContent}
+              activeOpacity={1}
+              onPress={(e) => e.stopPropagation()}
+            >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Select Work Location</Text>
-                <TouchableOpacity onPress={() => setShowWorkLocationModal(false)}>
-                  <Icon name="close" size={24} color="#666" />
-                </TouchableOpacity>
               </View>
               
               <View style={styles.jobTypesGrid}>
@@ -661,8 +670,8 @@ export default function JobScraperScreen() {
               >
                 <Text style={styles.modalDoneButtonText}>Done</Text>
               </TouchableOpacity>
-            </View>
-          </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </Modal>
 
         {/* Job Details Modal */}

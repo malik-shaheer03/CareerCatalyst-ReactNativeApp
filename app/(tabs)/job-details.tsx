@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
   ActivityIndicator,
+  Alert,
+  PanResponder,
+  ScrollView,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuth } from '../../lib/auth-context';
 import { useToast } from '../../lib/ToastContext';
@@ -45,6 +46,32 @@ export default function JobDetailsScreen() {
 
   // Check if current user is the owner of this job
   const isJobOwner = job && currentUser && job.employerId === currentUser.uid;
+
+  // Swipe gesture handler for right swipe to navigate back
+  const panResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+          // Only respond to horizontal swipes to the right
+          return gestureState.dx > 20 && Math.abs(gestureState.dy) < 80;
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+          // If swipe is significant enough (more than 100 pixels to the right)
+          console.log('Swipe detected:', gestureState.dx, 'isEmployee:', isEmployee, 'isEmployer:', isEmployer);
+          if (gestureState.dx > 100) {
+            if (isEmployer) {
+              console.log('Navigating to manage-jobs');
+              router.push('/(tabs)/employer/manage-jobs');
+            } else if (isEmployee) {
+              console.log('Navigating to find-jobs');
+              router.push('/(tabs)/find-jobs');
+            }
+          }
+        },
+      }),
+    [isEmployee, isEmployer, router]
+  );
 
   useEffect(() => {
     if (jobData && typeof jobData === 'string') {
@@ -95,13 +122,14 @@ export default function JobDetailsScreen() {
       return;
     }
 
-    // Navigate to application form
+    // Navigate to application form with jobData for back navigation
     router.push({
       pathname: '/(tabs)/apply-job',
       params: {
         jobId: job?.id,
         jobTitle: job?.title,
         company: job?.company,
+        jobData: JSON.stringify(job), // Pass the full job data for back navigation
       }
     });
   };
@@ -160,102 +188,147 @@ export default function JobDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.headerButton}
-          onPress={() => router.push('/(tabs)/find-jobs')}
-        >
-          <Icon name="arrow-back" size={24} color="#374151" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Job Details</Text>
-        {isJobOwner ? (
+    <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
+      {/* Modern Header with Curved Bottom */}
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
           <TouchableOpacity 
-            style={styles.headerButton}
-            onPress={handleEdit}
+            style={styles.backButton}
+            onPress={() => {
+              if (isEmployer) {
+                router.push('/(tabs)/employer/manage-jobs');
+              } else {
+                router.push('/(tabs)/find-jobs');
+              }
+            }}
           >
-            <Icon name="edit" size={24} color="#00A389" />
+            <Icon name="arrow-back" size={24} color="#00A389" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity 
-            style={styles.headerButton}
-            onPress={handleShare}
-          >
-            <Icon name="share" size={24} color="#374151" />
-          </TouchableOpacity>
-        )}
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerSubtitle}>Position Details</Text>
+            <Text style={styles.headerTitle}>Job Information</Text>
+          </View>
+          {isJobOwner ? (
+            <TouchableOpacity 
+              style={styles.headerIconButton}
+              onPress={handleEdit}
+            >
+              <Icon name="edit" size={22} color="#00A389" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity 
+              style={styles.headerIconButton}
+              onPress={handleShare}
+            >
+              <Icon name="share" size={22} color="#00A389" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Job Header */}
-        <View style={styles.jobHeader}>
-          <View style={styles.companyLogo}>
-            <Text style={styles.companyInitial}>
-              {job.company.charAt(0).toUpperCase()}
-            </Text>
-          </View>
-          <View style={styles.jobHeaderInfo}>
+        <View style={styles.content}>
+          {/* Company Header Card with Gradient */}
+          <View style={styles.companyCard}>
+            <View style={styles.companyLogoContainer}>
+              <View style={styles.companyLogo}>
+                <Text style={styles.companyInitial}>
+                  {job.company.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              {job.status === 'active' && (
+                <View style={styles.activeBadge}>
+                  <Icon name="check-circle" size={12} color="#FFFFFF" />
+                  <Text style={styles.activeBadgeText}>Active</Text>
+                </View>
+              )}
+            </View>
             <Text style={styles.jobTitle}>{job.title}</Text>
             <Text style={styles.companyName}>{job.company}</Text>
-            <View style={styles.jobMeta}>
-              <View style={styles.metaItem}>
-                <Icon name="location-on" size={16} color="#6B7280" />
-                <Text style={styles.metaText}>{job.location}</Text>
+            
+            {/* Meta Info Pills */}
+            <View style={styles.metaPills}>
+              <View style={styles.metaPill}>
+                <Icon name="location-on" size={14} color="#00A389" />
+                <Text style={styles.metaPillText}>{job.location}</Text>
               </View>
-              <View style={styles.metaItem}>
-                <Icon name="work" size={16} color="#6B7280" />
-                <Text style={styles.metaText}>{job.type}</Text>
+              <View style={styles.metaPill}>
+                <Icon name="work" size={14} color="#3B82F6" />
+                <Text style={styles.metaPillText}>{job.type}</Text>
               </View>
-              <View style={styles.metaItem}>
-                <Icon name="schedule" size={16} color="#6B7280" />
-                <Text style={styles.metaText}>Posted {formatDate(job.postedAt)}</Text>
+              <View style={styles.metaPill}>
+                <Icon name="schedule" size={14} color="#F59E0B" />
+                <Text style={styles.metaPillText}>{formatDate(job.postedAt)}</Text>
               </View>
             </View>
           </View>
-        </View>
 
-        {/* Job Details */}
-        <View style={styles.content}>
-          {/* Quick Info */}
-          <View style={styles.quickInfo}>
-            <View style={styles.infoCard}>
-              <Icon name="trending-up" size={20} color="#00A389" />
-              <Text style={styles.infoLabel}>Experience</Text>
-              <Text style={styles.infoValue}>{job.experience}</Text>
+          {/* Quick Info Cards with Icons */}
+          <View style={styles.quickInfoSection}>
+            <View style={styles.quickInfoCard}>
+              <View style={styles.quickInfoIconContainer}>
+                <Icon name="trending-up" size={24} color="#00A389" />
+              </View>
+              <View style={styles.quickInfoContent}>
+                <Text style={styles.quickInfoLabel}>Experience Level</Text>
+                <Text style={styles.quickInfoValue}>{job.experience}</Text>
+              </View>
             </View>
-            <View style={styles.infoCard}>
-              <Icon name="attach-money" size={20} color="#00A389" />
-              <Text style={styles.infoLabel}>Salary</Text>
-              <Text style={styles.infoValue}>{job.salary || 'Competitive'}</Text>
+            
+            <View style={styles.quickInfoCard}>
+              <View style={styles.quickInfoIconContainer}>
+                <Icon name="attach-money" size={24} color="#10B981" />
+              </View>
+              <View style={styles.quickInfoContent}>
+                <Text style={styles.quickInfoLabel}>Salary Range</Text>
+                <Text style={styles.quickInfoValue}>{job.salary || 'Competitive'}</Text>
+              </View>
             </View>
           </View>
 
-          {/* Description */}
+          {/* Description Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Job Description</Text>
-            <Text style={styles.sectionContent}>{job.description}</Text>
+            <View style={styles.sectionHeader}>
+              <Icon name="description" size={22} color="#00A389" />
+              <Text style={styles.sectionTitle}>Job Description</Text>
+            </View>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionContent}>{job.description}</Text>
+            </View>
           </View>
 
-          {/* Requirements */}
+          {/* Requirements Section */}
           {job.requirements && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Requirements</Text>
-              <Text style={styles.sectionContent}>{job.requirements}</Text>
+              <View style={styles.sectionHeader}>
+                <Icon name="checklist" size={22} color="#3B82F6" />
+                <Text style={styles.sectionTitle}>Requirements</Text>
+              </View>
+              <View style={styles.sectionCard}>
+                <Text style={styles.sectionContent}>{job.requirements}</Text>
+              </View>
             </View>
           )}
 
-          {/* Benefits */}
+          {/* Benefits Section */}
           {job.benefits && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Benefits</Text>
-              <Text style={styles.sectionContent}>{job.benefits}</Text>
+              <View style={styles.sectionHeader}>
+                <Icon name="card-giftcard" size={22} color="#10B981" />
+                <Text style={styles.sectionTitle}>Benefits & Perks</Text>
+              </View>
+              <View style={styles.sectionCard}>
+                <Text style={styles.sectionContent}>{job.benefits}</Text>
+              </View>
             </View>
           )}
+
+          {/* Extra padding for apply button and tab bar */}
+          <View style={{ height: 180 }} />
         </View>
       </ScrollView>
 
-      {/* Apply Button - Only show for job seekers and not for job owners */}
+      {/* Modern Apply Button - Only show for job seekers */}
       {!isJobOwner && (
         <View style={styles.applyContainer}>
           <TouchableOpacity
@@ -267,8 +340,8 @@ export default function JobDetailsScreen() {
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <>
-                <Icon name="send" size={20} color="#FFFFFF" />
-                <Text style={styles.applyButtonText}>Apply Now</Text>
+                <Icon name="send" size={22} color="#FFFFFF" />
+                <Text style={styles.applyButtonText}>Apply for this Position</Text>
               </>
             )}
           </TouchableOpacity>
@@ -290,8 +363,9 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 16,
-    fontSize: 16,
+    fontSize: 15,
     color: '#6B7280',
+    fontWeight: '500',
   },
   errorContainer: {
     flex: 1,
@@ -301,163 +375,243 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: 16,
-    fontSize: 18,
+    fontSize: 16,
     color: '#6B7280',
     textAlign: 'center',
+    fontWeight: '500',
   },
   backButton: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#00A389',
-    borderRadius: 8,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
   },
   backButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
+  },
+  headerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingTop: 16,
+    paddingBottom: 20,
   },
-  headerButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#F3F4F6',
+  headerTitleContainer: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '500',
+    marginBottom: 2,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  scrollView: {
-    flex: 1,
-    paddingBottom: 100, // Add padding to avoid tab bar overlap
-  },
-  jobHeader: {
-    flexDirection: 'row',
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  companyLogo: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#00A389',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  companyInitial: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  jobHeaderInfo: {
-    flex: 1,
-  },
-  jobTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#111827',
-    marginBottom: 4,
   },
-  companyName: {
-    fontSize: 16,
-    color: '#00A389',
-    fontWeight: '600',
-    marginBottom: 8,
+  headerIconButton: {
+    padding: 10,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    marginLeft: 12,
   },
-  jobMeta: {
-    flexDirection: 'column',
-    gap: 4,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  metaText: {
-    fontSize: 14,
-    color: '#6B7280',
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
-    paddingBottom: 120, // Extra padding to ensure content is above apply button and tab bar
   },
-  quickInfo: {
+  companyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  companyLogoContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  companyLogo: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#00A389',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  companyInitial: {
+    color: '#FFFFFF',
+    fontSize: 32,
+    fontWeight: '700',
+  },
+  activeBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#10B981',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  activeBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  jobTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  companyName: {
+    fontSize: 18,
+    color: '#00A389',
+    fontWeight: '600',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  metaPills: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'center',
+  },
+  metaPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
+  },
+  metaPillText: {
+    fontSize: 13,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  quickInfoSection: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 20,
   },
-  infoCard: {
+  quickInfoCard: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  infoLabel: {
-    fontSize: 12,
+  quickInfoIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  quickInfoContent: {
+    flex: 1,
+  },
+  quickInfoLabel: {
+    fontSize: 11,
     color: '#6B7280',
-    marginTop: 4,
-    textAlign: 'center',
+    fontWeight: '500',
+    marginBottom: 4,
   },
-  infoValue: {
+  quickInfoValue: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#111827',
-    marginTop: 2,
-    textAlign: 'center',
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#111827',
-    marginBottom: 12,
+  },
+  sectionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   sectionContent: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     color: '#374151',
   },
   applyContainer: {
     position: 'absolute',
-    bottom: 80, // Position above tab bar (tab bar is usually 60-80px high)
+    bottom: 80,
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    backgroundColor: 'transparent',
   },
   applyButton: {
     backgroundColor: '#00A389',
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 10,
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   applyButtonDisabled: {
     opacity: 0.6,
@@ -465,6 +619,6 @@ const styles = StyleSheet.create({
   applyButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

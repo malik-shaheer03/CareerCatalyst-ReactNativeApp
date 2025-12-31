@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { ResumeAIService } from '@/lib/ai';
+import { ResumeData } from '@/lib/resume';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-  Platform,
-  KeyboardAvoidingView
+  View
 } from 'react-native';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import { ResumeAIService } from '@/lib/ai';
-import { ResumeData } from '@/lib/resume';
 
 // Types
 export interface SummaryProps {
@@ -61,18 +61,23 @@ const Summary: React.FC<SummaryProps> = ({
 
   // Generate AI summaries
   const generateAISummaries = useCallback(async () => {
+    console.log('[Summary] Generate AI button clicked');
+    console.log('[Summary] Resume info:', resumeInfo);
+    console.log('[Summary] Job title:', resumeInfo.personal?.jobTitle);
+    
     if (!resumeInfo.personal?.jobTitle) {
       Alert.alert('Error', 'Please add a job title in Personal Details first.');
       return;
     }
 
     try {
-      console.log('Starting AI generation for job title:', resumeInfo.personal.jobTitle);
+      console.log('[Summary] Starting AI generation for job title:', resumeInfo.personal.jobTitle);
       setIsGenerating(true);
       setShowAIOptions(true);
       
+      console.log('[Summary] Calling ResumeAIService.generateSummary...');
       const summaries = await ResumeAIService.generateSummary(resumeInfo.personal.jobTitle);
-      console.log('AI summaries generated:', summaries);
+      console.log('[Summary] AI summaries generated:', summaries);
       
       // Convert to our format
       const formattedSummaries: AIGeneratedSummary[] = summaries.map((summary, index) => ({
@@ -81,10 +86,17 @@ const Summary: React.FC<SummaryProps> = ({
       }));
       
       setAiGeneratedSummaries(formattedSummaries);
-      console.log('Formatted summaries set:', formattedSummaries);
+      console.log('[Summary] Formatted summaries set:', formattedSummaries);
+      
+      Alert.alert('Success', `Generated ${formattedSummaries.length} summaries! Scroll down to see them.`);
     } catch (error) {
-      console.error('AI generation failed:', error);
+      console.error('[Summary] AI generation failed:', error);
+      console.error('[Summary] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
       Alert.alert('Error', `Failed to generate summaries: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setShowAIOptions(false);
     } finally {
       setIsGenerating(false);
     }
@@ -136,8 +148,17 @@ const Summary: React.FC<SummaryProps> = ({
           </View>
           <TouchableOpacity
             style={[styles.aiButton, isGenerating && styles.aiButtonGenerating]}
-            onPress={generateAISummaries}
-            disabled={isGenerating || disabled || !resumeInfo.personal?.jobTitle}
+            onPress={() => {
+              console.log('[Summary] Button pressed!');
+              console.log('[Summary] Button state:', {
+                isGenerating,
+                disabled,
+                hasJobTitle: !!resumeInfo.personal?.jobTitle,
+                jobTitle: resumeInfo.personal?.jobTitle
+              });
+              generateAISummaries();
+            }}
+            disabled={isGenerating || disabled}
           >
             {isGenerating ? (
               <ActivityIndicator size="small" color="#004D40" />

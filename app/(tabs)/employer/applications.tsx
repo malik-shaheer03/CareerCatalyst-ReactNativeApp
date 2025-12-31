@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { collection, doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
-  ActivityIndicator,
-  Dimensions,
-  Linking,
-  Modal,
-  Pressable,
-  Alert,
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    Modal,
+    Pressable,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import { useAuth } from '../../../lib/auth-context';
 import EmailCompositionModal from '../../../components/EmailCompositionModal';
-import { 
-  getEmployerApplications, 
-  updateApplicationStatus,
-  deleteApplication,
-  getEmployerJobs,
-  type Application 
-} from '../../../lib/services/employer-services';
+import { useAuth } from '../../../lib/auth-context';
 import { withEmployerProtection } from '../../../lib/employer-protection';
-import { useToast } from '../../../lib/ToastContext';
-import { doc, getDoc, collection } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import {
+    deleteApplication,
+    getEmployerApplications,
+    getEmployerJobs,
+    updateApplicationStatus,
+    type Application
+} from '../../../lib/services/employer-services';
+import { useToast } from '../../../lib/ToastContext';
 
 const { width } = Dimensions.get('window');
 
@@ -268,11 +267,15 @@ function ApplicationsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerSpacer} />
-        <Text style={styles.headerTitle}>Applications</Text>
-        <View style={styles.headerSpacer} />
+      {/* Modern Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerSubtitle}>Candidates</Text>
+            <Text style={styles.headerTitle}>Applications</Text>
+          </View>
+          <Icon name="account-multiple" size={32} color="#00A389" />
+        </View>
       </View>
 
       {/* Filter Tabs */}
@@ -319,13 +322,16 @@ function ApplicationsScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             colors={['#00A389']}
+            tintColor="#00A389"
           />
         }
         showsVerticalScrollIndicator={false}
       >
         {filteredApplications.length === 0 ? (
           <View style={styles.emptyState}>
-            <Icon name="account-off" size={64} color="#D1D5DB" />
+            <View style={styles.emptyIconContainer}>
+              <Icon name="account-off" size={80} color="#00A389" />
+            </View>
             <Text style={styles.emptyTitle}>No Applications</Text>
             <Text style={styles.emptyDescription}>
               {filterStatus === 'all' 
@@ -342,49 +348,60 @@ function ApplicationsScreen() {
                 onPress={() => handleOpenModal(application)}
                 activeOpacity={0.7}
               >
+                {/* Status Badge Overlay */}
+                <View style={[styles.statusBadgeOverlay, { backgroundColor: getStatusColor(application.status || 'pending') }]}>
+                  <Text style={styles.statusTextOverlay}>{getStatusText(application.status || 'pending')}</Text>
+                </View>
+
                 {/* Candidate Info */}
                 <View style={styles.cardHeader}>
                   <View style={styles.candidateAvatar}>
-                    <Icon name="account" size={28} color="#00A389" />
+                    <Icon name="account" size={36} color="#FFFFFF" />
                   </View>
                   <View style={styles.candidateInfo}>
                     <Text style={styles.candidateName}>{application.candidateName}</Text>
                     <Text style={styles.jobTitle}>{application.jobTitle}</Text>
                   </View>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(application.status || 'pending') }]}>
-                    <Text style={styles.statusText}>{getStatusText(application.status || 'pending')}</Text>
-                  </View>
                 </View>
 
-                {/* Contact Info */}
+                {/* Contact Info Grid */}
                 <View style={styles.contactInfo}>
-                  <View style={styles.infoRow}>
-                    <Icon name="email" size={16} color="#6B7280" />
-                    <Text style={styles.infoText}>{application.email}</Text>
+                  <View style={styles.infoCard}>
+                    <Icon name="email" size={20} color="#00A389" />
+                    <Text style={styles.infoText} numberOfLines={1}>{application.email}</Text>
                   </View>
                   {application.phone && (
-                    <View style={styles.infoRow}>
-                      <Icon name="phone" size={16} color="#6B7280" />
+                    <View style={styles.infoCard}>
+                      <Icon name="phone" size={20} color="#3B82F6" />
                       <Text style={styles.infoText}>{application.phone}</Text>
                     </View>
                   )}
-                  <View style={styles.infoRow}>
-                    <Icon name="calendar" size={16} color="#6B7280" />
+                  <View style={styles.infoCard}>
+                    <Icon name="calendar" size={20} color="#F59E0B" />
                     <Text style={styles.infoText}>
-                      Applied {application.appliedAt ? getTimeAgo(new Date(application.appliedAt.seconds * 1000)) : 'Recently'}
+                      {application.appliedAt ? getTimeAgo(new Date(application.appliedAt.seconds * 1000)) : 'Recently'}
                     </Text>
                   </View>
                 </View>
 
-                {/* Cover Letter */}
+                {/* Cover Letter Preview */}
                 {application.coverLetter && (
                   <View style={styles.coverLetterSection}>
-                    <Text style={styles.coverLetterLabel}>Cover Letter</Text>
-                    <Text style={styles.coverLetterText} numberOfLines={3}>
+                    <View style={styles.coverLetterHeader}>
+                      <Icon name="file-document" size={18} color="#64748B" />
+                      <Text style={styles.coverLetterLabel}>Cover Letter</Text>
+                    </View>
+                    <Text style={styles.coverLetterText} numberOfLines={2}>
                       {application.coverLetter}
                     </Text>
                   </View>
                 )}
+
+                {/* View Details Button */}
+                <View style={styles.viewDetailsButton}>
+                  <Text style={styles.viewDetailsText}>View Full Profile</Text>
+                  <Icon name="arrow-right" size={18} color="#00A389" />
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -458,7 +475,7 @@ function ApplicationsScreen() {
                   {userProfile?.skills && userProfile.skills.length > 0 && (
                     <View style={styles.modalSection}>
                       <View style={styles.modalSectionHeader}>
-                        <Icon name="star-circle" size={24} color="#00A389" />
+                        <Icon name="star-circle-outline" size={24} color="#00A389" />
                         <Text style={styles.modalSectionTitle}>Skills</Text>
                       </View>
                       <View style={styles.skillsContainer}>
@@ -475,7 +492,7 @@ function ApplicationsScreen() {
                   {userProfile?.experience && userProfile.experience.length > 0 && (
                     <View style={styles.modalSection}>
                       <View style={styles.modalSectionHeader}>
-                        <Icon name="briefcase" size={24} color="#00A389" />
+                        <Icon name="briefcase-outline" size={24} color="#00A389" />
                         <Text style={styles.modalSectionTitle}>Work Experience</Text>
                       </View>
                       {userProfile.experience.map((exp: any, index: number) => (
@@ -530,7 +547,7 @@ function ApplicationsScreen() {
                   {userProfile?.certifications && userProfile.certifications.length > 0 && (
                     <View style={styles.modalSection}>
                       <View style={styles.modalSectionHeader}>
-                        <Icon name="certificate" size={24} color="#00A389" />
+                        <Icon name="certificate-outline" size={24} color="#00A389" />
                         <Text style={styles.modalSectionTitle}>Certifications</Text>
                       </View>
                       {userProfile.certifications.map((cert: any, index: number) => (
@@ -543,7 +560,7 @@ function ApplicationsScreen() {
                           </View>
                           {cert.expiryDate && (
                             <View style={styles.certificationMetaRow}>
-                              <Icon name="calendar-clock" size={14} color="#6B7280" />
+                              <Icon name="clock-alert-outline" size={14} color="#6B7280" />
                               <Text style={styles.certificationMeta}>Expires: {cert.expiryDate}</Text>
                             </View>
                           )}
@@ -555,7 +572,7 @@ function ApplicationsScreen() {
                   {/* Job Details Section */}
                   <View style={styles.modalSection}>
                     <View style={styles.modalSectionHeader}>
-                      <Icon name="briefcase" size={24} color="#00A389" />
+                      <Icon name="briefcase-outline" size={24} color="#00A389" />
                       <Text style={styles.modalSectionTitle}>Job Details</Text>
                     </View>
                     <View style={styles.jobDetailsCard}>
@@ -567,7 +584,7 @@ function ApplicationsScreen() {
                         </Text>
                       </View>
                       <View style={styles.jobDetailRow}>
-                        <Icon name="progress-clock" size={16} color="#6B7280" />
+                        <Icon name="clock-outline" size={16} color="#6B7280" />
                         <Text style={styles.jobDetailText}>
                           Status: {getStatusText(selectedApplication.status || 'pending')}
                         </Text>
@@ -681,23 +698,37 @@ function ApplicationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
+  },
+  headerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+    marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#111827',
-    letterSpacing: 0.3,
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1E293B',
+    letterSpacing: -0.5,
   },
   headerSpacer: {
     width: 20,
@@ -705,63 +736,62 @@ const styles = StyleSheet.create({
   filterWrapper: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#E2E8F0',
   },
   filterContainer: {
     paddingVertical: 16,
   },
   filterTabs: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     gap: 12,
   },
   filterTab: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 24,
-    backgroundColor: '#F9FAFB',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
+    gap: 10,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
   },
   filterTabActive: {
     backgroundColor: '#00A389',
+    borderColor: '#00A389',
     shadowColor: '#00A389',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   filterTabText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#6B7280',
+    color: '#64748B',
     letterSpacing: 0.3,
   },
   filterTabTextActive: {
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   countBadge: {
-    minWidth: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#E5E7EB',
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
   },
   countBadgeActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   countBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#374151',
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#64748B',
   },
   countBadgeTextActive: {
     color: '#FFFFFF',
@@ -770,7 +800,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // Account for tab bar height + extra space
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 120,
   },
   loadingContainer: {
     flex: 1,
@@ -778,89 +810,131 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
+    marginTop: 16,
     fontSize: 16,
-    color: '#6B7280',
+    color: '#64748B',
+    fontWeight: '500',
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
-    paddingTop: 100,
+    paddingVertical: 80,
+  },
+  emptyIconContainer: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: '#ECFDF5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#374151',
-    marginTop: 16,
-    marginBottom: 8,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
   },
   emptyDescription: {
     fontSize: 16,
-    color: '#6B7280',
+    color: '#64748B',
     textAlign: 'center',
+    lineHeight: 24,
   },
   applicationsList: {
-    padding: 20,
-    gap: 16,
+    gap: 20,
   },
   applicationCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  statusBadgeOverlay: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statusTextOverlay: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
+    paddingRight: 90,
   },
   candidateAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#ECFDF5',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#00A389',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 16,
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   candidateInfo: {
     flex: 1,
   },
   candidateName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1E293B',
     marginBottom: 4,
   },
   jobTitle: {
-    fontSize: 14,
-    color: '#00A389',
-    fontWeight: '500',
+    fontSize: 15,
+    color: '#64748B',
+    fontWeight: '600',
   },
   statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 12,
   },
   statusText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#FFFFFF',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
   contactInfo: {
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 12,
+    gap: 12,
     marginBottom: 16,
-    gap: 8,
+  },
+  infoCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    padding: 14,
+    borderRadius: 12,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   infoRow: {
     flexDirection: 'row',
@@ -869,25 +943,52 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
+    color: '#475569',
+    fontWeight: '600',
     flex: 1,
   },
   coverLetterSection: {
+    backgroundColor: '#F8FAFC',
+    padding: 16,
+    borderRadius: 14,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  coverLetterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
   },
   coverLetterLabel: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#6B7280',
-    marginBottom: 8,
+    fontWeight: '700',
+    color: '#64748B',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   coverLetterText: {
     fontSize: 14,
-    color: '#374151',
+    color: '#475569',
     lineHeight: 22,
+    fontWeight: '500',
+  },
+  viewDetailsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 12,
+    gap: 8,
+    borderWidth: 2,
+    borderColor: '#A7F3D0',
+  },
+  viewDetailsText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#00A389',
   },
   // Modal Styles
   modalOverlay: {

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuth } from '../../../lib/auth-context';
-import { getEmployerAnalytics } from '../../../lib/services/employer-services';
 import { withEmployerProtection } from '../../../lib/employer-protection';
+import { getEmployerAnalytics } from '../../../lib/services/employer-services';
 
 const { width } = Dimensions.get('window');
 
@@ -121,16 +121,15 @@ function AnalyticsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-back" size={24} color="#374151" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Analytics</Text>
-        <View style={styles.headerSpacer} />
+      {/* Modern Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerSubtitle}>Performance</Text>
+            <Text style={styles.headerTitle}>Analytics</Text>
+          </View>
+          <Icon name="insights" size={32} color="#00A389" />
+        </View>
       </View>
 
       {/* Period Filter */}
@@ -166,37 +165,29 @@ function AnalyticsScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             colors={['#00A389']}
+            tintColor="#00A389"
           />
         }
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          {/* Overview Cards */}
+          {/* Overview Cards with Gradient */}
           <View style={styles.overviewSection}>
-            <Text style={styles.sectionTitle}>Overview</Text>
             <View style={styles.statsGrid}>
-              <View style={styles.statCard}>
-                <View style={styles.statCardContent}>
-                  <Icon name="work" size={24} color="#00A389" />
-                  <View style={styles.statInfo}>
-                    <Text style={styles.statValue}>{analytics.totalJobs}</Text>
-                    <Text style={styles.statLabel}>Total Jobs</Text>
-                  </View>
-                </View>
+              <View style={[styles.statCard, styles.gradientCard1]}>
+                <Icon name="work" size={32} color="#FFFFFF" />
+                <Text style={styles.statValue}>{analytics.totalJobs}</Text>
+                <Text style={styles.statLabel}>Total Jobs</Text>
                 <Text style={styles.statSubtext}>
                   {analytics.activeJobs} active
                 </Text>
               </View>
 
-              <View style={styles.statCard}>
-                <View style={styles.statCardContent}>
-                  <Icon name="people" size={24} color="#3B82F6" />
-                  <View style={styles.statInfo}>
-                    <Text style={styles.statValue}>{analytics.totalApplications}</Text>
-                    <Text style={styles.statLabel}>Applications</Text>
-                  </View>
-                </View>
-                <Text style={[styles.statSubtext, { color: '#10B981' }]}>
+              <View style={[styles.statCard, styles.gradientCard2]}>
+                <Icon name="people" size={32} color="#FFFFFF" />
+                <Text style={styles.statValue}>{analytics.totalApplications}</Text>
+                <Text style={styles.statLabel}>Applications</Text>
+                <Text style={styles.statSubtext}>
                   +{analytics.newApplicationsThisWeek} this week
                 </Text>
               </View>
@@ -209,15 +200,17 @@ function AnalyticsScreen() {
             <View style={styles.statusGrid}>
               {Object.entries(analytics.applicationsByStatus).map(([status, count]) => {
                 const statusConfig = {
-                  pending: { color: '#F59E0B', label: 'Pending', icon: 'hourglass-empty' },
-                  shortlisted: { color: '#10B981', label: 'Shortlisted', icon: 'star' },
-                  rejected: { color: '#EF4444', label: 'Rejected', icon: 'close' },
-                  hired: { color: '#8B5CF6', label: 'Hired', icon: 'check-circle' },
-                }[status] || { color: '#6B7280', label: status, icon: 'help' };
+                  pending: { color: '#F59E0B', label: 'Pending', icon: 'hourglass-empty', bg: '#FFF7ED' },
+                  shortlisted: { color: '#10B981', label: 'Shortlisted', icon: 'star', bg: '#ECFDF5' },
+                  rejected: { color: '#EF4444', label: 'Rejected', icon: 'close', bg: '#FEF2F2' },
+                  hired: { color: '#8B5CF6', label: 'Hired', icon: 'check-circle', bg: '#F5F3FF' },
+                }[status] || { color: '#6B7280', label: status, icon: 'help', bg: '#F3F4F6' };
 
                 return (
-                  <View key={status} style={styles.statusCard}>
-                    <Icon name={statusConfig.icon} size={20} color={statusConfig.color} />
+                  <View key={status} style={[styles.statusCard, { backgroundColor: statusConfig.bg }]}>
+                    <View style={[styles.statusIconContainer, { backgroundColor: statusConfig.color }]}>
+                      <Icon name={statusConfig.icon} size={24} color="#FFFFFF" />
+                    </View>
                     <Text style={styles.statusCount}>{count}</Text>
                     <Text style={styles.statusLabel}>{statusConfig.label}</Text>
                   </View>
@@ -231,23 +224,36 @@ function AnalyticsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Job Performance</Text>
               <View style={styles.performanceCards}>
-                {analytics.jobPerformance.map((job) => (
+                {analytics.jobPerformance.map((job, index) => (
                   <View key={job.jobId} style={styles.performanceCard}>
-                    <Text style={styles.performanceJobTitle}>{job.title}</Text>
+                    <View style={styles.performanceHeader}>
+                      <Text style={styles.performanceJobTitle} numberOfLines={2}>{job.title}</Text>
+                      <View style={styles.performanceBadge}>
+                        <Text style={styles.performanceBadgeText}>#{index + 1}</Text>
+                      </View>
+                    </View>
                     
                     <View style={styles.performanceMetrics}>
                       <View style={styles.performanceMetric}>
-                        <Icon name="people" size={16} color="#6B7280" />
-                        <Text style={styles.performanceMetricText}>
-                          {job.applications} {job.applications === 1 ? 'application' : 'applications'}
-                        </Text>
+                        <View style={styles.metricIconContainer}>
+                          <Icon name="people" size={18} color="#3B82F6" />
+                        </View>
+                        <View>
+                          <Text style={styles.metricValue}>{job.applications}</Text>
+                          <Text style={styles.metricLabel}>
+                            {job.applications === 1 ? 'Application' : 'Applications'}
+                          </Text>
+                        </View>
                       </View>
                       
                       <View style={styles.performanceMetric}>
-                        <Icon name="trending-up" size={16} color="#6B7280" />
-                        <Text style={styles.performanceMetricText}>
-                          {job.conversionRate.toFixed(1)}% of total
-                        </Text>
+                        <View style={styles.metricIconContainer}>
+                          <Icon name="trending-up" size={18} color="#10B981" />
+                        </View>
+                        <View>
+                          <Text style={styles.metricValue}>{job.conversionRate.toFixed(1)}%</Text>
+                          <Text style={styles.metricLabel}>Of Total</Text>
+                        </View>
                       </View>
                     </View>
                   </View>
@@ -256,23 +262,25 @@ function AnalyticsScreen() {
             </View>
           )}
 
-          {/* Applications Trend (Simple Bar Chart) */}
+          {/* Applications Trend Chart */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Applications Trend</Text>
             <View style={styles.chartContainer}>
               <View style={styles.chart}>
                 {analytics.applicationsTrend.map((data, index) => {
                   const maxCount = Math.max(...analytics.applicationsTrend.map(d => d.count));
-                  const height = (data.count / maxCount) * 120;
+                  const height = maxCount > 0 ? (data.count / maxCount) * 120 : 0;
                   
                   return (
                     <View key={index} style={styles.chartBar}>
-                      <View 
-                        style={[
-                          styles.chartBarFill, 
-                          { height: height, backgroundColor: '#00A389' }
-                        ]} 
-                      />
+                      <View style={styles.chartBarContainer}>
+                        <View 
+                          style={[
+                            styles.chartBarFill, 
+                            { height: height || 4 }
+                          ]} 
+                        />
+                      </View>
                       <Text style={styles.chartBarValue}>{data.count}</Text>
                       <Text style={styles.chartBarLabel}>
                         {new Date(data.date).getDate()}
@@ -288,60 +296,66 @@ function AnalyticsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Insights</Text>
             <View style={styles.insightsContainer}>
-              {/* Best performing job */}
               {analytics.jobPerformance.length > 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="lightbulb" size={20} color="#F59E0B" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="lightbulb" size={24} color="#F59E0B" />
+                  </View>
                   <Text style={styles.insightText}>
                     Your "{analytics.jobPerformance[0].title}" job has received {analytics.jobPerformance[0].applications} {analytics.jobPerformance[0].applications === 1 ? 'application' : 'applications'}
                   </Text>
                 </View>
               )}
               
-              {/* New applications trend */}
               {analytics.newApplicationsThisWeek > 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="trending-up" size={20} color="#10B981" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="trending-up" size={24} color="#10B981" />
+                  </View>
                   <Text style={styles.insightText}>
                     You received {analytics.newApplicationsThisWeek} new {analytics.newApplicationsThisWeek === 1 ? 'application' : 'applications'} this week
                   </Text>
                 </View>
               )}
               
-              {/* Pending applications */}
               {analytics.applicationsByStatus.pending > 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="schedule" size={20} color="#3B82F6" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="schedule" size={24} color="#3B82F6" />
+                  </View>
                   <Text style={styles.insightText}>
                     You have {analytics.applicationsByStatus.pending} pending {analytics.applicationsByStatus.pending === 1 ? 'application' : 'applications'} that need review
                   </Text>
                 </View>
               )}
 
-              {/* Shortlisted applications */}
               {analytics.applicationsByStatus.shortlisted > 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="star" size={20} color="#10B981" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="star" size={24} color="#10B981" />
+                  </View>
                   <Text style={styles.insightText}>
                     {analytics.applicationsByStatus.shortlisted} {analytics.applicationsByStatus.shortlisted === 1 ? 'candidate' : 'candidates'} shortlisted for next round
                   </Text>
                 </View>
               )}
 
-              {/* Hired count */}
               {analytics.applicationsByStatus.hired > 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="check-circle" size={20} color="#8B5CF6" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="check-circle" size={24} color="#8B5CF6" />
+                  </View>
                   <Text style={styles.insightText}>
                     Successfully hired {analytics.applicationsByStatus.hired} {analytics.applicationsByStatus.hired === 1 ? 'candidate' : 'candidates'}
                   </Text>
                 </View>
               )}
 
-              {/* No data state */}
               {analytics.totalApplications === 0 && (
                 <View style={styles.insightCard}>
-                  <Icon name="info" size={20} color="#6B7280" />
+                  <View style={styles.insightIconContainer}>
+                    <Icon name="info" size={24} color="#6B7280" />
+                  </View>
                   <Text style={styles.insightText}>
                     No applications yet. Keep your jobs active to attract candidates!
                   </Text>
@@ -358,65 +372,80 @@ function AnalyticsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
+  },
+  headerContainer: {
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
   },
-  backButton: {
-    padding: 8,
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+    marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  headerSpacer: {
-    width: 40,
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1E293B',
+    letterSpacing: -0.5,
   },
   periodFilterContainer: {
     backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-    paddingVertical: 12,
+    borderBottomColor: '#E2E8F0',
   },
   periodFilters: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    gap: 8,
+    gap: 10,
   },
   periodFilter: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
   },
   periodFilterActive: {
     backgroundColor: '#00A389',
     borderColor: '#00A389',
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   periodFilterText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: '600',
+    color: '#64748B',
   },
   periodFilterTextActive: {
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // Account for tab bar height + extra space
+    paddingBottom: 120,
   },
   loadingContainer: {
     flex: 1,
@@ -426,7 +455,8 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#6B7280',
+    color: '#64748B',
+    fontWeight: '500',
   },
   errorContainer: {
     flex: 1,
@@ -436,72 +466,83 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: '#374151',
+    color: '#1E293B',
     textAlign: 'center',
     marginTop: 16,
     marginBottom: 24,
+    fontWeight: '600',
   },
   retryButton: {
     backgroundColor: '#00A389',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   retryButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   content: {
     padding: 20,
   },
   overviewSection: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#1E293B',
     marginBottom: 16,
+    letterSpacing: -0.3,
   },
   statsGrid: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 20,
+    padding: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  statCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+  gradientCard1: {
+    backgroundColor: '#00A389',
   },
-  statInfo: {
-    marginLeft: 12,
+  gradientCard2: {
+    backgroundColor: '#3B82F6',
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: 36,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginTop: 12,
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: '#6B7280',
+    color: '#FFFFFF',
+    fontWeight: '600',
+    opacity: 0.9,
   },
   statSubtext: {
-    fontSize: 12,
-    color: '#6B7280',
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginTop: 8,
+    opacity: 0.85,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   statusGrid: {
     flexDirection: 'row',
@@ -509,69 +550,126 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   statusCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    width: (width - 64) / 3,
+    borderRadius: 16,
+    padding: 20,
+    width: (width - 64) / 2,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  statusIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   statusCount: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    marginVertical: 8,
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#1E293B',
+    marginBottom: 6,
   },
   statusLabel: {
-    fontSize: 12,
-    color: '#6B7280',
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '700',
     textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   performanceCards: {
-    gap: 12,
+    gap: 16,
   },
   performanceCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 18,
+    padding: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  performanceHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
   },
   performanceJobTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 12,
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1E293B',
+    flex: 1,
+    marginRight: 12,
+  },
+  performanceBadge: {
+    backgroundColor: '#00A389',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  performanceBadgeText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   performanceMetrics: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
   performanceMetric: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 14,
+    gap: 10,
   },
-  performanceMetricText: {
-    fontSize: 13,
-    color: '#6B7280',
+  metricIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  metricValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1E293B',
+  },
+  metricLabel: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
   chartContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 18,
+    padding: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   chart: {
     flexDirection: 'row',
@@ -584,42 +682,66 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  chartBarContainer: {
+    width: '70%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 120,
+  },
   chartBarFill: {
-    width: 24,
-    borderRadius: 4,
-    marginBottom: 8,
+    width: '100%',
+    borderRadius: 8,
+    backgroundColor: '#00A389',
+    shadowColor: '#00A389',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   chartBarValue: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 4,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1E293B',
+    marginTop: 8,
   },
   chartBarLabel: {
     fontSize: 11,
-    color: '#9CA3AF',
+    color: '#94A3B8',
+    fontWeight: '600',
+    marginTop: 4,
   },
   insightsContainer: {
-    gap: 12,
+    gap: 14,
   },
   insightCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 18,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  insightIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   insightText: {
     flex: 1,
     fontSize: 14,
-    color: '#374151',
+    color: '#475569',
     lineHeight: 20,
+    fontWeight: '600',
   },
 });
 

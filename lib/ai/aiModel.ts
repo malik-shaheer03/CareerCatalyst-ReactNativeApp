@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // API Key - In production, this should be stored securely
-const API_KEY = "AIzaSyBbhkLUVTDC1j9GpVBJyGcs3YYe2oQHoC0";
+const API_KEY = "AIzaSyCyk6RkGGU-lEczlcuowYZmkMwuCRJSdSU";
 
 // Initialize the Google Generative AI
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// Use Gemini 2.5 Flash Lite model
+// Use Gemini 1.5 Flash model (more stable)
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash-lite",
 });
@@ -33,6 +33,8 @@ export class ResumeAIService {
    */
   static async generateSummary(jobTitle: string, experienceLevel?: string): Promise<string[]> {
     try {
+      console.log('[ResumeAIService] generateSummary called with:', { jobTitle, experienceLevel });
+      
       const prompt = `Job Title: ${jobTitle}${experienceLevel ? `, Experience Level: ${experienceLevel}` : ''}
       
       Generate a professional summary for this job title. Return a JSON object with the following structure:
@@ -48,21 +50,40 @@ export class ResumeAIService {
       Generate 3 different summaries for different experience levels (Fresher, Mid-Level, Senior) if no specific level is provided.
       Each summary should be 3-4 lines and highlight relevant skills, achievements, and career focus.`;
 
+      console.log('[ResumeAIService] Sending prompt to AI...');
       const result = await AIChatSession.sendMessage(prompt);
+      console.log('[ResumeAIService] AI response received');
+      
       const response = await result.response.text();
+      console.log('[ResumeAIService] Raw response:', response);
       
       // Parse JSON response
       const parsed = JSON.parse(response);
+      console.log('[ResumeAIService] Parsed response:', parsed);
       
       if (Array.isArray(parsed.summaries)) {
-        return parsed.summaries.map((item: any) => item.summary);
+        const summaries = parsed.summaries.map((item: any) => item.summary);
+        console.log('[ResumeAIService] Extracted summaries:', summaries);
+        return summaries;
       } else if (parsed.summary) {
+        console.log('[ResumeAIService] Single summary found:', parsed.summary);
         return [parsed.summary];
       }
       
+      console.error('[ResumeAIService] Invalid response format:', parsed);
       throw new Error('Invalid AI response format');
     } catch (error) {
-      console.error('Error generating summary:', error);
+      console.error('[ResumeAIService] Error generating summary:', error);
+      console.error('[ResumeAIService] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown',
+        stack: error instanceof Error ? error.stack : undefined,
+        type: typeof error
+      });
+      
+      if (error instanceof Error && error.message.includes('API key')) {
+        throw new Error('AI service configuration error. Please check API key.');
+      }
+      
       throw new Error('Failed to generate summary. Please try again.');
     }
   }
@@ -296,6 +317,88 @@ export class ResumeAIService {
     } catch (error) {
       console.error('Error generating training recommendations:', error);
       throw new Error('Failed to generate training recommendations. Please try again.');
+    }
+  }
+
+  /**
+   * Generate cover letter for job application
+   */
+  static async generateCoverLetter(jobTitle: string, company: string, applicantName?: string, userSkills?: string[]): Promise<string[]> {
+    try {
+      console.log('[ResumeAIService] generateCoverLetter called with:', { jobTitle, company, applicantName, userSkills });
+      
+      const skillsText = userSkills && userSkills.length > 0 
+        ? `Applicant Skills: ${userSkills.join(', ')}`
+        : 'Applicant is interested in this role';
+
+      const prompt = `Generate a professional cover letter for a job application.
+      
+      Job Details:
+      - Position: ${jobTitle}
+      - Company: ${company}
+      - ${skillsText}
+      ${applicantName ? `- Applicant Name: ${applicantName}` : ''}
+      
+      Generate a JSON object with the following structure:
+      {
+        "coverLetters": [
+          {
+            "letter": "Full cover letter text here",
+            "tone": "Professional/Enthusiastic/Formal"
+          }
+        ]
+      }
+      
+      Generate 3 different cover letter variations with different tones (Professional, Enthusiastic, Formal).
+      Each cover letter should:
+      - Be 3-4 paragraphs long
+      - Express genuine interest in the position and company
+      - Highlight relevant skills and experience
+      - Show enthusiasm and motivation
+      - Be personalized for the specific role
+      - End with a call to action
+      - Be approximately 200-300 words
+      
+      Do not include placeholder brackets like [Your Name] or [Date]. Write the letter ready to use.`;
+
+      console.log('[ResumeAIService] Sending cover letter prompt to AI...');
+      const result = await AIChatSession.sendMessage(prompt);
+      console.log('[ResumeAIService] AI response received for cover letter');
+      
+      const response = await result.response.text();
+      console.log('[ResumeAIService] Raw cover letter response:', response.substring(0, 200) + '...');
+      
+      // Parse JSON response
+      const parsed = JSON.parse(response);
+      console.log('[ResumeAIService] Parsed cover letter response');
+      
+      if (Array.isArray(parsed.coverLetters)) {
+        const letters = parsed.coverLetters.map((item: any) => item.letter);
+        console.log('[ResumeAIService] Extracted', letters.length, 'cover letters');
+        return letters;
+      } else if (parsed.letter) {
+        console.log('[ResumeAIService] Single cover letter found');
+        return [parsed.letter];
+      } else if (parsed.coverLetter) {
+        console.log('[ResumeAIService] Single coverLetter found');
+        return [parsed.coverLetter];
+      }
+      
+      console.error('[ResumeAIService] Invalid cover letter response format:', parsed);
+      throw new Error('Invalid AI response format');
+    } catch (error) {
+      console.error('[ResumeAIService] Error generating cover letter:', error);
+      console.error('[ResumeAIService] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown',
+        stack: error instanceof Error ? error.stack : undefined,
+        type: typeof error
+      });
+      
+      if (error instanceof Error && error.message.includes('API key')) {
+        throw new Error('AI service configuration error. Please check API key.');
+      }
+      
+      throw new Error('Failed to generate cover letter. Please try again.');
     }
   }
 }

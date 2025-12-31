@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 // Resume Index Screen - Redirects to Dashboard
 const ResumeIndexScreen: React.FC = () => {
@@ -9,7 +9,7 @@ const ResumeIndexScreen: React.FC = () => {
   useEffect(() => {
     // Redirect to resume dashboard
     router.replace('/(tabs)/resume-dashboard');
-  }, [router]);
+  }, []);
 
   return (
     <View style={styles.container}>

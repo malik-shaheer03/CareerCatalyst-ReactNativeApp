@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { useAuth } from '@/lib/auth-context';
+import { useNotificationService } from '@/lib/notification-service';
+import { getEmployerApplications, getEmployerJobs } from '@/lib/services/employer-services';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/lib/auth-context';
-import { useNotificationService } from '@/lib/notification-service';
-import { getEmployerAnalytics, getEmployerJobs, getEmployerApplications } from '@/lib/services/employer-services';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -320,14 +318,14 @@ const styles = StyleSheet.create({
   },
   statsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+    justifyContent: 'space-between',
+    gap: 10,
   },
   statCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    width: (width - 52) / 3,
+    padding: 16,
+    flex: 1,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

@@ -1,5 +1,9 @@
 import { AIChatSession } from './ai-model';
 
+// ML Service API Configuration
+const ML_API_URL = 'http://localhost:8001/api/recommend-training';
+const USE_ML_SERVICE = true; // Set to false to use Gemini API fallback
+
 export interface Course {
   platform: string;
   name: string;
@@ -13,7 +17,44 @@ export interface TrainingRecommendation {
   courses: Course[];
 }
 
-export const getRecommendedTraining = async (skillsArray: string[], jobTitle: string): Promise<TrainingRecommendation[]> => {
+/**
+ * Get training recommendations from ML service
+ */
+const getTrainingFromML = async (skillsArray: string[], jobTitle: string): Promise<TrainingRecommendation[]> => {
+  try {
+    const response = await fetch(ML_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        skills: skillsArray,
+        job_title: jobTitle,
+        top_n: 5
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`ML API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.success && data.training_recommendations) {
+      return data.training_recommendations;
+    } else {
+      throw new Error('Invalid response from ML service');
+    }
+  } catch (error) {
+    console.error("Error getting training from ML service:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get training recommendations from Gemini API (Fallback)
+ */
+const getTrainingFromGemini = async (skillsArray: string[], jobTitle: string): Promise<TrainingRecommendation[]> => {
   try {
     const prompt = `
 Given the user's job title: "${jobTitle}"
@@ -40,6 +81,39 @@ Return only a valid JSON array and nothing else.
     } catch (e) {
       console.error("Failed to parse Gemini response:", text, e);
       return [];
+    }
+  } catch (error) {
+    console.error("Error getting training from Gemini:", error);
+    throw error;
+  }
+};
+
+/**
+ * Main function to get training recommendations
+ * Uses ML service by default, falls back to Gemini API if ML service is unavailable
+ */
+export const getRecommendedTraining = async (skillsArray: string[], jobTitle: string): Promise<TrainingRecommendation[]> => {
+  try {
+    if (USE_ML_SERVICE) {
+      // Try ML service first
+      try {
+        console.log("🤖 Using ML Service for training recommendations...");
+        const recommendations = await getTrainingFromML(skillsArray, jobTitle);
+        console.log("✅ ML Service returned", recommendations.length, "training recommendations");
+        return recommendations;
+      } catch (mlError) {
+        console.warn("⚠️ ML Service unavailable, falling back to Gemini API...");
+        // Fall back to Gemini API
+        const recommendations = await getTrainingFromGemini(skillsArray, jobTitle);
+        console.log("✅ Gemini API returned", recommendations.length, "training recommendations");
+        return recommendations;
+      }
+    } else {
+      // Use Gemini API directly
+      console.log("🌟 Using Gemini API for training recommendations...");
+      const recommendations = await getTrainingFromGemini(skillsArray, jobTitle);
+      console.log("✅ Gemini API returned", recommendations.length, "training recommendations");
+      return recommendations;
     }
   } catch (error) {
     console.error("Error getting recommended training:", error);

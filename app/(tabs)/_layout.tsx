@@ -1,10 +1,9 @@
-import { Tabs } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { useAuth } from '@/lib/auth-context';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { usePathname, useRouter } from 'expo-router';
-import { useAuth } from '@/lib/auth-context';
+import { Tabs, usePathname, useRouter } from 'expo-router';
+import React from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 export default function TabLayout() {
   const pathname = usePathname();
@@ -37,19 +36,34 @@ export default function TabLayout() {
   // Check if we're on job scraper (should highlight find-jobs tab)
   const isJobScraperRelated = pathname.includes('/job-scraper');
 
-  // Check if we're on find-jobs or job scraper (both should highlight find-jobs)
-  const isFindJobsRelated = pathname.includes('/find-jobs') || isJobScraperRelated || pathname.includes('/apply-job') || pathname.includes('/job-details');
-
-  // Check if we're on employer-related screens
-  const isEmployerJobsRelated = pathname.includes('/employer/post-job') || pathname.includes('/employer/manage-jobs');
-  const isEmployerAppsRelated = pathname.includes('/employer/applications') || pathname.includes('/employer/candidate-details');
-  const isEmployerAnalyticsRelated = pathname.includes('/employer/analytics');
-
   // Determine if we should show employer tabs
   // Only show employer tabs when user is logged in AND is an employer
   const isEmployer = !loading && currentUser && userType === 'employer';
   const isEmployee = !loading && currentUser && userType === 'employee'; 
   const isLoggedIn = !loading && !!currentUser;
+
+  // Check if we're on find-jobs or job scraper (both should highlight find-jobs)
+  // For employees, job-details should also highlight find-jobs
+  const isFindJobsRelated = pathname.includes('/find-jobs') || 
+                           isJobScraperRelated || 
+                           pathname.includes('/apply-job') ||
+                           (pathname.includes('/job-details') && isEmployee);
+
+  // Check if we're on employer-related screens
+  // For employers, job-details should highlight manage-jobs
+  const isEmployerJobsRelated = pathname.includes('/employer/post-job') || 
+                                pathname.includes('/employer/manage-jobs') || 
+                                (pathname.includes('/job-details') && isEmployer);
+  const isEmployerAppsRelated = pathname.includes('/employer/applications') || pathname.includes('/employer/candidate-details');
+  const isEmployerAnalyticsRelated = pathname.includes('/employer/analytics');
+
+  // Debug logging for job-details page
+  if (pathname.includes('/job-details')) {
+    console.log('TabLayout - On job-details page. pathname:', pathname, 
+                'isEmployee:', isEmployee, 'isEmployer:', isEmployer,
+                'isFindJobsRelated:', isFindJobsRelated, 
+                'isEmployerJobsRelated:', isEmployerJobsRelated);
+  }
   
   console.log('TabLayout - loading:', loading, 'isEmployer:', isEmployer, 'isEmployee:', isEmployee, 'isLoggedIn:', isLoggedIn, 'userType:', userType, 'currentUser:', !!currentUser);
 
@@ -144,7 +158,7 @@ export default function TabLayout() {
         name="employer/post-job"
         options={{
           title: 'Post Job',
-          href: isEmployer ? undefined : null, // Hide if not employer
+          href: null, // Hidden from tab bar, accessible via navigation only
           tabBarIcon: ({ color, focused }) => {
             const isCustomFocused = focused || pathname.includes('/employer/post-job');
             return (
@@ -182,7 +196,7 @@ export default function TabLayout() {
           title: 'Manage Jobs',
           href: isEmployer ? undefined : null, // Hide if not employer
           tabBarIcon: ({ color, focused }) => {
-            const isCustomFocused = focused || pathname.includes('/employer/manage-jobs');
+            const isCustomFocused = focused || isEmployerJobsRelated;
             return (
               <View style={styles.tabItemContainer}>
                 {isCustomFocused && (
@@ -199,7 +213,7 @@ export default function TabLayout() {
             );
           },
           tabBarLabel: ({ focused, children }) => {
-            const isActive = focused || pathname.includes('/employer/manage-jobs');
+            const isActive = focused || isEmployerJobsRelated;
             return (
               <Text style={[
                 styles.tabBarLabel,

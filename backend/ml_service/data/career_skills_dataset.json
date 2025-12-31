@@ -1,0 +1,214 @@
+{
+  "training_data": [
+    {
+      "skills": ["JavaScript", "React", "HTML", "CSS", "TypeScript"],
+      "career_paths": [
+        {"id": 1, "title": "Frontend Developer", "description": "Build user interfaces using React, Vue, or Angular. Focus on creating responsive, accessible web applications with modern JavaScript frameworks.", "match_score": 0.95},
+        {"id": 2, "title": "Full Stack Web Developer", "description": "Develop both client and server-side applications. Combine frontend frameworks with backend technologies like Node.js or Python.", "match_score": 0.85},
+        {"id": 3, "title": "UI/UX Engineer", "description": "Bridge design and development by implementing user interfaces with attention to usability and visual design using modern web technologies.", "match_score": 0.80},
+        {"id": 4, "title": "Web Application Developer", "description": "Create dynamic web applications with focus on performance, security, and scalability using JavaScript ecosystem.", "match_score": 0.78},
+        {"id": 5, "title": "React Native Developer", "description": "Build cross-platform mobile applications using React Native, leveraging web development skills for mobile platforms.", "match_score": 0.75}
+      ]
+    },
+    {
+      "skills": ["Python", "Django", "Flask", "PostgreSQL", "RESTful APIs"],
+      "career_paths": [
+        {"id": 1, "title": "Backend Developer", "description": "Design and implement server-side logic, databases, and APIs using Python frameworks like Django or Flask with focus on scalability.", "match_score": 0.95},
+        {"id": 2, "title": "Full Stack Python Developer", "description": "Build complete web applications using Python for backend and modern JavaScript frameworks for frontend development.", "match_score": 0.88},
+        {"id": 3, "title": "API Developer", "description": "Specialize in creating robust RESTful and GraphQL APIs, focusing on authentication, data validation, and performance optimization.", "match_score": 0.85},
+        {"id": 4, "title": "DevOps Engineer", "description": "Automate deployment pipelines, manage cloud infrastructure, and maintain CI/CD systems using Python scripting and automation tools.", "match_score": 0.70},
+        {"id": 5, "title": "Data Engineer", "description": "Build data pipelines and ETL systems using Python, working with databases and big data technologies for data processing.", "match_score": 0.72}
+      ]
+    },
+    {
+      "skills": ["Machine Learning", "Python", "TensorFlow", "scikit-learn", "Data Analysis"],
+      "career_paths": [
+        {"id": 1, "title": "Machine Learning Engineer", "description": "Develop and deploy ML models for real-world applications using TensorFlow, PyTorch, and scikit-learn with focus on model optimization.", "match_score": 0.98},
+        {"id": 2, "title": "Data Scientist", "description": "Analyze complex datasets, build predictive models, and extract insights using statistical methods and machine learning algorithms.", "match_score": 0.90},
+        {"id": 3, "title": "AI Engineer", "description": "Build intelligent systems and applications using deep learning, NLP, and computer vision techniques with modern AI frameworks.", "match_score": 0.92},
+        {"id": 4, "title": "Research Scientist (ML)", "description": "Conduct research in machine learning, publish papers, and develop novel algorithms for academic or industry research labs.", "match_score": 0.85},
+        {"id": 5, "title": "MLOps Engineer", "description": "Deploy, monitor, and maintain machine learning models in production environments using containerization and cloud platforms.", "match_score": 0.80}
+      ]
+    },
+    {
+      "skills": ["Java", "Spring Boot", "Microservices", "Kubernetes", "Docker"],
+      "career_paths": [
+        {"id": 1, "title": "Java Backend Developer", "description": "Build enterprise applications using Java and Spring ecosystem, focusing on scalable microservices architecture and best practices.", "match_score": 0.95},
+        {"id": 2, "title": "Microservices Architect", "description": "Design distributed systems using microservices patterns, container orchestration, and cloud-native technologies.", "match_score": 0.90},
+        {"id": 3, "title": "DevOps Engineer", "description": "Manage containerized applications, implement CI/CD pipelines, and orchestrate services using Kubernetes and Docker.", "match_score": 0.88},
+        {"id": 4, "title": "Cloud Solutions Architect", "description": "Design scalable cloud infrastructure, implement best practices for security and performance on AWS, Azure, or GCP.", "match_score": 0.82},
+        {"id": 5, "title": "Enterprise Application Developer", "description": "Develop large-scale business applications using Java technologies, integrating with legacy systems and modern architectures.", "match_score": 0.78}
+      ]
+    },
+    {
+      "skills": ["React Native", "Mobile Development", "iOS", "Android", "JavaScript"],
+      "career_paths": [
+        {"id": 1, "title": "Mobile App Developer", "description": "Create cross-platform mobile applications using React Native or Flutter, focusing on performance and native functionality.", "match_score": 0.95},
+        {"id": 2, "title": "React Native Developer", "description": "Specialize in building high-quality mobile apps with React Native, integrating native modules and third-party libraries.", "match_score": 0.98},
+        {"id": 3, "title": "iOS Developer", "description": "Develop native iOS applications using Swift or Objective-C, following Apple's Human Interface Guidelines and best practices.", "match_score": 0.75},
+        {"id": 4, "title": "Android Developer", "description": "Build native Android applications using Kotlin or Java, implementing Material Design and Android platform features.", "match_score": 0.75},
+        {"id": 5, "title": "Mobile UI/UX Developer", "description": "Focus on creating exceptional mobile user experiences with attention to platform-specific design patterns and interactions.", "match_score": 0.80}
+      ]
+    },
+    {
+      "skills": ["AWS", "Azure", "Cloud Architecture", "Terraform", "CI/CD"],
+      "career_paths": [
+        {"id": 1, "title": "Cloud Engineer", "description": "Design, implement, and manage cloud infrastructure on AWS, Azure, or GCP using infrastructure-as-code and automation.", "match_score": 0.95},
+        {"id": 2, "title": "DevOps Engineer", "description": "Build and maintain CI/CD pipelines, automate deployments, and ensure system reliability using modern DevOps practices.", "match_score": 0.92},
+        {"id": 3, "title": "Site Reliability Engineer (SRE)", "description": "Ensure system uptime, performance, and scalability through automation, monitoring, and incident response procedures.", "match_score": 0.88},
+        {"id": 4, "title": "Cloud Solutions Architect", "description": "Design end-to-end cloud solutions, optimize costs, and implement security best practices for enterprise clients.", "match_score": 0.90},
+        {"id": 5, "title": "Infrastructure Engineer", "description": "Manage and optimize infrastructure using IaC tools like Terraform, ensuring high availability and disaster recovery.", "match_score": 0.85}
+      ]
+    },
+    {
+      "skills": ["SQL", "Database Design", "MongoDB", "Redis", "Data Modeling"],
+      "career_paths": [
+        {"id": 1, "title": "Database Administrator", "description": "Manage, optimize, and maintain database systems ensuring data integrity, security, and high availability.", "match_score": 0.95},
+        {"id": 2, "title": "Data Engineer", "description": "Build data pipelines, ETL processes, and data warehouses using SQL and NoSQL databases for analytics and reporting.", "match_score": 0.90},
+        {"id": 3, "title": "Backend Developer", "description": "Design database schemas and implement data access layers for applications using various database technologies.", "match_score": 0.85},
+        {"id": 4, "title": "Database Developer", "description": "Write complex SQL queries, stored procedures, and optimize database performance for enterprise applications.", "match_score": 0.92},
+        {"id": 5, "title": "Data Architect", "description": "Design comprehensive data strategies, modeling data flows, and establishing data governance policies for organizations.", "match_score": 0.88}
+      ]
+    },
+    {
+      "skills": ["Cybersecurity", "Penetration Testing", "Network Security", "Ethical Hacking"],
+      "career_paths": [
+        {"id": 1, "title": "Security Engineer", "description": "Implement security measures, conduct vulnerability assessments, and protect systems from cyber threats and attacks.", "match_score": 0.95},
+        {"id": 2, "title": "Penetration Tester", "description": "Perform ethical hacking and security audits to identify vulnerabilities in applications, networks, and infrastructure.", "match_score": 0.92},
+        {"id": 3, "title": "Security Analyst", "description": "Monitor security systems, investigate incidents, and implement security policies to protect organizational assets.", "match_score": 0.88},
+        {"id": 4, "title": "Information Security Specialist", "description": "Develop security protocols, conduct risk assessments, and ensure compliance with security standards and regulations.", "match_score": 0.85},
+        {"id": 5, "title": "Cybersecurity Consultant", "description": "Advise organizations on security best practices, conduct audits, and help implement comprehensive security strategies.", "match_score": 0.82}
+      ]
+    },
+    {
+      "skills": ["UI/UX Design", "Figma", "Adobe XD", "Prototyping", "User Research"],
+      "career_paths": [
+        {"id": 1, "title": "UI/UX Designer", "description": "Design user interfaces and experiences through research, wireframing, prototyping, and usability testing.", "match_score": 0.95},
+        {"id": 2, "title": "Product Designer", "description": "Own end-to-end product design from concept to launch, collaborating with engineering and product management teams.", "match_score": 0.90},
+        {"id": 3, "title": "Interaction Designer", "description": "Focus on creating intuitive interactions and micro-interactions that enhance user experience and engagement.", "match_score": 0.88},
+        {"id": 4, "title": "UX Researcher", "description": "Conduct user research, usability testing, and analyze user behavior to inform design decisions and improve products.", "match_score": 0.85},
+        {"id": 5, "title": "UI Engineer", "description": "Bridge design and development by implementing pixel-perfect interfaces with modern frontend technologies.", "match_score": 0.78}
+      ]
+    },
+    {
+      "skills": ["Node.js", "Express", "MongoDB", "REST APIs", "JavaScript"],
+      "career_paths": [
+        {"id": 1, "title": "Node.js Developer", "description": "Build scalable backend services using Node.js and Express, focusing on API development and real-time applications.", "match_score": 0.95},
+        {"id": 2, "title": "Full Stack JavaScript Developer", "description": "Develop complete web applications using JavaScript across the stack with Node.js backend and React/Vue frontend.", "match_score": 0.92},
+        {"id": 3, "title": "API Developer", "description": "Design and implement RESTful and GraphQL APIs using Node.js, focusing on performance and scalability.", "match_score": 0.90},
+        {"id": 4, "title": "Backend Engineer", "description": "Build server-side applications, microservices, and data processing systems using Node.js ecosystem.", "match_score": 0.88},
+        {"id": 5, "title": "Real-time Application Developer", "description": "Create real-time applications using WebSockets, Socket.io, and Node.js for chat, gaming, or collaboration tools.", "match_score": 0.85}
+      ]
+    },
+    {
+      "skills": ["C++", "Algorithm Design", "Data Structures", "System Programming"],
+      "career_paths": [
+        {"id": 1, "title": "System Software Developer", "description": "Develop operating systems, drivers, and low-level software using C++ with focus on performance and memory management.", "match_score": 0.95},
+        {"id": 2, "title": "Game Developer", "description": "Create game engines, graphics systems, and gameplay mechanics using C++ for AAA games and game development studios.", "match_score": 0.88},
+        {"id": 3, "title": "Embedded Systems Engineer", "description": "Program microcontrollers and embedded devices using C++ for IoT, automotive, or robotics applications.", "match_score": 0.85},
+        {"id": 4, "title": "Performance Engineer", "description": "Optimize application performance, reduce latency, and improve resource utilization using C++ and profiling tools.", "match_score": 0.82},
+        {"id": 5, "title": "Algorithm Engineer", "description": "Design and implement complex algorithms for computational problems in finance, graphics, or scientific computing.", "match_score": 0.90}
+      ]
+    },
+    {
+      "skills": ["Unity", "C#", "Game Development", "3D Graphics"],
+      "career_paths": [
+        {"id": 1, "title": "Game Developer", "description": "Create games using Unity engine, implementing gameplay mechanics, physics, and user interfaces for various platforms.", "match_score": 0.95},
+        {"id": 2, "title": "Unity Developer", "description": "Specialize in Unity development for games, VR/AR experiences, and interactive simulations across mobile and desktop.", "match_score": 0.98},
+        {"id": 3, "title": "AR/VR Developer", "description": "Build immersive augmented and virtual reality experiences using Unity for entertainment, training, or enterprise applications.", "match_score": 0.90},
+        {"id": 4, "title": "Technical Game Designer", "description": "Bridge design and programming by implementing game systems, balancing gameplay, and prototyping new features.", "match_score": 0.85},
+        {"id": 5, "title": "Simulation Developer", "description": "Create training simulations, architectural visualizations, and educational software using Unity 3D engine.", "match_score": 0.82}
+      ]
+    },
+    {
+      "skills": ["Blockchain", "Solidity", "Ethereum", "Smart Contracts", "Web3"],
+      "career_paths": [
+        {"id": 1, "title": "Blockchain Developer", "description": "Build decentralized applications (dApps) and smart contracts on Ethereum, Polygon, or other blockchain platforms.", "match_score": 0.95},
+        {"id": 2, "title": "Smart Contract Developer", "description": "Write, test, and audit smart contracts using Solidity, ensuring security and efficiency in blockchain applications.", "match_score": 0.98},
+        {"id": 3, "title": "Web3 Developer", "description": "Create Web3 applications integrating blockchain with frontend interfaces using libraries like Web3.js or Ethers.js.", "match_score": 0.92},
+        {"id": 4, "title": "DeFi Developer", "description": "Build decentralized finance protocols, including lending platforms, DEXs, and yield farming applications.", "match_score": 0.88},
+        {"id": 5, "title": "Blockchain Security Engineer", "description": "Audit smart contracts, identify vulnerabilities, and implement security best practices for blockchain projects.", "match_score": 0.85}
+      ]
+    },
+    {
+      "skills": ["Data Visualization", "Tableau", "Power BI", "Python", "Statistical Analysis"],
+      "career_paths": [
+        {"id": 1, "title": "Data Analyst", "description": "Analyze business data, create visualizations, and provide insights using tools like Tableau, Power BI, and SQL.", "match_score": 0.95},
+        {"id": 2, "title": "Business Intelligence Analyst", "description": "Transform raw data into actionable business intelligence through reporting, dashboards, and data-driven recommendations.", "match_score": 0.92},
+        {"id": 3, "title": "Data Visualization Specialist", "description": "Design compelling visual representations of complex data, helping stakeholders understand trends and patterns.", "match_score": 0.90},
+        {"id": 4, "title": "Analytics Engineer", "description": "Build data models, ETL pipelines, and analytics infrastructure to support business intelligence initiatives.", "match_score": 0.85},
+        {"id": 5, "title": "Market Research Analyst", "description": "Analyze market trends, consumer behavior, and competitive landscape using statistical methods and visualization tools.", "match_score": 0.80}
+      ]
+    },
+    {
+      "skills": ["Go", "Microservices", "Docker", "Kubernetes", "Distributed Systems"],
+      "career_paths": [
+        {"id": 1, "title": "Go Developer", "description": "Build high-performance backend services, microservices, and tools using Go programming language with focus on concurrency.", "match_score": 0.95},
+        {"id": 2, "title": "Distributed Systems Engineer", "description": "Design and implement scalable distributed systems using Go, handling large-scale data processing and communication.", "match_score": 0.92},
+        {"id": 3, "title": "Platform Engineer", "description": "Build internal platforms, tools, and infrastructure services using Go for improving developer productivity.", "match_score": 0.88},
+        {"id": 4, "title": "Cloud Native Developer", "description": "Develop cloud-native applications using Go with containerization and orchestration technologies.", "match_score": 0.90},
+        {"id": 5, "title": "Backend Infrastructure Engineer", "description": "Build and maintain backend infrastructure, APIs, and services using Go for high-traffic applications.", "match_score": 0.85}
+      ]
+    },
+    {
+      "skills": ["Swift", "iOS Development", "Xcode", "SwiftUI", "UIKit"],
+      "career_paths": [
+        {"id": 1, "title": "iOS Developer", "description": "Build native iOS applications using Swift and SwiftUI, following Apple's design guidelines and best practices.", "match_score": 0.98},
+        {"id": 2, "title": "Mobile App Developer", "description": "Create applications for Apple ecosystem including iPhone, iPad, Apple Watch, and Apple TV using Swift.", "match_score": 0.92},
+        {"id": 3, "title": "iOS UI/UX Developer", "description": "Focus on creating beautiful iOS interfaces with SwiftUI and UIKit, emphasizing animations and user experience.", "match_score": 0.85},
+        {"id": 4, "title": "Apple Platform Developer", "description": "Develop applications across Apple platforms, integrating with macOS, iOS, and watchOS ecosystems.", "match_score": 0.88},
+        {"id": 5, "title": "Mobile Solutions Architect", "description": "Design mobile application architectures, implement best practices, and mentor iOS development teams.", "match_score": 0.80}
+      ]
+    },
+    {
+      "skills": ["Kotlin", "Android Development", "Jetpack Compose", "Android Studio"],
+      "career_paths": [
+        {"id": 1, "title": "Android Developer", "description": "Build native Android applications using Kotlin and Jetpack libraries, following Material Design principles.", "match_score": 0.98},
+        {"id": 2, "title": "Mobile App Developer", "description": "Create Android applications with modern architecture patterns like MVVM, using Kotlin and Android Jetpack.", "match_score": 0.92},
+        {"id": 3, "title": "Android UI Developer", "description": "Focus on building beautiful Android interfaces using Jetpack Compose and Material Design components.", "match_score": 0.85},
+        {"id": 4, "title": "Mobile Backend Developer", "description": "Build backend services for Android apps, integrating with Firebase, REST APIs, and cloud services.", "match_score": 0.78},
+        {"id": 5, "title": "Android Platform Engineer", "description": "Work on Android platform development, custom ROM development, or framework-level Android programming.", "match_score": 0.82}
+      ]
+    },
+    {
+      "skills": ["DevOps", "Jenkins", "GitLab CI", "Ansible", "Monitoring"],
+      "career_paths": [
+        {"id": 1, "title": "DevOps Engineer", "description": "Automate software development lifecycle, implement CI/CD pipelines, and manage infrastructure using DevOps practices.", "match_score": 0.98},
+        {"id": 2, "title": "Release Engineer", "description": "Manage software releases, coordinate deployments, and ensure smooth delivery of applications to production.", "match_score": 0.90},
+        {"id": 3, "title": "Automation Engineer", "description": "Automate manual processes, testing, and deployments using scripting and configuration management tools.", "match_score": 0.92},
+        {"id": 4, "title": "Build Engineer", "description": "Maintain build systems, optimize compilation times, and ensure reproducible builds across environments.", "match_score": 0.85},
+        {"id": 5, "title": "Infrastructure Automation Specialist", "description": "Implement infrastructure-as-code, automate provisioning, and maintain cloud infrastructure using modern tools.", "match_score": 0.88}
+      ]
+    },
+    {
+      "skills": ["GraphQL", "Apollo", "REST APIs", "API Design", "Microservices"],
+      "career_paths": [
+        {"id": 1, "title": "API Developer", "description": "Design and implement GraphQL and REST APIs, focusing on performance, security, and developer experience.", "match_score": 0.95},
+        {"id": 2, "title": "Backend Developer", "description": "Build server-side applications with modern API technologies, implementing business logic and data access layers.", "match_score": 0.90},
+        {"id": 3, "title": "Full Stack Developer", "description": "Develop complete applications using GraphQL for data layer and modern frontend frameworks for user interfaces.", "match_score": 0.88},
+        {"id": 4, "title": "API Architect", "description": "Design API strategies, establish standards, and ensure consistency across microservices architecture.", "match_score": 0.85},
+        {"id": 5, "title": "Integration Engineer", "description": "Build integrations between systems using APIs, webhooks, and message queues for enterprise applications.", "match_score": 0.82}
+      ]
+    },
+    {
+      "skills": ["Vue.js", "Nuxt.js", "JavaScript", "Frontend", "Vuex"],
+      "career_paths": [
+        {"id": 1, "title": "Vue.js Developer", "description": "Build modern web applications using Vue.js ecosystem, focusing on reactive interfaces and component architecture.", "match_score": 0.95},
+        {"id": 2, "title": "Frontend Developer", "description": "Create user interfaces with Vue.js, implementing responsive designs and smooth user experiences.", "match_score": 0.92},
+        {"id": 3, "title": "Full Stack JavaScript Developer", "description": "Develop complete web applications using Vue.js frontend with Node.js or other backend technologies.", "match_score": 0.88},
+        {"id": 4, "title": "Web Application Developer", "description": "Build single-page applications using Vue.js with state management and modern build tools.", "match_score": 0.85},
+        {"id": 5, "title": "Nuxt.js Developer", "description": "Create server-side rendered Vue applications using Nuxt.js framework for better SEO and performance.", "match_score": 0.90}
+      ]
+    },
+    {
+      "skills": ["Angular", "TypeScript", "RxJS", "NgRx", "Frontend"],
+      "career_paths": [
+        {"id": 1, "title": "Angular Developer", "description": "Build enterprise web applications using Angular framework, TypeScript, and reactive programming with RxJS.", "match_score": 0.95},
+        {"id": 2, "title": "Frontend Engineer", "description": "Develop complex user interfaces with Angular, implementing scalable architecture and state management.", "match_score": 0.92},
+        {"id": 3, "title": "Full Stack Developer", "description": "Create complete web applications using Angular frontend with Java, .NET, or Node.js backend technologies.", "match_score": 0.88},
+        {"id": 4, "title": "Enterprise Application Developer", "description": "Build large-scale business applications using Angular with focus on maintainability and scalability.", "match_score": 0.85},
+        {"id": 5, "title": "TypeScript Developer", "description": "Specialize in TypeScript development across frontend and backend, with Angular as primary frontend framework.", "match_score": 0.82}
+      ]
+    }
+  ]
+}
