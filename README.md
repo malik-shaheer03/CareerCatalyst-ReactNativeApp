@@ -1,4 +1,4 @@
-# 🚀 CareerCatalyst -  💼 **Job Discovery & Scraping** - Advanced job search, filtering, and automatic job scraping from LinkedIn and Indeed
+# 🚀 CareerCatalyst - AI-Powered Career Development Platform
 
 <div align="center">
 
@@ -6,319 +6,543 @@
 ![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Google AI](https://img.shields.io/badge/Google_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Scikit Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
-*Comprehensive mobile career development platform with AI-powered interview preparation, resume building, and job matching*
+*Comprehensive mobile career development platform with ML-powered predictions, AI interview prep, and intelligent job matching*
 
-**📱 Cross-Platform | 🤖 AI-Powered | 🔐 Secure Authentication | 📊 Real-time Analytics | 📧 Email Integration**
+**📱 Cross-Platform | 🤖 ML-Powered | 🔐 Secure | 📊 Real-time Analytics | 📧 Email Integration**
 
 </div>
 
+---
+
 ## 🚀 Overview
 
-**CareerCatalyst** is a cutting-edge mobile application that revolutionizes career development through AI-powered tools and comprehensive job search capabilities. Built with React Native and Expo, it provides job seekers with intelligent interview preparation, professional resume building, personalized career guidance, and seamless job discovery experiences.
+**CareerCatalyst** is a cutting-edge React Native mobile application that revolutionizes career development through **Machine Learning** and **AI-powered tools**. Built with React Native, Expo, Python ML backend, and Firebase, it provides comprehensive solutions for job seekers and employers.
 
-### 🎯 Complete Feature Overview
+### 🎯 Key Highlights
 
-| Category | Job Seeker Features | Employer Features |
-|----------|---------------------|-------------------|
-| **🔐 Authentication** | Email/Password login, OTP password reset | Email/Password login, Secure access |
-| **📊 Dashboard** | Personal analytics, performance tracking | Job analytics, application metrics |
-| **💼 Jobs** | Find jobs, scrape LinkedIn/Indeed, apply | Post jobs, manage listings, analytics |
-| **📥 Applications** | Track application status, get updates | Review, shortlist, hire, reject |
-| **📧 Email** | Resume sharing, OTP reset, status updates | Send shortlist/hire emails to candidates |
-| **📄 Resume** | Build, edit, manage, share via email PDF | View candidate resumes |
-| **🎤 AI Features** | Mock interviews, MCQ practice, career guidance | - |
-| **🗺️ Career** | Personalized path recommendations | - |
-| **📍 Location** | GPS-based job search near you | - |
-| **🔔 Notifications** | Toast alerts, email notifications | Real-time updates |
+- **🤖 ML Career Predictions**: TF-IDF-based ML model predicting career paths from user skills
+- **📚 130+ Course Recommendations**: Curated Coursera & Udemy courses
+- **🎤 AI Interview Preparation**: Real-time speech recognition with Gemini AI feedback
+- **📄 Advanced Resume Builder**: Professional resumes with PDF export and email sharing
+- **🌐 Job Scraping**: Automatic job discovery from LinkedIn & Indeed
+- **📧 Email Integration**: Complete communication system for employers and job seekers
+- **📊 Real-time Analytics**: Performance tracking for both job seekers and employers
 
-### ✨ Key Features
+---
 
-#### 🎯 **Core Features**
-- 🎤 **AI-Powered Interview Prep** - Mock interviews with real-time speech recognition and analysis
-- 📝 **Smart MCQ Practice** - Adaptive quiz system with AI-generated questions
-- 🗺️ **Career Path Guidance** - Personalized career recommendations using Google Gemini AI
-- 💼 **Job Discovery** - Advanced job search with filtering and real-time updates
-- � **Multi-role Authentication** - Secure login for job seekers and employers with email/password
-- 📊 **Performance Analytics** - Detailed insights into interview and quiz performance
+## 📋 Table of Contents
 
-#### 📄 **Advanced Resume System**
-- 📝 **Professional Resume Builder** - Create stunning resumes with rich text editing
-- 🎨 **Multiple Resume Templates** - Choose from various professional designs
-- 📊 **Resume Dashboard** - Manage multiple resumes in one place
-- 👁️ **Real-time Preview** - See changes instantly as you edit
-- 📤 **PDF Export** - Download resumes as high-quality PDF files
-- 📧 **Email Sharing** - Share resumes directly via email with PDF attachments
-- � **Auto-save** - Never lose your work with automatic saving
-- 📋 **Resume Duplication** - Quickly create variations of existing resumes
-- ⭐ **Favorites System** - Mark important resumes for quick access
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [ML Service Architecture](#-ml-service-architecture)
+- [Backend Services](#-backend-services)
+- [Installation](#-installation--setup)
+- [Running the Application](#-running-the-application)
+- [Project Structure](#-project-structure)
+- [API Documentation](#-api-endpoints)
+- [Screenshots](#-screenshots)
+- [Contributing](#-contributing)
+- [Author](#-author)
+- [License](#-license)
 
-#### 🔐 **Authentication & Security**
-- 🔑 **Password Reset with OTP** - Secure email-based password recovery
-- � **Email Verification** - OTP-based email verification system
-- 🛡️ **Protected Routes** - Role-based access control
-- 🔒 **Firebase Security Rules** - Database-level security enforcement
-- 🚪 **Secure Logout** - Clean session management across all platforms
+---
 
-#### 🎨 **UI/UX Enhancements**
-- 🔔 **Toast Notifications** - Beautiful, informative feedback messages
-- ✅ **Confirmation Modals** - Interactive dialogs for critical actions
-- 🎭 **Smooth Animations** - Professional transitions and micro-interactions
-- � **Responsive Design** - Optimized for all device sizes
-- 🌈 **Modern Gradients** - Eye-catching color schemes throughout
-- 💎 **Glassmorphism Effects** - Contemporary blur and transparency effects
+## ✨ Features
 
-#### 📧 **Email Communication & Notifications**
-- ✉️ **Employer to Candidate**: Shortlisting notifications, hiring offers, custom messages
-- 🔐 **OTP Password Reset**: Secure 6-digit OTP via email for password recovery
-- 📄 **Resume Sharing**: Share resumes via email with PDF attachments
-- 📧 **Application Updates**: Email notifications for application status changes
-- 🎉 **Hiring Notifications**: Professional job offer emails to successful candidates
-- 📨 **Interview Invitations**: Coordinated interview scheduling via email
-- 🔔 **System Notifications**: Account updates and important alerts
+### 🤖 Machine Learning & AI Features
 
-#### 🌐 **Job Discovery & Scraping**
-- � **LinkedIn Scraping**: Automatic job discovery from LinkedIn
-- 🟣 **Indeed Scraping**: Real-time job scraping from Indeed
-- 📍 **Location-based Search**: GPS-integrated job search near you
-- � **Advanced Filters**: Salary, type, experience, keywords, and company filters
+#### **ML Career Path Prediction Service** (NEW!)
+- 🎯 **Career Path Prediction**: TF-IDF + Cosine Similarity algorithm predicts top 5 career paths
+- 📚 **Training Recommendations**: 130+ curated courses from Coursera & Udemy
+- 🔬 **Skill Matching**: 500+ skill vocabulary with unigrams and bigrams
+- 📊 **Match Scoring**: Confidence levels (High >0.5, Medium 0.3-0.5, Low <0.3)
+- 🔄 **Intelligent Fallback**: Seamless fallback to Gemini AI if ML service unavailable
+- ⚡ **FastAPI Backend**: High-performance Python ML service on Port 8001
+- 📖 **Interactive Docs**: Swagger UI documentation at `/docs`
+
+#### **Career Paths Supported** (21 Total)
+- Frontend Developer
+- Backend Developer
+- Full Stack Developer
+- Mobile App Developer (React Native, Flutter, iOS, Android)
+- Data Scientist
+- Machine Learning Engineer
+- AI Engineer
+- DevOps Engineer
+- Cloud Engineer (AWS, Azure, GCP)
+- Data Engineer
+- Database Administrator
+- Security Engineer / Cybersecurity Specialist
+- UI/UX Designer
+- Product Manager
+- QA Engineer / Test Automation
+- Game Developer
+- Blockchain Developer
+- Data Analyst / Business Intelligence
+- API Developer
+- System Software Developer
+- Platform Engineer
+
+#### **AI-Powered Interview System**
+- 🎤 **Mock Interviews**: Real-time speech recognition and analysis
+- 💬 **AI Feedback**: Detailed performance analysis using Google Gemini AI
+- 📝 **MCQ Practice**: Adaptive quiz system with AI-generated questions
+- 📊 **Performance Tracking**: Detailed scores, improvements, and weak areas
+- 🎯 **Role-Specific Questions**: Customized questions based on job title
+
+#### **AI Career Guidance**
+- 🗺️ **Personalized Career Paths**: AI recommendations based on skills and experience
+- 🎓 **Training Suggestions**: Curated learning resources mapped to career paths
+- 📈 **Skill Gap Analysis**: Identify missing skills for target careers
+- 💡 **Industry Insights**: Trends and opportunities in different fields
+
+---
+
+### 📄 Advanced Resume System
+
+#### **Resume Builder Features**
+- 📝 **Rich Text Editor**: Professional formatting with bold, italic, bullet points
+- 🎨 **Multiple Templates**: Various professional designs (ATS-friendly)
+- 👁️ **Real-time Preview**: See changes instantly as you edit
+- 📤 **PDF Export**: High-quality PDF generation with Expo Print
+- 💾 **Auto-save**: Automatic saving every few seconds
+- 🤖 **AI Summary Generation**: Gemini AI generates professional summaries
+- 📊 **Resume Sections**: Personal info, summary, experience, education, skills, projects, certifications
+- 🎯 **Section Management**: Add, edit, reorder, delete sections
+- 🖼️ **Avatar Upload**: Professional profile pictures
+
+#### **Resume Dashboard**
+- 📚 **Multi-Resume Management**: Create and manage unlimited resumes
+- 🔍 **Search & Filter**: Find resumes by title, date, or favorites
+- ⭐ **Favorites System**: Mark important resumes for quick access
+- 📊 **Sort Options**: Sort by date created or name
+- 📤 **Email Sharing**: Share resumes via email with PDF attachments
+- 📥 **Download**: Export as PDF files
+- 📋 **Duplicate**: Create copies of existing resumes
+- 🗑️ **Delete**: Remove unwanted resumes with confirmation
+- 🔄 **Real-time Sync**: Firebase Firestore synchronization
+
+---
+
+### 💼 Job Discovery & Management
+
+#### **Job Search Features**
+- 🔍 **Advanced Search**: Filter by title, location, salary, type, experience
+- 📍 **Location-based Search**: GPS integration for nearby jobs
+- 🔄 **Real-time Updates**: Live job synchronization from Firebase
+- 💾 **Saved Jobs**: Bookmark jobs for later review
 - 🎯 **Smart Recommendations**: AI-powered job matching
 
-#### 💼 **Employer Features**
-- 📝 **Post Jobs**: Create detailed job listings with requirements
-- 🔧 **Manage Jobs**: Edit, delete, activate/close job postings
-- 📥 **Manage Applications**: Review, shortlist, reject, hire candidates
-- � **Analytics Dashboard**: Real-time job performance and application metrics
-- 📧 **Email Candidates**: Send professional emails directly from application review
+#### **Job Scraping System** (Port 8000)
+- 🔵 **LinkedIn Scraping**: Automatic job discovery with full details
+- 🟣 **Indeed Scraping**: Real-time scraping with salary information
+- 🎯 **Advanced Filters**: Location, salary range, job type, experience level
+- 📊 **Clean Data**: Structured, validated job data
+- ⚡ **Fast API**: High-performance Python FastAPI backend
+- 🔄 **On-demand Scraping**: Instant job discovery
 
-## 🏗️ System Architecture
+#### **Job Application System**
+- 📥 **Quick Apply**: One-click application with resume attachment
+- 📊 **Application Tracking**: Monitor status (Pending, Shortlisted, Rejected, Hired)
+- 📧 **Email Notifications**: Get updates from employers
+- 📈 **Success Rate Tracking**: Analyze application conversion rates
 
-### Tech Stack
+---
 
+### 🏢 Employer Features
+
+#### **Job Management**
+- 📝 **Post Jobs**: Create detailed job listings with rich descriptions
+- 🔧 **Edit Jobs**: Update job details, requirements, and status
+- ❌ **Delete Jobs**: Remove outdated postings
+- 📊 **Job Analytics**: Track views, applications, and conversions
+- 🔄 **Status Management**: Activate or close job postings
+- 🎨 **Modern UI**: Card-based layout with swipe gestures
+
+#### **Application Management**
+- 📥 **Review Applications**: View all candidate applications
+- 👤 **Candidate Profiles**: Detailed information and resume viewing
+- 📊 **Status Updates**: Pending → Shortlisted → Hired/Rejected
+- 📧 **Email Communication**: Send professional emails to candidates
+- 🔍 **Filter by Status**: View applications by current status
+- 📈 **Analytics Dashboard**: Real-time metrics and insights
+
+#### **Employer Dashboard**
+- 📊 **Real-time Statistics**: Job counts, application metrics, hiring rates
+- 📈 **Performance Charts**: Visual analytics for job postings
+- 🔄 **Live Data Sync**: Instant updates across all screens
+- 📱 **Mobile Optimized**: Responsive design for all devices
+
+---
+
+### 📧 Email Communication System
+
+#### **Email Services** (Ports 5000-5002)
+
+**1. Candidate Email Service** (Port 5000)
+- 📧 **Professional Emails**: Employers send emails to candidates
+- 🎨 **Email Templates**: Beautiful, branded email designs
+- 📨 **Shortlisting Notifications**: Alert candidates when shortlisted
+- 🎉 **Hiring Offers**: Professional job offer emails
+- 📝 **Custom Messages**: Personalized candidate communication
+- ✅ **Delivery Tracking**: Confirm email delivery
+
+**2. Password Reset Service** (Port 5001)
+- 🔐 **OTP Generation**: 6-digit OTP for password reset
+- 📧 **Email Delivery**: Send OTP via email
+- ⏱️ **10-Minute Expiry**: Secure time-limited OTPs
+- 🔄 **Resend OTP**: Request new OTP (60-second cooldown)
+- ✅ **OTP Verification**: Validate before password reset
+- 🔔 **Account Notifications**: Email alerts for account changes
+
+**3. Resume Email Service** (Port 5002)
+- 📄 **PDF Attachments**: Send resumes as PDF files
+- 📧 **Share Resumes**: Job seekers share with employers/recruiters
+- 🎨 **Professional Templates**: Formatted email designs
+- ✅ **Delivery Confirmation**: Track successful delivery
+
+---
+
+### 🔐 Authentication & Security
+
+- 🔑 **Multi-Role Authentication**: Job Seeker and Employer accounts
+- 📧 **Email/Password Login**: Firebase Authentication
+- 🔐 **OTP Password Reset**: Secure 6-digit OTP via email
+- ✉️ **Email Verification**: Account security with OTP
+- 🛡️ **Protected Routes**: Role-based access control
+- 🔒 **Firebase Security Rules**: Database-level protection
+- 💪 **Password Strength Validation**: Enforced strong passwords
+- 🚪 **Secure Logout**: Clean session management
+
+---
+
+### 🎨 Modern UI/UX
+
+- 🎯 **Card-based Layouts**: Clean, organized information display
+- 🎨 **Gradient Backgrounds**: Eye-catching color schemes
+- 💎 **Glassmorphism Effects**: Contemporary blur and transparency
+- 🔄 **Swipe Gestures**: Intuitive back navigation (right swipe)
+- 📱 **Touch-to-Dismiss Modals**: Modern modal interactions
+- ✨ **Smooth Animations**: Professional transitions
+- 🎭 **Material Icons**: Clear visual communication
+- 📊 **Beautiful Charts**: Data visualization for analytics
+- 🔔 **Toast Notifications**: Informative feedback messages
+- ✅ **Confirmation Modals**: Prevent accidental actions
+
+---
+
+## 🏗️ Tech Stack
+
+### **Frontend**
 | Technology | Purpose | Version |
 |------------|---------|---------|
-| **React Native** | Cross-platform mobile framework | Latest |
-| **Expo** | Development platform and tools | Latest |
-| **TypeScript** | Type safety & development | 5+ |
-| **Firebase** | Backend services & authentication | Latest |
-| **Google Gemini AI** | AI-powered content generation | 2.5 Flash Lite |
-| **Expo Router** | File-based navigation | Latest |
-| **React Navigation** | Navigation library | Latest |
+| React Native | Cross-platform mobile framework | Latest |
+| Expo | Development platform & tools | Latest |
+| TypeScript | Type safety & development | 5+ |
+| Expo Router | File-based navigation | Latest |
+| React Navigation | Advanced navigation | Latest |
+| Expo Linear Gradient | Gradient backgrounds | Latest |
+| React Native Voice | Speech recognition | Latest |
+| Expo Print | PDF generation | Latest |
+| Expo Sharing | Native sharing | Latest |
 
-### Core Components
+### **Backend**
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| Firebase | Authentication & Database | Latest |
+| Firestore | Real-time NoSQL database | Latest |
+| Firebase Storage | File storage for resumes | Latest |
+| Node.js | Email microservices | 18+ |
+| Express | Web framework | Latest |
+| Nodemailer | Email sending | Latest |
+| Python | ML service & job scraping | 3.8+ |
+| FastAPI | ML API framework | 0.104+ |
+| scikit-learn | ML model training | 1.3+ |
+| Beautiful Soup | Web scraping | Latest |
 
-1. **Authentication System**: Secure multi-role login with Firebase and OTP-based password reset
-2. **Job Seeker Dashboard**: Personal career management interface with real-time updates
-3. **Employer Dashboard**: Job posting, job management, application management, candidate communication, and analytics
-4. **Interview Module**: AI-powered mock interviews and MCQ practice with speech recognition
-5. **Career Path Module**: Personalized career guidance and AI-curated training recommendations
-6. **Job Search & Scraper**: Advanced filtering, real-time job discovery, and automatic job scraping from LinkedIn and Indeed
-7. **Application System**: Complete application workflow with status tracking and email notifications
-7. **Advanced Resume Builder**: Professional resume creation with rich text editing and real-time preview
-8. **Resume Dashboard**: Multi-resume management with PDF export, email sharing, and favorites
-9. **AI Integration**: Google Gemini AI for content generation, interview analysis, and career recommendations
-10. **Backend Services**: Node.js/Express microservices for email, OTP, and resume sharing
-11. **Notification System**: Toast notifications and interactive confirmation modals
-12. **Profile Management**: Comprehensive user profiles with skill tracking and achievements
+### **AI & ML**
+| Technology | Purpose |
+|------------|---------|
+| Google Gemini AI 2.5 Flash Lite | Content generation, interview analysis |
+| TF-IDF Vectorization | Text feature extraction |
+| Cosine Similarity | Skill matching algorithm |
+| Natural Language Processing | Text analysis |
 
-## 🎨 User Interface Features
+---
 
-### Modern Android Design
+## 🤖 ML Service Architecture
 
-- 🏠 **Hero Sections**: Compelling introductions with gradient backgrounds
-- 🎯 **Card-based Layout**: Clean, organized information display
-- 💳 **Interactive Elements**: Smooth animations and micro-interactions
-- 👥 **Profile Management**: Comprehensive user profile and resume builder
-- 📞 **Real-time Updates**: Live data synchronization across all screens
-- 🧭 **Intuitive Navigation**: Tab-based navigation with active state indicators
+### **Career Prediction Pipeline**
 
-### Dashboard Features
+```
+┌─────────────────────────────────────────────────────────────┐
+│                ML CAREER PREDICTION FLOW                     │
+└─────────────────────────────────────────────────────────────┘
 
-- 📊 **Real-time Statistics**: Live job count, application status, and performance metrics
-- 🔄 **Live Data Sync**: Instant updates across all user interfaces
-- 📱 **Responsive Design**: Optimized for all Android device sizes
-- 🎭 **Smooth Animations**: Professional transitions and glassmorphism effects
-- 🔔 **Notification System**: Real-time alerts and updates
-
-## 🔐 Authentication & Security
-
-### Multi-role System
-
-```typescript
-// Role-based access control
-✅ Job Seeker: Personal career management and job search
-✅ Employer: Job posting and candidate management
-✅ Secure Firebase Authentication
-✅ Real-time session management
-✅ Protected routes and data access
+User Skills Input (Array of Strings)
+            ↓
+React Native App → HTTP POST Request
+            ↓
+FastAPI ML Service (Port 8001)
+            ↓
+TF-IDF Vectorization
+    • Convert skills to numerical vectors
+    • 500+ feature vocabulary (unigrams + bigrams)
+    • Normalize and weight features
+            ↓
+Cosine Similarity Matching
+    • Compare user vector with 21 career vectors
+    • Calculate similarity scores (0-1 range)
+    • Rank careers by match score
+            ↓
+Top 5 Career Predictions
+    • Career title & description
+    • Match score (0.0 - 1.0)
+    • Confidence level (High/Medium/Low)
+            ↓
+Course Recommender System
+    • Map careers to course categories
+    • Select 3 relevant courses per career
+    • 130+ courses from Coursera & Udemy
+            ↓
+JSON Response
+    • Career predictions
+    • Training recommendations
+    • Match scores & confidence
+            ↓
+React Native App Display
+    • Fallback to Gemini AI if ML service unavailable
 ```
 
-### Security Features
+### **ML Model Details**
 
-- 🔐 **Role-based Access Control**: Granular permissions for each user type
-- 🔒 **Firebase Security Rules**: Database-level security enforcement
-- 🛡️ **Protected Routes**: Automatic redirects based on user roles
-- 🔑 **Secure Authentication**: Email/password with session management
-- � **OTP-based Password Reset**: Secure 6-digit OTP with 10-minute expiration
-- ✉️ **Email Verification**: OTP verification for account security
-- 🔐 **Password Strength Validation**: Enforced strong password requirements
-- 📱 **Secure Session Management**: Clean logout across all platforms
-- 🛡️ **XSS Protection**: Sanitized inputs and secure data handling
+- **Algorithm**: TF-IDF + Cosine Similarity
+- **Training Data**: 21 career categories
+- **Skill Vocabulary**: 500+ unique skills
+- **Feature Extraction**: Unigrams + Bigrams (1-2 word combinations)
+- **Similarity Metric**: Cosine similarity (angular distance)
+- **Model Storage**: Pickle files (.pkl)
+- **Performance**: < 100ms average response time
 
-## 📱 Cross-Platform Compatibility
+### **Course Recommendation System**
 
-### Device Support
+**Course Categories** (12 domains):
+- Frontend Development (React, Vue, Angular)
+- Backend Development (Node.js, Django, Spring Boot)
+- Full Stack Development
+- Mobile Development (React Native, Flutter, iOS, Android)
+- Data Science & ML
+- DevOps & Cloud (AWS, Azure, Docker, Kubernetes)
+- Data Engineering (Spark, Hadoop, Airflow)
+- Cybersecurity
+- AI & Deep Learning
+- QA & Testing
+- UI/UX Design
+- Product Management
+- Blockchain
 
-| Platform | Version | Features |
-|----------|---------|----------|
-| 🤖 **Android** | 6.0+ | Full feature support with native performance |
-| 🍎 **iOS** | 12.0+ | Complete compatibility with iOS-specific optimizations |
-| 📱 **Tablets** | All sizes | Adaptive layouts for larger screens |
-| 🖥️ **Web** | Modern browsers | Progressive web app capabilities |
+**Course Platforms**:
+- **Coursera**: Professional certificates, specializations (65+ courses)
+- **Udemy**: Practical bootcamps and hands-on courses (65+ courses)
 
-## � Backend Services
+---
 
-CareerCatalyst includes three Node.js/Express microservices for handling email communications:
+## 📡 Backend Services
 
-### 1. **Password Reset Service** (Port 5001)
-- 📧 **Send OTP**: Email 6-digit OTP for password reset
-- 🔐 **Verify OTP**: Validate OTP before password reset
-- 📧 **Resend OTP**: Request new OTP if expired
-- ✅ **Reset Password**: Update password after OTP verification
-- 🔔 **Deletion Notification**: Email users when account is deleted
+CareerCatalyst includes **5 backend services** working together:
 
-### 2. **Candidate Email Service** (Port 5000)
-- 📧 **Professional Emails**: Employers can send emails to candidates
-- 🎨 **Email Templates**: Beautiful, professional email designs
-- ✅ **Delivery Confirmation**: Track email delivery status
-- 📊 **Health Check**: Monitor service availability
+### **1. ML Career Prediction Service** (Port 8001) 🆕
 
-### 3. **Resume Email Service** (Port 5002)
-- 📄 **PDF Attachments**: Send resumes as PDF files via email
-- 📧 **Share Resumes**: Job seekers can share resumes with employers
-- 🎨 **Professional Templates**: Formatted email templates
-- ✅ **Delivery Tracking**: Confirm successful email delivery
+**Purpose**: Machine learning-powered career path predictions and course recommendations
 
-### 4. **Job Scraping Service** (Port 8000)
-- 🌐 **LinkedIn Scraping**: Discover jobs from LinkedIn with full details
-- 🔍 **Indeed Scraping**: Find jobs on Indeed with salary information
-- 🎯 **Advanced Filtering**: Filter by location, salary, type, experience
-- 📊 **Structured Data**: Clean, validated job data ready for display
-- ⚡ **Fast API**: High-performance Python FastAPI backend
-- 🔄 **Real-time Scraping**: On-demand job discovery
+**Features**:
+- Career path prediction from user skills
+- Training course recommendations
+- Skill matching and analysis
+- Health check and diagnostics
+- Interactive API documentation
 
-### Starting Backend Services
+**Endpoints**:
+- `GET /` - Service information
+- `GET /health` - Health check and model status
+- `POST /api/predict-career-paths` - Predict careers from skills
+- `POST /api/recommend-training` - Get course recommendations
+- `GET /api/available-careers` - List all supported careers
+- `GET /docs` - Swagger UI documentation
 
-#### Quick Start (Windows)
-```bash
-cd App/backend
-start-all-services.bat
-```
+**Technology**: Python, FastAPI, scikit-learn, numpy
 
-#### Manual Start (4 separate terminals)
-```bash
-# Terminal 1 - Resume Email Service
-cd App/backend
-node sendResumeEmail.js
+---
 
-# Terminal 2 - Password Reset Service
-cd App/backend
-node passwordReset.js
+### **2. Password Reset Service** (Port 5001)
 
-# Terminal 3 - Candidate Email Service
-cd App/backend
-node send_candidate_email.js
+**Purpose**: Secure OTP-based password reset system
 
-# Terminal 4 - Job Scraping Service
-cd App/backend
-python main.py
-```
+**Features**:
+- 6-digit OTP generation
+- Email delivery via Nodemailer
+- OTP verification (10-minute expiry)
+- Resend OTP functionality (60-second cooldown)
+- Password reset after verification
+- Account deletion notifications
 
-### Environment Configuration
-Create `.env` file in `App/backend/`:
-```env
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-gmail-app-password
-RESET_PORT=5001
-EMAIL_PORT=5000
-RESUME_EMAIL_PORT=5002
-```
+**Endpoints**:
+- `POST /send-otp` - Generate and send OTP
+- `POST /verify-otp` - Verify OTP code
+- `POST /resend-otp` - Resend expired OTP
+- `POST /reset-password` - Reset password after OTP verification
+- `POST /send-deletion-email` - Notify about account deletion
 
-**Note**: Use Gmail App Password, not your regular password. [Learn how to create App Password](https://support.google.com/accounts/answer/185833)
+**Technology**: Node.js, Express, Nodemailer, Firebase Admin
 
-## �🚀 Getting Started
+---
 
-### Prerequisites
+### **3. Candidate Email Service** (Port 5000)
+
+**Purpose**: Employer-to-candidate email communication
+
+**Features**:
+- Shortlisting notifications
+- Hiring offer emails
+- Custom message emails
+- Professional email templates
+- Delivery confirmation
+
+**Endpoints**:
+- `POST /send-email` - Send email to candidate
+- `GET /health` - Service health check
+
+**Email Types**:
+- Shortlisting notification
+- Hiring offer
+- Application rejection
+- Interview invitation
+- Custom message
+
+**Technology**: Node.js, Express, Nodemailer, Gmail SMTP
+
+---
+
+### **4. Resume Email Service** (Port 5002)
+
+**Purpose**: Share resumes via email with PDF attachments
+
+**Features**:
+- PDF attachment support
+- Resume sharing to employers/recruiters
+- Professional email templates
+- Delivery tracking
+
+**Endpoints**:
+- `POST /share-resume` - Email resume with PDF attachment
+- `GET /health` - Service health check
+
+**Technology**: Node.js, Express, Nodemailer, Multer (file handling)
+
+---
+
+### **5. Job Scraping Service** (Port 8000)
+
+**Purpose**: Automatic job discovery from LinkedIn and Indeed
+
+**Features**:
+- LinkedIn job scraping
+- Indeed job scraping
+- Advanced filtering (location, salary, type, experience)
+- Clean, structured data
+- Real-time scraping
+- Mock data fallback
+
+**Endpoints**:
+- `POST /api/scrape-jobs` - Scrape jobs from platforms
+- `GET /` - Service health check
+
+**Scraping Capabilities**:
+- Job title, company, location
+- Job description and requirements
+- Salary information
+- Job type (Full-time, Part-time, Contract)
+- Experience level
+- Application links
+
+**Technology**: Python, FastAPI, Beautiful Soup, Selenium, Jobspy
+
+---
+
+## 🚀 Installation & Setup
+
+### **Prerequisites**
 
 ```bash
 # Node.js (v18 or higher)
 node --version
 
-# npm or yarn
+# Python (v3.8 or higher)
+python --version
+
+# npm (comes with Node.js)
 npm --version
 
-# Expo CLI
-npm install -g @expo/cli
+# pip (Python package manager)
+pip --version
 
-# Android Studio (for Android development)
-# Xcode (for iOS development - macOS only)
+# Expo CLI (globally installed)
+npm install -g @expo/cli
 ```
 
-### Installation & Setup
+### **Clone Repository**
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/CareerCatalyst.git
-
-# Navigate to project directory
-cd CareerCatalyst/App
-
-# Install dependencies
-npm install
-
-# Install backend dependencies
-cd backend
-npm install
-cd ..
-
-# Set up Firebase configuration
-# Add your Firebase config to lib/firebase.ts
-
-# Set up Google AI API key
-# Add your Gemini API key to lib/services/mcq-api.ts
-
-# Set up backend environment variables
-# Create .env file in backend/ directory (see Backend Services section)
-
-# Start backend services (required for email features)
-cd backend
-# Run start-all-services.bat on Windows
-# Or manually start each service in separate terminals
-
-# Start development server (in a new terminal)
-cd ..
-npx expo start
-
-# Run on Android
-npx expo start --android
-
-# Run on iOS
-npx expo start --ios
-
-# Run on Web
-npx expo start --web
-
-# Build for production
-npx expo build:android
-npx expo build:ios
+git clone https://github.com/malik-shaheer03/CareerCatalyst-ReactNativeApp.git
+cd CareerCatalyst-ReactNativeApp/App
 ```
 
-### Firebase Configuration
+### **Install Dependencies**
 
+#### **Frontend (React Native)**
+```bash
+# Install main dependencies
+npm install
+
+# Install additional dependencies if needed
+npm install expo-router expo-linear-gradient expo-blur expo-speech
+npm install @expo/vector-icons react-native-voice expo-print expo-sharing
+```
+
+#### **Backend (Node.js Services)**
+```bash
+cd backend
+npm install
+```
+
+#### **Backend (Python Services)**
+```bash
+# Install job scraping service dependencies
+cd backend
+pip install -r requirements.txt
+
+# Install ML service dependencies
+cd ml_service
+pip install -r requirements.txt
+```
+
+### **Configuration**
+
+#### **1. Firebase Setup**
+
+Create `lib/firebase.ts`:
 ```typescript
-// lib/firebase.ts
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
 const firebaseConfig = {
   apiKey: "your-api-key",
   authDomain: "your-project.firebaseapp.com",
@@ -327,523 +551,591 @@ const firebaseConfig = {
   messagingSenderId: "your-sender-id",
   appId: "your-app-id"
 };
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 ```
 
-### Google AI Configuration
+#### **2. Google Gemini AI Setup**
 
+Update `lib/ai/aiModel.ts`:
 ```typescript
-// lib/services/mcq-api.ts
-const apiKey = "your-gemini-api-key";
+const API_KEY = "your-gemini-api-key-here";
 const model = "gemini-2.5-flash-lite";
 ```
 
-## 💻 Usage Examples
+Get your API key from: https://makersuite.google.com/app/apikey
 
-### Job Seeker Features
+#### **3. Backend Environment Variables**
 
-```typescript
-// Job Seeker Dashboard
-1. Profile Management - Complete profile setup and editing
-2. Job Search - Advanced filtering and real-time job discovery
-3. Interview Prep - AI-powered mock interviews and MCQ practice
-4. Career Guidance - Personalized career path recommendations
-5. Resume Builder - Professional resume creation and optimization
-6. Performance Tracking - Detailed analytics and progress monitoring
+Create `backend/.env`:
+```env
+# Email Configuration (Gmail)
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-gmail-app-password
+
+# Service Ports
+RESET_PORT=5001
+EMAIL_PORT=5000
+RESUME_EMAIL_PORT=5002
+
+# Optional: Firebase Admin SDK
+FIREBASE_PROJECT_ID=your-project-id
 ```
 
-### Employer Features
+**Important**: Use Gmail App Password, not your regular password.  
+Learn how: https://support.google.com/accounts/answer/185833
 
-```typescript
-// Employer Dashboard
-1. 📊 Real-time Analytics - Live job statistics, application counts, and performance metrics
-2. 💼 Post Jobs - Create detailed job listings with requirements and descriptions
-3. 🔧 Manage Jobs - Edit, delete, and change job status (active/closed)
-4. 📥 Manage Applications - Review, shortlist, reject, and hire candidates
-5. 📧 Email Communication - Send professional emails to candidates (shortlisting, hiring, updates)
-6. 👤 Candidate Profiles - View detailed candidate information and resumes
-7. 📊 Job Analytics - Track individual job performance and application metrics
-8. 🔔 Real-time Updates - Live synchronization of jobs and applications
-9. 🏢 Company Profile - Manage company information and branding
-```
+---
 
-### Job Seeker Features
+## 🏃 Running the Application
 
-```typescript
-// Job Seeker Dashboard
-1. 🔍 Find Jobs - Search with advanced filters (location, salary, type, experience)
-2. 🌐 Job Scraping - Automatic job discovery from LinkedIn and Indeed
-3. 📍 Location-based Search - Find jobs near you with GPS integration
-4. 💼 Apply to Jobs - Quick application with resume attachment
-5. 📊 Application Tracking - Monitor application status (pending, shortlisted, rejected, hired)
-6. 📄 Resume Management - Create, edit, and manage multiple resumes
-7. 📧 Resume Sharing - Share resumes via email with PDF attachments
-8. 🎤 Interview Preparation - AI-powered mock interviews and MCQ practice
-9. 🗺️ Career Guidance - Personalized career path recommendations
-10. 📧 Email Notifications - Receive updates from employers (shortlisting, hiring)
-11. 📈 Performance Analytics - Track interview scores and skill improvements
-12. 🎯 Personalized Recommendations - AI-curated job matches and training resources
-```
-
-### AI-Powered Features
-
-```typescript
-// Interview Module
-1. Mock Interviews - Real-time speech recognition and analysis
-2. MCQ Practice - AI-generated questions with adaptive difficulty
-3. Performance Analysis - Detailed feedback and improvement suggestions
-4. Career Recommendations - Personalized career path guidance
-5. Training Suggestions - AI-curated learning resources
-```
-
-## 🌟 Feature Highlights
-
-### 1. **AI-Powered Interview System**
-- Real-time speech recognition for mock interviews
-- Intelligent performance analysis and feedback
-- Adaptive question generation based on job roles
-- Comprehensive scoring and improvement suggestions
-
-### 2. **Smart Career Guidance**
-- Personalized career path recommendations
-- AI-curated training and skill development suggestions
-- Industry-specific insights and trends
-- Progress tracking and milestone achievements
-
-### 3. **Advanced Job Search & Scraping**
-- 🔍 **Real-time Job Discovery**: Instant updates from Firebase database
-- 🌐 **Automatic Job Scraping**: Scrape jobs from LinkedIn and Indeed using FastAPI backend
-- 📍 **Location-based Search**: GPS integration for jobs near you
-- 🔧 **Advanced Filters**: Filter by location, salary, job type, experience level, and keywords
-- 💾 **Saved Searches**: Save favorite search criteria for quick access
-- 🔔 **Job Alerts**: Get notified when new jobs match your preferences
-- 📊 **Application Tracking**: Monitor application status across all jobs
-- 🎯 **Smart Recommendations**: AI-powered job matches based on your profile
-- 📱 **Seamless Application**: One-click apply with resume attachment
-
-### 4. **Advanced Resume System**
-#### Resume Builder Features:
-- 📝 **Rich Text Editor**: Professional formatting with bold, italic, and bullet points
-- 🎨 **Multiple Templates**: Various professional designs to choose from
-- 👁️ **Real-time Preview**: See changes instantly as you type
-- 📄 **PDF Export**: Download high-quality PDF resumes
-- 💾 **Auto-save**: Automatic saving every few seconds
-- 📊 **Resume Sections**: Personal info, summary, experience, education, skills, projects
-- 🎯 **Section Management**: Add, edit, reorder, and delete resume sections
-- 🖼️ **Avatar Upload**: Add professional profile picture
-- ✨ **Professional Styling**: Clean, ATS-friendly resume layouts
-
-#### Resume Dashboard Features:
-- 📚 **Multi-resume Management**: Create and manage multiple resumes
-- 🔍 **Search & Filter**: Find resumes by title, date, or favorites
-- ⭐ **Favorites System**: Mark important resumes for quick access
-- 📊 **Sort Options**: Sort by date or name
-- 👁️ **Preview Mode**: Quick preview before editing
-- 📤 **Email Sharing**: Share resumes via email with PDF attachment
-- 📥 **Download**: Export resumes as PDF files
-- 📋 **Duplicate**: Create copies of existing resumes
-- 🗑️ **Delete**: Remove unwanted resumes with confirmation
-- 📱 **Responsive Cards**: Beautiful card-based layout
-- 🔄 **Real-time Sync**: Live updates across all devices
-
-### 5. **Password Reset & Account Security**
-- 🔐 **Forgot Password Flow**: Secure OTP-based password reset
-- 📧 **Email Verification**: 6-digit OTP sent to registered email
-- ⏱️ **OTP Expiration**: 10-minute validity for security
-- 🔄 **Resend OTP**: Request new OTP if expired (60-second cooldown)
-- 💪 **Password Strength**: Real-time validation with requirements
-- ✅ **Password Confirmation**: Match verification before reset
-- 🎨 **Beautiful UI**: Modern, user-friendly password reset screens
-- 🔔 **Notifications**: Toast messages for all actions
-- 📧 **Confirmation Emails**: Email notification after successful password change
-
-### 6. **Email Communication System**
-
-#### Employer to Candidate Communication:
-- 📧 **Shortlisting Emails**: Notify candidates when they're shortlisted for interviews
-- 🎉 **Hiring Notifications**: Send professional job offer emails to hired candidates
-- 📝 **Custom Emails**: Compose and send personalized emails to any candidate
-- ✅ **Delivery Confirmation**: Track email delivery status
-- 🎨 **Professional Templates**: Beautiful, branded email designs
-
-#### Job Seeker Email Features:
-- 📄 **Resume Sharing**: Share resumes via email with PDF attachments
-- 🔐 **OTP Email Verification**: Secure email-based password reset with 6-digit OTP
-- 📧 **Application Confirmations**: Receive email confirmations when applying to jobs
-- 🔔 **Status Updates**: Get notified when application status changes
-- 💼 **Interview Invitations**: Receive interview invitations from employers
-
-#### Backend Email Services:
-- **Port 5000**: Candidate Email Service (shortlisting, hiring, custom emails)
-- **Port 5001**: Password Reset Service (OTP generation, verification, resend)
-- **Port 5002**: Resume Email Service (PDF attachments, resume sharing)
-- **Gmail Integration**: Professional email delivery via Nodemailer
-- **Email Templates**: Responsive HTML templates for all communications
-
-### 7. **Employer Application Management**
-
-#### Application Workflow:
-- 📥 **View Applications**: See all applications for posted jobs
-- 👤 **Candidate Profiles**: View detailed candidate information and resumes
-- 📊 **Status Management**: Update application status (pending → shortlisted → hired/rejected)
-- 📧 **Email Communication**: Send emails directly from application review screen
-- 🔍 **Filter by Status**: View applications by pending, shortlisted, rejected, or hired
-- 📈 **Application Analytics**: Track metrics for each job posting
-- 🔔 **Real-time Updates**: Live synchronization of application statuses
-- 📱 **Mobile Optimized**: Review applications on any device
-
-#### Application Statuses:
-- ⏳ **Pending**: New applications awaiting review
-- ⭐ **Shortlisted**: Candidates selected for interview
-- ❌ **Rejected**: Applications that didn't meet requirements
-- ✅ **Hired**: Successfully hired candidates
-
-### 8. **Comprehensive Analytics**
-- 📊 **Employer Analytics**: Job posting performance, application metrics, hiring rates
-- 📈 **Job Seeker Analytics**: Interview performance metrics and skill progress tracking
-- 🎯 **Career Development**: Progress tracking and milestone achievements
-- 📊 **Application Success Rates**: Track application outcomes and conversion rates
-- 🎤 **Interview Performance**: Detailed feedback and improvement suggestions
-- 📝 **Skill Assessment**: Identify improvement areas and skill gaps
-- 📄 **Resume Performance**: Optimization insights and suggestions
-
-## 📊 Performance Metrics
-
-- **App Launch Time**: < 2 seconds
-- **Real-time Updates**: < 500ms latency
-- **Speech Recognition**: < 1 second response time
-- **AI Response Time**: < 3 seconds for content generation
-- **Cross-platform Performance**: 95+ optimization score
-- **Memory Usage**: Optimized for mobile devices
-- **Battery Efficiency**: Minimal impact on device battery
-
-## 📧 Email Communication Workflows
-
-### Complete Email Flow System
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    EMAIL COMMUNICATION FLOWS                 │
-└─────────────────────────────────────────────────────────────┘
-
-1. PASSWORD RESET FLOW (OTP-Based)
-   Job Seeker → Forgot Password → Enter Email
-   ↓
-   Backend (Port 5001) → Generate 6-digit OTP
-   ↓
-   Email Service → Send OTP to User's Email
-   ↓
-   User → Enter OTP → Verify OTP
-   ↓
-   Backend → Validate OTP (10-min expiry)
-   ↓
-   User → Set New Password → Success ✅
-
-2. RESUME SHARING FLOW
-   Job Seeker → Resume Dashboard → Select Resume → Share
-   ↓
-   Mobile App → Generate PDF (Expo Print)
-   ↓
-   Backend (Port 5002) → Attach PDF to Email
-   ↓
-   Email Service → Send Resume to Employer/Recipient ✅
-
-3. APPLICATION MANAGEMENT FLOW
-   Employer → View Applications → Review Candidate
-   ↓
-   Employer → Shortlist/Hire/Reject
-   ↓
-   Backend (Port 5000) → Trigger Email
-   ↓
-   Email Service → Notify Candidate
-   ├─ Shortlisted → "You've been shortlisted!" 🎉
-   ├─ Hired → "Congratulations! Job Offer" 💼
-   └─ Custom Message → Professional Email Template ✉️
-
-4. EMPLOYER COMMUNICATION FLOW
-   Employer → Applications Screen → Select Candidate
-   ↓
-   Employer → Click "Email" Button
-   ↓
-   Email Composition Modal → Write Custom Email
-   ↓
-   Backend (Port 5000) → Professional Email Template
-   ↓
-   Email Service → Send to Candidate's Email ✅
-```
-
-### Email Features Summary
-
-| Feature | Port | Purpose | Triggers |
-|---------|------|---------|----------|
-| **Password Reset** | 5001 | OTP generation & verification | Forgot Password, Verify OTP, Resend OTP |
-| **Resume Sharing** | 5002 | PDF email attachments | Share Resume, Apply to Job |
-| **Candidate Emails** | 5000 | Employer communications | Shortlist, Hire, Reject, Custom Email |
-| **System Notifications** | 5001 | Account alerts | Account deletion, Important updates |
-
-## 🌐 Job Scraping System
-
-CareerCatalyst includes an advanced job scraping system that automatically discovers jobs from LinkedIn and Indeed.
-
-### Job Scraping Features
-
-#### Supported Platforms:
-- 🔵 **LinkedIn**: Scrape jobs with full details including company, location, and description
-- 🟣 **Indeed**: Scrape jobs with salary information and application links
-- 🔄 **Real-time Scraping**: On-demand job discovery with instant results
-- 📊 **Structured Data**: Clean, organized job data ready for display
-
-#### Scraping Capabilities:
-- 🔍 **Keyword Search**: Search by job title, skills, or keywords
-- 📍 **Location Filter**: Find jobs in specific cities or regions
-- 💼 **Job Type Filter**: Filter by full-time, part-time, contract, remote
-- 💰 **Salary Range**: Specify minimum and maximum salary expectations
-- 📅 **Date Posted**: Filter by how recently jobs were posted
-- 🏢 **Company Filter**: Search jobs from specific companies
-- 🎯 **Experience Level**: Filter by entry-level, mid-level, senior positions
-
-#### Technical Implementation:
-- **FastAPI Backend**: High-performance Python backend on port 8000
-- **Beautiful Soup**: Web scraping library for parsing job listings
-- **Selenium**: Browser automation for dynamic content
-- **Rate Limiting**: Respectful scraping with delays to avoid blocking
-- **Error Handling**: Robust error recovery and retry mechanisms
-- **Data Validation**: Clean and validate scraped data before display
-
-#### How to Use Job Scraper:
-1. Navigate to Job Scraper screen from Find Jobs tab
-2. Enter search keywords (e.g., "Software Engineer", "Data Scientist")
-3. Specify location (e.g., "New York", "Remote")
-4. Set filters (salary, job type, experience level)
-5. Select platforms to scrape (LinkedIn, Indeed, or both)
-6. Click "Scrape Jobs" and wait for results
-7. Browse scraped jobs in beautiful card layout
-8. Click "Apply" to apply directly or visit job posting
-
-### Scraping Service Setup
+### **Option 1: Quick Start (Windows)**
 
 ```bash
-# Navigate to backend directory
+# Terminal 1 - Start all Node.js services
+cd backend
+start-all-services.bat
+
+# Terminal 2 - Start ML service
+cd backend/ml_service
+start_ml_service.bat
+
+# Terminal 3 - Start Expo
+cd ../..
+npx expo start
+```
+
+### **Option 2: Manual Start (All Platforms)**
+
+#### **Start Backend Services (6 separate terminals)**
+
+```bash
+# Terminal 1 - ML Service
+cd App/backend/ml_service
+python train_model.py      # First time only - train the model
+python api/ml_server.py    # Start ML API
+
+# Terminal 2 - Job Scraping Service
 cd App/backend
-
-# Install Python dependencies
-pip install fastapi uvicorn beautifulsoup4 selenium requests
-
-# Start scraping service
 python main.py
 
-# Service will run on http://localhost:8000
+# Terminal 3 - Password Reset Service
+cd App/backend
+node passwordReset.js
+
+# Terminal 4 - Candidate Email Service
+cd App/backend
+node send_candidate_email.js
+
+# Terminal 5 - Resume Email Service
+cd App/backend
+node sendResumeEmail.js
+
+# Terminal 6 - Expo Development Server
+cd App
+npx expo start
 ```
 
-**Note**: Job scraping respects the terms of service of LinkedIn and Indeed. Use responsibly and within rate limits.
-
-## 🔧 Technical Implementation
-
-### Firebase Services Used
-
-- **Authentication**: User management and security
-- **Firestore**: Real-time database for all operations
-- **Cloud Functions**: Automated background processes
-- **Storage**: Resume and document management
-- **Security Rules**: Database-level access control
-
-### AI Integration
-
-- **Google Gemini 2.5 Flash Lite**: Content generation and analysis
-- **Speech Recognition**: Real-time voice processing
-- **Natural Language Processing**: Interview analysis and feedback
-- **Machine Learning**: Personalized recommendations
-
-### Key Libraries
-
-#### Frontend
-- **Expo Router**: File-based navigation system
-- **React Navigation**: Advanced navigation features
-- **Expo Linear Gradient**: Beautiful gradient backgrounds
-- **Expo Blur**: Glassmorphism effects
-- **React Native Voice**: Speech recognition capabilities
-- **Expo Speech**: Text-to-speech functionality
-- **Expo Print**: PDF generation for resume export
-- **Expo Sharing**: Native share functionality
-- **Expo File System**: File management for PDF handling
-- **React Native Paper**: Material Design components
-- **React Native Render HTML**: Rich text rendering
-- **Axios**: HTTP client for backend communication
-- **@expo/vector-icons**: Material Community Icons
-
-#### Backend (Node.js)
-- **Express.js**: Web framework for Node.js
-- **Nodemailer**: Email sending library
-- **Firebase Admin SDK**: Server-side Firebase operations
-- **CORS**: Cross-origin resource sharing
-- **Body Parser**: Request body parsing
-- **dotenv**: Environment variable management
-- **Concurrently**: Run multiple services simultaneously
-
-#### Backend (Python - Job Scraping)
-- **FastAPI**: High-performance web framework for APIs
-- **Uvicorn**: ASGI server for FastAPI
-- **Beautiful Soup**: HTML parsing and web scraping
-- **Selenium**: Browser automation for dynamic content
-- **Requests**: HTTP library for web requests
-- **Pandas**: Data manipulation and analysis (optional)
-- **Python-dotenv**: Environment variable management
-
-## 📝 Project Structure
-
-```
-CareerCatalyst/
-├── App/                      # React Native app directory
-│   ├── app/                 # Expo Router pages
-│   │   ├── (tabs)/         # Tab-based navigation screens
-│   │   │   ├── auth/       # Authentication screens
-│   │   │   │   ├── login.tsx         # Login screen
-│   │   │   │   ├── signup.tsx        # Signup screen
-│   │   │   │   ├── forgot-password.tsx   # Password reset request
-│   │   │   │   ├── verify-otp.tsx        # OTP verification
-│   │   │   │   └── reset-password.tsx    # New password setup
-│   │   │   ├── dashboards/ # User dashboards
-│   │   │   │   ├── employer-dashboard.tsx   # Employer analytics
-│   │   │   │   └── job-seeker-dashboard.tsx # Job seeker analytics
-│   │   │   ├── employer/   # Employer features
-│   │   │   │   ├── post-job.tsx          # Create job postings
-│   │   │   │   ├── manage-jobs.tsx       # Edit/delete jobs
-│   │   │   │   └── applications.tsx      # Manage applications
-│   │   │   ├── resume-builder.tsx    # Advanced resume builder
-│   │   │   ├── resume-dashboard.tsx  # Resume management
-│   │   │   ├── interview-bot.tsx     # AI interview practice
-│   │   │   ├── career-path.tsx       # Career guidance
-│   │   │   ├── find-jobs.tsx         # Job search
-│   │   │   ├── job-scraper.tsx       # LinkedIn/Indeed scraper
-│   │   │   ├── apply-job.tsx         # Job application screen
-│   │   │   └── ...         # Other feature screens
-│   │   └── modal.tsx       # Modal components
-│   ├── backend/            # Node.js & Python backend services
-│   │   ├── passwordReset.js         # OTP and password reset service (Port 5001)
-│   │   ├── sendResumeEmail.js       # Resume email service (Port 5002)
-│   │   ├── send_candidate_email.js  # Candidate email service (Port 5000)
-│   │   ├── main.py                  # Job scraping service (Port 8000)
-│   │   ├── start-all-services.bat   # Windows batch script to start all
-│   │   ├── package.json             # Node.js dependencies
-│   │   ├── requirements.txt         # Python dependencies (scraper)
-│   │   ├── .env.example             # Environment variables template
-│   │   └── START_BACKEND_SERVICES.md # Backend documentation
-│   ├── components/         # Reusable UI components
-│   │   ├── ui/            # Base UI components
-│   │   ├── profile-setup/ # Profile setup components
-│   │   ├── resume/        # Resume-specific components
-│   │   │   ├── form-components/  # Resume form components
-│   │   │   ├── preview/          # Resume preview components
-│   │   │   └── ...               # Other resume components
-│   │   ├── ConfirmationModal.tsx    # Confirmation dialogs
-│   │   ├── ToastNotification.tsx    # Toast notifications
-│   │   ├── ShareResumeModal.tsx     # Email sharing modal
-│   │   └── EmailCompositionModal.tsx # Email composition
-│   ├── lib/               # Utility functions and services
-│   │   ├── services/      # API services and AI integration
-│   │   │   ├── backend-api.ts          # Backend API client
-│   │   │   ├── resume-pdf-service.ts   # PDF generation
-│   │   │   ├── mcq-api.ts              # MCQ AI service
-│   │   │   ├── jobScrapperService.ts   # Job scraping API client
-│   │   │   ├── employer-services.ts    # Employer job/application management
-│   │   │   └── ...                     # Other services
-│   │   ├── ai/           # AI-specific services and models
-│   │   ├── resume/       # Resume management and utilities
-│   │   │   ├── resumeContext.tsx    # Resume state management
-│   │   │   ├── resumeAPI.ts         # Resume CRUD operations
-│   │   │   └── index.ts             # Resume exports
-│   │   ├── utils/        # Utility functions
-│   │   │   └── password-validation.ts # Password strength checker
-│   │   ├── ToastContext.tsx  # Toast notification context
-│   │   ├── auth-context.tsx  # Authentication context
-│   │   └── firebase.ts    # Firebase configuration
-│   ├── hooks/             # Custom React hooks
-│   ├── constants/         # App constants and themes
-│   └── assets/           # Images and static assets
-├── web/                   # Web version (Next.js)
-└── README.md             # Project documentation
-```
-
-## 🚀 Deployment
-
-### Production Deployment
+### **Run on Devices**
 
 ```bash
-# Build the application
-npx expo build:android
-npx expo build:ios
+# Android
+npx expo start --android
 
-# Deploy to app stores
-# Configure app store listings
-# Set up Firebase project
-# Deploy to Google Play Store / Apple App Store
+# iOS (macOS only)
+npx expo start --ios
+
+# Web
+npx expo start --web
 ```
 
-### Environment Variables
+### **Build for Production**
 
-```env
-EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
-# ... other configuration
+```bash
+# Android APK
+eas build --platform android
+
+# iOS IPA
+eas build --platform ios
+
+# Configure EAS Build
+eas build:configure
 ```
 
-## 🎯 Key Modules
+---
 
-### 1. **Interview Preparation**
-- Mock interview sessions with AI analysis
-- MCQ practice with adaptive difficulty
-- Real-time speech recognition
-- Performance feedback and improvement suggestions
+## 📁 Project Structure
 
-### 2. **Career Path Guidance**
-- AI-powered career recommendations
-- Personalized training suggestions
-- Skill assessment and development
-- Industry insights and trends
+```
+CareerCatalyst-ReactNativeApp/
+└── App/
+    ├── app/                          # Expo Router pages
+    │   ├── (tabs)/                   # Tab navigation screens
+    │   │   ├── auth/                 # Authentication screens
+    │   │   │   ├── login.tsx
+    │   │   │   ├── signup.tsx
+    │   │   │   ├── forgot-password.tsx
+    │   │   │   ├── verify-otp.tsx
+    │   │   │   └── reset-password.tsx
+    │   │   ├── dashboards/           # Dashboard screens
+    │   │   │   ├── job-seeker-dashboard.tsx
+    │   │   │   └── employer-dashboard.tsx
+    │   │   ├── employer/             # Employer features
+    │   │   │   ├── post-job.tsx
+    │   │   │   ├── manage-jobs.tsx
+    │   │   │   ├── applications.tsx
+    │   │   │   └── analytics.tsx
+    │   │   ├── profile/              # Profile management
+    │   │   ├── index.tsx             # Home screen
+    │   │   ├── find-jobs.tsx         # Job search
+    │   │   ├── job-scraper.tsx       # Job scraping UI
+    │   │   ├── job-details.tsx       # Job details view
+    │   │   ├── apply-job.tsx         # Job application
+    │   │   ├── resume-builder.tsx    # Resume creation
+    │   │   ├── resume-dashboard.tsx  # Resume management
+    │   │   ├── interview-bot.tsx     # AI interview prep
+    │   │   ├── mcq-setup.tsx         # MCQ quiz setup
+    │   │   ├── mcq-quiz.tsx          # MCQ quiz
+    │   │   ├── career-path.tsx       # Career guidance
+    │   │   ├── skills-training.tsx   # Training recommendations
+    │   │   ├── profile-setup.tsx     # Profile setup wizard
+    │   │   └── _layout.tsx           # Tab layout
+    │   └── modal.tsx                 # Modal screens
+    │
+    ├── backend/                      # Backend services
+    │   ├── ml_service/               # 🆕 ML Service (Port 8001)
+    │   │   ├── api/
+    │   │   │   ├── __init__.py
+    │   │   │   └── ml_server.py      # FastAPI ML server
+    │   │   ├── data/
+    │   │   │   └── career_skills_dataset.json  # Training data
+    │   │   ├── models/               # Trained models (gitignored)
+    │   │   │   ├── vectorizer.pkl
+    │   │   │   ├── skill_vectors.pkl
+    │   │   │   └── career_data.pkl
+    │   │   ├── utils/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── helpers.py        # Utility functions
+    │   │   │   └── course_recommender.py  # Course recommendations
+    │   │   ├── __init__.py
+    │   │   ├── train_model.py        # Model training script
+    │   │   ├── test_enhanced_api.py  # API testing
+    │   │   ├── requirements.txt      # Python dependencies
+    │   │   ├── start_ml_service.bat  # Quick start (Windows)
+    │   │   └── .gitignore
+    │   │
+    │   ├── passwordReset.js          # OTP service (Port 5001)
+    │   ├── send_candidate_email.js   # Email service (Port 5000)
+    │   ├── sendResumeEmail.js        # Resume email (Port 5002)
+    │   ├── main.py                   # Job scraping (Port 8000)
+    │   ├── package.json              # Node.js dependencies
+    │   ├── requirements.txt          # Python dependencies
+    │   ├── start-all-services.bat    # Start all services (Windows)
+    │   ├── .env.example              # Environment template
+    │   └── .env                      # Environment variables (gitignored)
+    │
+    ├── components/                   # Reusable UI components
+    │   ├── Header.tsx
+    │   ├── ToastNotification.tsx
+    │   ├── ConfirmationModal.tsx
+    │   ├── EmailCompositionModal.tsx
+    │   ├── ShareResumeModal.tsx
+    │   ├── themed-text.tsx
+    │   ├── themed-view.tsx
+    │   ├── find-jobs/
+    │   │   └── JobCard.tsx
+    │   ├── profile-setup/
+    │   │   ├── EducationStep.tsx
+    │   │   ├── ExperienceStep.tsx
+    │   │   ├── CertificationsStep.tsx
+    │   │   ├── JobPreferencesStep.tsx
+    │   │   └── index.ts
+    │   └── resume/
+    │       ├── form-components/
+    │       │   ├── PersonalInfo.tsx
+    │       │   ├── Summary.tsx
+    │       │   ├── Experience.tsx
+    │       │   ├── Education.tsx
+    │       │   ├── Skills.tsx
+    │       │   └── Projects.tsx
+    │       ├── preview/
+    │       │   └── ResumePreview.tsx
+    │       ├── RichTextEditor.tsx
+    │       ├── RichTextToolbar.tsx
+    │       └── index.ts
+    │
+    ├── lib/                          # Core utilities and services
+    │   ├── ai/                       # AI services
+    │   │   ├── aiModel.ts            # Gemini AI integration
+    │   │   ├── aiJobButton.ts
+    │   │   ├── recommendTrainingAI.ts
+    │   │   └── index.ts
+    │   ├── services/                 # API services
+    │   │   ├── career-path-api.ts    # 🆕 ML career prediction
+    │   │   ├── training-recommendations-api.ts  # 🆕 Course recommendations
+    │   │   ├── jobScrapperService.ts # Job scraping client
+    │   │   ├── employer-services.ts  # Employer API
+    │   │   ├── backend-api.ts        # Backend integration
+    │   │   └── resume-pdf-service.ts # PDF generation
+    │   ├── resume/                   # Resume management
+    │   │   ├── resumeContext.tsx
+    │   │   ├── resumeAPI.ts
+    │   │   └── index.ts
+    │   ├── utils/                    # Utility functions
+    │   │   └── password-validation.ts
+    │   ├── firebase.ts               # Firebase config
+    │   ├── auth-context.tsx          # Auth state management
+    │   ├── ToastContext.tsx          # Toast notifications
+    │   ├── notification-context.tsx  # Notification system
+    │   ├── store.ts                  # Global state
+    │   └── employer-protection.tsx   # Role protection
+    │
+    ├── hooks/                        # Custom React hooks
+    │   ├── use-color-scheme.ts
+    │   ├── use-theme-color.ts
+    │   └── use-logout.ts
+    │
+    ├── constants/                    # App constants
+    │   └── theme.ts                  # Theme configuration
+    │
+    ├── assets/                       # Static assets
+    │   └── images/
+    │       ├── icon.png
+    │       ├── splash-icon.png
+    │       └── white-logo-noBG.png
+    │
+    ├── app.json                      # Expo configuration
+    ├── package.json                  # Dependencies
+    ├── tsconfig.json                 # TypeScript config
+    ├── babel.config.js               # Babel configuration
+    ├── metro.config.js               # Metro bundler config
+    ├── .gitignore                    # Git ignore rules
+    └── README.md                     # This file
+```
 
-### 3. **Job Search & Discovery**
-- Real-time job listings
-- Advanced filtering and search
-- Application tracking
-- Company profile insights
+---
 
-### 4. **Profile Management**
-- Comprehensive user profiles
-- Resume builder and optimization
-- Skill tracking and development
-- Achievement and milestone tracking
+## 🎯 API Endpoints
+
+### **ML Service** (Port 8001)
+
+#### **Career Prediction**
+```http
+POST http://localhost:8001/api/predict-career-paths
+Content-Type: application/json
+
+{
+  "skills": ["JavaScript", "React", "Node.js", "MongoDB"],
+  "top_n": 5
+}
+
+Response:
+{
+  "success": true,
+  "career_paths": [
+    {
+      "id": 1,
+      "title": "Full Stack Developer",
+      "description": "Develop both client and server-side applications...",
+      "match_score": 0.92,
+      "confidence": "high"
+    }
+  ],
+  "user_skills": ["JavaScript", "React", "Node.js", "MongoDB"]
+}
+```
+
+#### **Training Recommendations**
+```http
+POST http://localhost:8001/api/recommend-training
+Content-Type: application/json
+
+{
+  "skills": ["Python", "Machine Learning"],
+  "job_title": "Data Scientist",
+  "top_n": 3
+}
+
+Response:
+{
+  "success": true,
+  "training_recommendations": [
+    {
+      "id": 1,
+      "title": "Data Scientist",
+      "courses": [
+        {
+          "platform": "Coursera",
+          "name": "IBM Data Science Professional Certificate",
+          "link": "https://www.coursera.org/...",
+          "description": "Master data science with Python, SQL, ML..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### **Health Check**
+```http
+GET http://localhost:8001/health
+
+Response:
+{
+  "status": "healthy",
+  "model_loaded": true,
+  "message": "Model loaded and ready"
+}
+```
+
+#### **Interactive Documentation**
+```
+http://localhost:8001/docs  (Swagger UI)
+http://localhost:8001/redoc (ReDoc)
+```
+
+---
+
+### **Email Services**
+
+#### **Send OTP** (Port 5001)
+```http
+POST http://localhost:5001/send-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+```
+
+#### **Verify OTP** (Port 5001)
+```http
+POST http://localhost:5001/verify-otp
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "otp": "123456"
+}
+```
+
+#### **Send Candidate Email** (Port 5000)
+```http
+POST http://localhost:5000/send-email
+Content-Type: application/json
+
+{
+  "to": "candidate@example.com",
+  "candidateName": "John Doe",
+  "jobTitle": "Software Engineer",
+  "companyName": "Tech Corp",
+  "emailType": "shortlisting"
+}
+```
+
+#### **Share Resume** (Port 5002)
+```http
+POST http://localhost:5002/share-resume
+Content-Type: multipart/form-data
+
+{
+  "to": "employer@example.com",
+  "subject": "Resume - John Doe",
+  "message": "Please find my resume attached",
+  "pdf": <file>
+}
+```
+
+---
+
+### **Job Scraping** (Port 8000)
+
+```http
+POST http://localhost:8000/api/scrape-jobs
+Content-Type: application/json
+
+{
+  "site_name": ["linkedin", "indeed"],
+  "search_term": "Software Engineer",
+  "location": "New York",
+  "results_wanted": 20,
+  "country_indeed": "USA"
+}
+
+Response:
+{
+  "jobs": [
+    {
+      "title": "Senior Software Engineer",
+      "company": "Google",
+      "location": "New York, NY",
+      "description": "...",
+      "salary": "$120,000 - $180,000",
+      "job_url": "https://...",
+      "site": "linkedin",
+      "type": "Full Time"
+    }
+  ]
+}
+```
+
+---
+
+## 📸 Screenshots
+
+### Job Seeker Features
+- 🏠 **Home Dashboard**: Analytics and quick actions
+- 🔍 **Job Search**: Advanced filtering and search
+- 🌐 **Job Scraper**: LinkedIn & Indeed scraping
+- 📄 **Resume Builder**: Professional resume creation
+- 📊 **Resume Dashboard**: Multi-resume management
+- 🎤 **Interview Prep**: AI-powered mock interviews
+- 📝 **MCQ Quiz**: Adaptive practice questions
+- 🗺️ **Career Path**: ML-powered career predictions
+- 📚 **Skills Training**: Course recommendations
+
+### Employer Features
+- 📊 **Employer Dashboard**: Real-time analytics
+- 📝 **Post Job**: Create job listings
+- 🔧 **Manage Jobs**: Edit and manage postings
+- 📥 **Applications**: Review candidate applications
+- 📧 **Email Candidates**: Professional communication
+
+*(Add screenshots by placing images in `assets/screenshots/` and linking here)*
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/AmazingFeature`
+3. **Commit your changes**: `git commit -m 'Add some AmazingFeature'`
+4. **Push to the branch**: `git push origin feature/AmazingFeature`
+5. **Open a Pull Request**
+
+### Contribution Guidelines
+
+- Follow TypeScript/Python best practices
+- Write clean, documented code
+- Test your changes thoroughly
+- Update documentation as needed
+- Follow existing code style
+
+---
+
+## 🐛 Known Issues & Troubleshooting
+
+### ML Service Issues
+
+**Problem**: ML service fails to start  
+**Solution**: Ensure all dependencies are installed: `pip install -r backend/ml_service/requirements.txt`
+
+**Problem**: Model not found error  
+**Solution**: Train the model first: `python backend/ml_service/train_model.py`
+
+### Email Service Issues
+
+**Problem**: Emails not sending  
+**Solution**: 
+- Use Gmail App Password, not regular password
+- Enable "Less secure app access" or use OAuth2
+- Check .env configuration
+
+### Job Scraping Issues
+
+**Problem**: Scraping returns empty results  
+**Solution**: 
+- Check internet connection
+- LinkedIn/Indeed may block frequent requests
+- Use mock data fallback for testing
+
+---
 
 ## 🔮 Future Enhancements
 
-- 🤖 **Advanced AI Features**: More sophisticated interview analysis
-- 📱 **Offline Support**: Offline mode for core features
-- 🌐 **Social Features**: Networking and community features
-- 📊 **Advanced Analytics**: More detailed performance insights
-- 🔔 **Push Notifications**: Real-time job alerts and updates
-- 🎓 **Learning Management**: Integrated course and certification tracking
+- 🤖 **Deep Learning Models**: Neural networks for better predictions
+- 🌐 **More Job Platforms**: Glassdoor, Monster, ZipRecruiter
+- 📱 **Offline Mode**: Offline ML inference and data caching
+- 🎓 **Learning Paths**: Personalized learning roadmaps
+- 🔔 **Push Notifications**: Real-time job alerts
+- 📊 **Advanced Analytics**: Detailed performance insights
+- 🌍 **Multi-language**: Internationalization support
+- 💬 **Chat System**: Real-time employer-candidate chat
+- 📹 **Video Interviews**: In-app video interviewing
+- 🎯 **Skill Assessments**: Automated coding challenges
+
+---
 
 ## 👨‍💻 Author
 
-**Muhammad Shaheer Malik**  
-- 🌐 [Portfolio](https://shaheer-portfolio-omega.vercel.app)  
-- 💼 [LinkedIn](https://linkedin.com/in/malik-shaheer03)  
-- 🐙 [GitHub](https://github.com/malik-shaheer03)  
-- 📸 [Instagram](https://instagram.com/malik_shaheer03)  
-- 📧 [Email Me](mailto:shaheermalik03@gmail.com)   
+**Muhammad Shaheer Malik**
+
+- 🌐 **Portfolio**: [shaheer-portfolio-omega.vercel.app](https://shaheer-portfolio-omega.vercel.app)
+- 💼 **LinkedIn**: [linkedin.com/in/malik-shaheer03](https://linkedin.com/in/malik-shaheer03)
+- 🐙 **GitHub**: [github.com/malik-shaheer03](https://github.com/malik-shaheer03)
+- 📸 **Instagram**: [instagram.com/malik_shaheer03](https://instagram.com/malik_shaheer03)
+- 📧 **Email**: [shaheermalik03@gmail.com](mailto:shaheermalik03@gmail.com)
+
+---
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### MIT License Summary
+
+- ✅ Commercial use
+- ✅ Modification
+- ✅ Distribution
+- ✅ Private use
+- ⚠️ Liability
+- ⚠️ Warranty
+
+---
+
+## 🙏 Acknowledgments
+
+- **React Native Team**: For the amazing framework
+- **Expo Team**: For excellent development tools
+- **Firebase**: For backend infrastructure
+- **Google AI**: For Gemini API access
+- **scikit-learn**: For ML algorithms
+- **FastAPI**: For high-performance API framework
+- **Open Source Community**: For all the amazing libraries
+
+---
+
+## 📊 Project Stats
+
+- **Lines of Code**: 50,000+
+- **Components**: 100+
+- **API Endpoints**: 20+
+- **Backend Services**: 5
+- **ML Career Paths**: 21
+- **Training Courses**: 130+
+- **Skill Vocabulary**: 500+
+- **Development Time**: 6+ months
+- **Technologies Used**: 15+
 
 ---
 
 <div align="center">
 
-**⭐ Star this repository if you found it helpful!**
+### ⭐ Star this repository if you found it helpful!
 
-*Built with ❤️ and modern mobile technologies*
+**Built with ❤️ using React Native, Python ML, and modern technologies**
 
-**🚀 Ready to revolutionize career development with AI-powered tools!**
+**🚀 Revolutionizing career development with Machine Learning and AI!**
+
+---
+
+**CareerCatalyst** © 2025 Muhammad Shaheer Malik. All Rights Reserved.
+
+[⬆ Back to Top](#-careercatalyst---ai-powered-career-development-platform)
 
 </div>
